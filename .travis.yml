@@ -5,6 +5,9 @@ android:
     - build-tools-23.0.1
     - android-23
     - platform-tools
+    - extra-android-m2repository
+  licenses:
+    - android-sdk-license-.+
 before_install: 
   - cd android_app
   - chmod +x gradlew
