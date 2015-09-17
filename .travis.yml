@@ -1,2 +1,4 @@
 language: java
-before_install: cd android_app
+before_install: 
+  - cd android_app
+  - chmod +x gradlew
