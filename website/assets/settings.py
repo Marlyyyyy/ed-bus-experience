@@ -65,7 +65,8 @@ INSTALLED_APPS = (
     'compressor',
     'rest_framework',
     'rest_framework.authtoken',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'busfeedback'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,7 +92,7 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbportfolio_django',
+        'NAME': 'db_edibus',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
