@@ -66,10 +66,12 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.humanize',
-    'busfeedback'
+    'busfeedback',
+    'silk'
 )
 
 MIDDLEWARE_CLASSES = (
+    'silk.middleware.SilkyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
