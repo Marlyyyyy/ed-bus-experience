@@ -82,8 +82,8 @@ def update_services_and_stops():
 
         for stop in existing_stops:
             stop.services.clear()
-            new_stop = new_stops.pop(stop.name, None)
-            stop.name = new_stop["stop_id"]
+            new_stop = new_stops.pop(stop.stop_id, None)
+            stop.stop_id = new_stop["stop_id"]
             stop.latitude = new_stop["latitude"]
             stop.longitude = new_stop["longitude"]
 
@@ -114,7 +114,7 @@ def update_services_and_stops():
 
     # Add services to stops
     for stop in saved_stops:
-        service_names_to_add = stop_services_dictionary[stop.name]
+        service_names_to_add = stop_services_dictionary[stop.stop_id]
         services_to_add = []
         for service_name in service_names_to_add:
             services_to_add.append(saved_services_dictionary[service_name])
@@ -156,6 +156,6 @@ def create_and_insert_new_stops_from_dictionary(stops):
     # Create a list of stop objects to be inserted into the database
     new_stops = []
     for stop in stops:
-        new_stops.append(Stop(name=stop["stop_id"], latitude=stop["latitude"], longitude=stop["longitude"]))
+        new_stops.append(Stop(stop_id=stop["stop_id"], latitude=stop["latitude"], longitude=stop["longitude"]))
 
     Stop.objects.bulk_create(new_stops)
