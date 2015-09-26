@@ -5,6 +5,7 @@ import requests
 from busfeedback.constants import *
 import json
 from datetime import datetime
+from django.utils import timezone
 from django.db import transaction
 
 
@@ -27,6 +28,7 @@ def update_table_date(table_name, new_date):
 def check_if_need_update(table_name, current_date, difference):
     if is_table_filled(table_name):
         update = Update.objects.filter(table_name=table_name)[0]
+        # last_updated = timezone.make_aware(update.last_updated, timezone.get_current_timezone())
         delta = current_date - update.last_updated
         actual_difference = int(delta.total_seconds() * 1000)
         if actual_difference > difference:
@@ -39,13 +41,15 @@ def check_if_need_update(table_name, current_date, difference):
 
 # Deletes existing data from stops, services and their linking table
 def delete_services_stops():
-    Service.query.delete()
-    Stop.query.delete()
+    Service.objects.delete_everything()
+    Stop.objects.delete_everything()
 
 
 # Fills up both services and stops with up-to-date data
 @transaction.atomic
 def update_services_and_stops():
+
+    delete_services_stops()
 
     # Get services as json data
     services_json = requests.get(API_SERVICES, headers=API_HEADER)
@@ -62,9 +66,9 @@ def update_services_and_stops():
     stops = stops_dictionary["stops"]
 
     # Update the tables' last_updated field
-    service_date = datetime.utcfromtimestamp(int(services_dictionary["last_updated"]))
+    service_date = timezone.make_aware(datetime.utcfromtimestamp(int(services_dictionary["last_updated"])), timezone.get_current_timezone())
     update_table_date("service", service_date)
-    stop_date = datetime.utcfromtimestamp(int(stops_dictionary["last_updated"]))
+    stop_date = timezone.make_aware(datetime.utcfromtimestamp(int(stops_dictionary["last_updated"])), timezone.get_current_timezone())
     update_table_date("stop", stop_date)
 
     # Create a dictionary of stopID,Services

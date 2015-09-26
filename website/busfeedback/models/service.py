@@ -2,6 +2,11 @@ from django.db import models
 from busfeedback.models.stop import Stop
 
 
+class ServiceManager(models.Manager):
+    def delete_everything(self):
+        Service.objects.all().delete()
+
+
 class Service(models.Model):
 
     # Many to many relationship with Stop
@@ -10,14 +15,11 @@ class Service(models.Model):
     type = models.CharField(max_length=40, blank=False)
     description = models.CharField(max_length=100, blank=False)
 
+    objects = ServiceManager()
+
     def __unicode__(self):
         return self.name
 
     class Meta:
         db_table = 'tbl_busfeedback_service'
         ordering = ('name',)
-
-
-class ServiceManager(models.Manager):
-    def delete_everything(self):
-        Service.objects.all().delete()
