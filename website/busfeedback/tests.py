@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from busfeedback.models.service import Service
 from busfeedback.models.stop import Stop
+from django.test import Client
 
 
 class BusUpdaterTestCase(TestCase):
@@ -35,3 +36,17 @@ class BusUpdaterTestCase(TestCase):
 
         first_service_stops = services[0].stops
         self.assertGreater(first_service_stops.count(), 0, "Stops should not be empty.")
+
+
+class BusViewTestCase(TestCase):
+
+    def setUp(self):
+        stop = Stop.objects.create(stop_id=95624796, latitude=55.900, longitude=-3.3)
+        service = Service.objects.create(name="3", type="day", description="Clovenstone - Mayfield")
+        stop.services.add(service)
+
+    def test_get_services_for_stop(self):
+        client = Client()
+        response = client.post('/bus/api/get_services_for_stop', {'stop_id': '95624796'})
+        response_content = json.loads(response.content.decode('utf-8'))
+        self.assertEqual("Clovenstone - Mayfield", response_content[0]["description"], "Response should contain the description of the service.")
