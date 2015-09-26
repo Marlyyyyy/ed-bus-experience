@@ -1,5 +1,7 @@
 from django.db import models
 from busfeedback.models.journey import Journey
+from busfeedback.models.stop import Stop
+from busfeedback.models.service import Service
 
 
 class Trip(models.Model):
@@ -10,10 +12,12 @@ class Trip(models.Model):
     # Many to one relationship with Journey
     journey = models.ForeignKey(Journey, related_name='trips')
 
-    # Integrity constraints missing because of the frequent updates of Stop and Service
-    start_stop_name = models.IntegerField(blank=False)
-    end_stop_name = models.IntegerField(blank=False)
-    service_name = models.CharField(max_length=5, blank=False)
+    # Many to one relationships with Stop
+    start_stop = models.ForeignKey(Stop, related_name='+')
+    end_stop = models.ForeignKey(Stop, related_name='+')
+
+    # Many to one relationship with Service
+    service = models.ForeignKey(Service)
 
     wait_duration = models.IntegerField()
     travel_duration = models.IntegerField()
