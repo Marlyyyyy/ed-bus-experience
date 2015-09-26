@@ -1,8 +1,9 @@
 from django.db import models
 from busfeedback.models.stop import Stop
+from bulk_update.manager import BulkUpdateManager
 
 
-class ServiceManager(models.Manager):
+class ServiceManager(BulkUpdateManager):
     def delete_everything(self):
         Service.objects.all().delete()
 

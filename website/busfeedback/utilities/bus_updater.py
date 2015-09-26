@@ -49,50 +49,60 @@ def delete_services_stops():
 @transaction.atomic
 def update_services_and_stops():
 
-    delete_services_stops()
+    # (Datetime of last update, List of objects) tuples
+    service_date, services = get_external_list_of_services()
+    stop_date, stops = get_external_list_of_stops()
 
-    # Get services as json data
-    services_json = requests.get(API_SERVICES, headers=API_HEADER)
-    services_dictionary = json.loads(services_json.text)
-
-    # Array of service objects
-    services = services_dictionary["services"]
-
-    # Get stops as json data
-    stops_json = requests.get(API_STOPS, headers=API_HEADER)
-    stops_dictionary = json.loads(stops_json.text)
-
-    # Array of stop objects
-    stops = stops_dictionary["stops"]
-
-    # Update the tables' last_updated field
-    service_date = timezone.make_aware(datetime.utcfromtimestamp(int(services_dictionary["last_updated"])), timezone.get_current_timezone())
     update_table_date("service", service_date)
-    stop_date = timezone.make_aware(datetime.utcfromtimestamp(int(stops_dictionary["last_updated"])), timezone.get_current_timezone())
     update_table_date("stop", stop_date)
 
-    # Create a dictionary of stopID,Services
+    # Create a dictionary of key: stop_id, value: service names
     stop_services_dictionary = {}
     for stop in stops:
-        # Must take the set because sometimes the service names are listed multiple times for a particular stop.
-        service_names = set(stop["services"])
-        stop_services_dictionary[stop["stop_id"]] = service_names
+        stop_services_dictionary[stop["stop_id"]] = set(stop["services"])
 
-    # Create a service instance of each service
-    new_services = []
-    for service in services:
-        new_services.append(Service(name=service["name"], type=service["service_type"], description=service["description"]))
+    existing_stops = Stop.objects.all()
+    existing_services = Service.objects.all()
 
-    # Create a stop instance of each stop and add corresponding services to them
-    new_stops = []
-    for stop in stops:
-        new_stops.append(Stop(name=stop["stop_id"], latitude=stop["latitude"], longitude=stop["longitude"]))
+    # If both tables are empty, insert all data. Otherwise update existing data, and insert new data
+    if not existing_stops and not existing_services:
+        create_and_insert_new_services_from_dictionary(services)
+        create_and_insert_new_stops_from_dictionary(stops)
 
-    # Insert all services using a single query
-    Service.objects.bulk_create(new_services)
+    else:
+        # Create dictionary of key: service_name, value: service
+        new_services = {}
+        for service in services:
+            new_services[service["name"]] = service
 
-    # Insert all stops using a single query
-    Stop.objects.bulk_create(new_stops)
+        # Create dictionary of key: stop_id, value: stop
+        new_stops = {}
+        for stop in stops:
+            new_stops[stop["stop_id"]] = stop
+
+        for stop in existing_stops:
+            stop.services.clear()
+            new_stop = new_stops.pop(stop.name, None)
+            stop.name = new_stop["stop_id"]
+            stop.latitude = new_stop["latitude"]
+            stop.longitude = new_stop["longitude"]
+
+        for service in existing_services:
+            new_service = new_services.pop(service.name, None)
+            if new_service is None:
+                continue
+
+            service.name = new_service["name"]
+            service.type = new_service["service_type"]
+            service.description = new_service["description"]
+
+        # Update existing
+        Stop.objects.bulk_update(existing_stops)
+        Service.objects.bulk_update(existing_services)
+
+        # Insert new
+        create_and_insert_new_stops_from_dictionary(new_stops.values())
+        create_and_insert_new_services_from_dictionary(new_services.values())
 
     # Manage the relationship between Service and Stop
     saved_stops = list(Stop.objects.all())
@@ -111,4 +121,41 @@ def update_services_and_stops():
         stop.services.add(*services_to_add)
 
 
+# Gets the last updated time of services, and the list of service objects
+def get_external_list_of_services():
 
+    # Get services as json data
+    services_json = requests.get(API_SERVICES, headers=API_HEADER)
+    services_dictionary = json.loads(services_json.text)
+    service_date = timezone.make_aware(datetime.utcfromtimestamp(int(services_dictionary["last_updated"])), timezone.get_current_timezone())
+
+    return service_date, services_dictionary["services"]
+
+
+# Gets the last updated time of stops, and the list of stop objects
+def get_external_list_of_stops():
+
+    # Get stops as json data
+    stops_json = requests.get(API_STOPS, headers=API_HEADER)
+    stops_dictionary = json.loads(stops_json.text)
+    stop_date = timezone.make_aware(datetime.utcfromtimestamp(int(stops_dictionary["last_updated"])), timezone.get_current_timezone())
+
+    return stop_date, stops_dictionary["stops"]
+
+
+def create_and_insert_new_services_from_dictionary(services):
+    # Create a list of service objects to be inserted into the database
+    new_services = []
+    for service in services:
+        new_services.append(Service(name=service["name"], type=service["service_type"], description=service["description"]))
+
+    Service.objects.bulk_create(new_services)
+
+
+def create_and_insert_new_stops_from_dictionary(stops):
+    # Create a list of stop objects to be inserted into the database
+    new_stops = []
+    for stop in stops:
+        new_stops.append(Stop(name=stop["stop_id"], latitude=stop["latitude"], longitude=stop["longitude"]))
+
+    Stop.objects.bulk_create(new_stops)

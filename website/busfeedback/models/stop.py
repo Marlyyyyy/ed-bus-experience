@@ -1,7 +1,8 @@
 from django.db import models
+from bulk_update.manager import BulkUpdateManager
 
 
-class StopManager(models.Manager):
+class StopManager(BulkUpdateManager):
     def delete_everything(self):
         Stop.objects.all().delete()
 

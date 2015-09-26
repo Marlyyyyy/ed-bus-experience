@@ -31,7 +31,7 @@ class BusUpdaterTestCase(TestCase):
         update_services_and_stops()
 
         services = Service.objects.all()
-        self.assertGreater(services.count(), 0, "Services should be empty.")
+        self.assertGreater(services.count(), 0, "Services should not be empty.")
 
         first_service_stops = services[0].stops
-        self.assertGreater(first_service_stops.count(), 0, "Stops should be empty.")
+        self.assertGreater(first_service_stops.count(), 0, "Stops should not be empty.")
