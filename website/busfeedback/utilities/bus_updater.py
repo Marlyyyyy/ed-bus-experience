@@ -5,6 +5,7 @@ import requests
 from busfeedback.constants import *
 import json
 from datetime import datetime
+from django.db import transaction
 
 
 def is_table_filled(table_name):
@@ -43,6 +44,7 @@ def delete_services_stops():
 
 
 # Fills up both services and stops with up-to-date data
+@transaction.atomic
 def update_services_and_stops():
 
     # Get services as json data
@@ -89,8 +91,8 @@ def update_services_and_stops():
     Stop.objects.bulk_create(new_stops)
 
     # Manage the relationship between Service and Stop
-    saved_stops = Stop.objects.all()
-    saved_services = Service.objects.all()
+    saved_stops = list(Stop.objects.all())
+    saved_services = list(Service.objects.all())
 
     saved_services_dictionary = {}
     for service in saved_services:
@@ -103,7 +105,6 @@ def update_services_and_stops():
         for service_name in service_names_to_add:
             services_to_add.append(saved_services_dictionary[service_name])
         stop.services.add(*services_to_add)
-        stop.save()
 
 
 

@@ -13,33 +13,33 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Journey',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start_time', models.DateTimeField()),
                 ('end_time', models.DateTimeField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ('start_time',),
                 'db_table': 'tbl_busfeedback_journey',
+                'ordering': ('start_time',),
             },
         ),
         migrations.CreateModel(
             name='Service',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(unique=True, max_length=5)),
                 ('type', models.CharField(max_length=40)),
                 ('description', models.CharField(max_length=100)),
             ],
             options={
-                'ordering': ('name',),
                 'db_table': 'tbl_busfeedback_service',
+                'ordering': ('name',),
             },
         ),
         migrations.CreateModel(
             name='Stop',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.IntegerField(unique=True)),
                 ('latitude', models.FloatField()),
                 ('longitude', models.FloatField()),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Trip',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start_time', models.DateTimeField()),
                 ('end_time', models.DateTimeField()),
                 ('start_stop_name', models.IntegerField()),
@@ -66,20 +66,20 @@ class Migration(migrations.Migration):
                 ('journey', models.ForeignKey(to='busfeedback.Journey', related_name='trips')),
             ],
             options={
-                'ordering': ('start_time',),
                 'db_table': 'tbl_busfeedback_trip',
+                'ordering': ('start_time',),
             },
         ),
         migrations.CreateModel(
             name='Update',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('table_name', models.CharField(max_length=40)),
                 ('last_updated', models.DateTimeField()),
             ],
             options={
-                'ordering': ('table_name',),
                 'db_table': 'tbl_busfeedback_update',
+                'ordering': ('table_name',),
             },
         ),
         migrations.AddField(
