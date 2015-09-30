@@ -51,6 +51,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
+    'FORM_METHOD_OVERRIDE': None,
+    'FORM_CONTENT_OVERRIDE': None,
+    'FORM_CONTENTTYPE_OVERRIDE': None
 }
 
 # Application definition
@@ -67,6 +70,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'django.contrib.humanize',
     'busfeedback',
+    'authentication',
     'silk'
 )
 
@@ -146,3 +150,6 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 
 # development purposes only!
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# use our custom authentication model
+AUTH_USER_MODEL = 'authentication.Account'

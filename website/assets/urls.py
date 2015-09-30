@@ -8,6 +8,7 @@ urlpatterns = patterns(
     url(r'^test/$', get_data),
     url(r'^remove/$', remove_data),
     url(r'^bus/', include('busfeedback.urls')),
+    url(r'^auth/', include('authentication.urls')),
     url(r'^admin/', include(admin.site.urls))
 )
 
