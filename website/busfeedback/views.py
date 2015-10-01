@@ -91,6 +91,11 @@ def upload_new_trip(request):
     else:
         journey = Journey.objects.create(start_time=start_time, end_time=end_time)
 
+        # Add journey to the user's diary if logged in
+        if request.user.is_authenticated():
+            journey.account = request.user
+            journey.save()
+
     # Create a new trip for a journey
     with transaction.atomic():
         trip = journey.trips.create(

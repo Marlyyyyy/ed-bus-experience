@@ -1,10 +1,13 @@
 from django.db import models
+from authentication.models import Account
 
 
 class Journey(models.Model):
 
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+
+    account = models.ForeignKey(Account, blank=True, null=True, related_name="journeys")
 
     created_at = models.DateTimeField(auto_now_add=True)
 

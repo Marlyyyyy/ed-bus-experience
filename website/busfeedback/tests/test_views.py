@@ -3,6 +3,7 @@ from django.test import TestCase
 from busfeedback.models.service import Service
 from busfeedback.models.stop import Stop
 from busfeedback.models.journey import Journey
+from authentication.models import Account
 from datetime import datetime, timedelta
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -47,7 +48,6 @@ class BusViewTestCase(TestCase):
         self.assertEqual(response_content[1]["stop_id"], 95624798, "Response should contain the second closest stop.")
 
     def test_new_upload_trip(self):
-
         start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
         end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
         service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
@@ -103,3 +103,13 @@ class BusViewTestCase(TestCase):
             end_time.strftime("%a, %d %b %Y %H:%M:%S"),
             "The end_time should be the end_time of the second trip."
         )
+
+        # Upload our first trip of a new journey while logged in.
+        user = Account.objects.create_user(username="Heffalumps", password="Woozles")
+        self.client.login(username="Heffalumps", password="Woozles")
+
+        self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+
+        user_journeys = user.journeys.all()
+
+        self.assertEqual(user_journeys.count(), 1, "The user should have one journey in their diary.")
