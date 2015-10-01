@@ -48,6 +48,8 @@ class BusViewTestCase(TestCase):
         self.assertEqual(response_content[1]["stop_id"], 95624798, "Response should contain the second closest stop.")
 
     def test_new_upload_trip(self):
+        self.client.logout()
+
         start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
         end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
         service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
@@ -70,25 +72,41 @@ class BusViewTestCase(TestCase):
 
         # Upload our first trip of a new journey.
         response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
-        response_content = json.loads(response.content.decode('utf-8'))
+        first_response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content['journey_id'], 1, "This should be the very first journey in the database.")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Journey.objects.all().count(), 1, "There should only be one journey in the database.")
 
         # Upload our first trip of a new journey.
         response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
-        response_content = json.loads(response.content.decode('utf-8'))
+        second_response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content['journey_id'], 2, "This should be now the second journey in the database.")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Journey.objects.all().count(), 2, "There should now be two journeys in the database.")
+        self.assertEqual(
+            first_response_content['journey_id']+1,
+            second_response_content['journey_id'],
+            "There should be one more journey in the database than before"
+        )
 
         # Upload our second trip of one of our journeys.
         end_time = datetime.now()
         trip['end_time'] = end_time
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json, 'journey_id': 2})
-        response_content = json.loads(response.content.decode('utf-8'))
+        response = self.client.post('/bus/api/upload_new_trip',
+                                    {'trip': trip_json,
+                                     'journey_id': second_response_content['journey_id']
+                                     })
+        third_response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content['journey_id'], 2, "This should be now the second journey in the database.")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Journey.objects.all().count(), 2, "There should still be two journeys in the database.")
+        self.assertEqual(
+            second_response_content['journey_id'],
+            third_response_content['journey_id'],
+            "There should be the same number of journeys in the database as before."
+        )
 
         second_journey = Journey.objects.get(id=2)
 
@@ -113,3 +131,35 @@ class BusViewTestCase(TestCase):
         user_journeys = user.journeys.all()
 
         self.assertEqual(user_journeys.count(), 1, "The user should have one journey in their diary.")
+
+    def test_get_diary_for_user(self):
+        start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
+        end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
+        service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
+
+        current_time = datetime.now()
+        start_time = current_time - timedelta(minutes=10)
+        end_time = current_time
+        trip = {
+            'start_time': start_time,
+            'end_time': end_time,
+            'start_stop': start_stop_id,
+            'end_stop': end_stop_id,
+            'service': service_id,
+            'wait_duration': 60000,
+            'travel_duration': 800000,
+            'seat': True,
+            'rating': 4.5
+        }
+        trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
+
+        # Upload our first trip of a new journey while logged in.
+        user = Account.objects.create_user(username="Heffalumps", password="Woozles")
+        self.client.login(username="Heffalumps", password="Woozles")
+        self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+
+        response = self.client.post('/bus/api/get_diary_for_user', {'username': 'Heffalumps'})
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_content[0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")
+

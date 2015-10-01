@@ -6,6 +6,7 @@ from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop
 from busfeedback.serializers.service_serializer import ServiceSerializer
 from busfeedback.serializers.stop_serializer import StopSerializer
+from busfeedback.serializers.journey_serializer import JourneySerializer
 from rest_framework.renderers import JSONRenderer
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -110,8 +111,23 @@ def upload_new_trip(request):
             rating=new_trip["rating"]
         )
 
-    response_date = json.dumps({"journey_id": journey.id})
+    response_data = json.dumps({"journey_id": journey.id})
 
-    return HttpResponse(response_date, content_type='application/json')
+    return HttpResponse(response_data, content_type='application/json')
+
+def get_diary_for_user(request):
+    username = request.POST.get("username", "")
+
+    try:
+        journeys = Journey.objects.filter(account__username=username).prefetch_related('trips')
+    except ObjectDoesNotExist:
+        error_message = "User with username '{}' could not be found.".format(username)
+        return HttpResponseBadRequest(error_message, content_type='application/json')
+
+    journey_serliazer = JourneySerializer(journeys, many=True)
+    json_journeys = JSONRenderer().render(journey_serliazer.data)
+
+    return HttpResponse(json_journeys, content_type='application/json')
+
 
 
