@@ -83,18 +83,19 @@ def update_services_and_stops():
         for stop in existing_stops:
             stop.services.clear()
             new_stop = new_stops.pop(stop.stop_id, None)
-            stop.stop_id = new_stop["stop_id"]
-            stop.latitude = new_stop["latitude"]
-            stop.longitude = new_stop["longitude"]
+
+            # If it's a new service, we'll persist it later
+            if new_stop:
+                stop.stop_id = new_stop["stop_id"]
+                stop.latitude = new_stop["latitude"]
+                stop.longitude = new_stop["longitude"]
 
         for service in existing_services:
             new_service = new_services.pop(service.name, None)
-            if new_service is None:
-                continue
-
-            service.name = new_service["name"]
-            service.type = new_service["service_type"]
-            service.description = new_service["description"]
+            if new_service:
+                service.name = new_service["name"]
+                service.type = new_service["service_type"]
+                service.description = new_service["description"]
 
         # Update existing
         Stop.objects.bulk_update(existing_stops)
@@ -114,11 +115,12 @@ def update_services_and_stops():
 
     # Add services to stops
     for stop in saved_stops:
-        service_names_to_add = stop_services_dictionary[stop.stop_id]
-        services_to_add = []
-        for service_name in service_names_to_add:
-            services_to_add.append(saved_services_dictionary[service_name])
-        stop.services.add(*services_to_add)
+        service_names_to_add = stop_services_dictionary.get(stop.stop_id)
+        if service_names_to_add:
+            services_to_add = []
+            for service_name in service_names_to_add:
+                services_to_add.append(saved_services_dictionary[service_name])
+            stop.services.add(*services_to_add)
 
 
 # Gets the last updated time of services, and the list of service objects
