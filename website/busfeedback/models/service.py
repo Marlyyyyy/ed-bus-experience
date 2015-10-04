@@ -1,11 +1,18 @@
 from django.db import models
 from busfeedback.models.stop import Stop
 from bulk_update.manager import BulkUpdateManager
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ServiceManager(BulkUpdateManager):
     def delete_everything(self):
         Service.objects.all().delete()
+
+    def get_or_none(self, **kwargs):
+        try:
+            return self.get(**kwargs)
+        except ObjectDoesNotExist:
+            return None
 
 
 class Service(models.Model):

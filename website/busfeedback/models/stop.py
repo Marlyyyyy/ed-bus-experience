@@ -1,10 +1,17 @@
 from django.db import models
 from bulk_update.manager import BulkUpdateManager
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class StopManager(BulkUpdateManager):
     def delete_everything(self):
         Stop.objects.all().delete()
+
+    def get_or_none(self, **kwargs):
+        try:
+            return self.get(**kwargs)
+        except ObjectDoesNotExist:
+            return None
 
     def get_closest_stops(self, latitude, longitude, radius_km=50.0, number_of_stops=3):
         parameters = {

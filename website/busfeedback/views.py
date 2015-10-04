@@ -58,22 +58,22 @@ def upload_new_trip(request):
 
     new_trip = json.loads(new_trip)
 
-    try:
-        start_stop = Stop.objects.get(id=new_trip["start_stop"])
-    except ObjectDoesNotExist:
+    # Check if Start Stop exists
+    start_stop = Stop.objects.get_or_none(id=new_trip["start_stop"])
+    if not start_stop:
         error_message = "No existing stop could be found with ID {}".format(new_trip["start_stop"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
-    try:
-        end_stop = Stop.objects.get(id=new_trip["end_stop"])
-    except ObjectDoesNotExist:
+    # Check if End Stop exists
+    end_stop = Stop.objects.get_or_none(id=new_trip["end_stop"])
+    if not end_stop:
         error_message = "No existing stop could be found with ID {}".format(new_trip["end_stop"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
-    try:
-        service = Service.objects.get(id=new_trip["service"])
-    except ObjectDoesNotExist:
-        error_message = "No existing stop could be found with ID {}".format(id=new_trip["service"])
+    # Check if Service exists
+    service = Service.objects.get_or_none(id=new_trip["service"])
+    if not service:
+        error_message = "No existing service could be found with ID {}".format(new_trip["service"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     start_time = timezone.make_aware(dateutil.parser.parse(new_trip["start_time"]), timezone.get_current_timezone())
@@ -99,7 +99,7 @@ def upload_new_trip(request):
 
     # Create a new trip for a journey
     with transaction.atomic():
-        trip = journey.trips.create(
+        journey.trips.create(
             start_time=start_time,
             end_time=end_time,
             start_stop=start_stop,
