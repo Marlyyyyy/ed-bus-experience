@@ -5,10 +5,27 @@ import java.util.Date;
 
 public class Trip {
 
-    public Trip(Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
+    /**
+     * Description
+     * @param id
+     * @param startTime
+     * @param endTime
+     * @param journey
+     * @param startStop
+     * @param endStop
+     * @param service
+     * @param waitDuration
+     * @param travelDuration
+     * @param seat
+     * @param rating
+     * @param createdAt
+     * @param updatedAt
+     */
+    public Trip(int id, Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
             Service service, int waitDuration, int travelDuration, boolean seat, float rating,
             Date createdAt, Date updatedAt){
 
+        this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.journey = journey;
@@ -23,6 +40,8 @@ public class Trip {
         this.updatedAt = updatedAt;
 
     }
+
+    private int id;
 
     private Date startTime;
 
@@ -45,6 +64,12 @@ public class Trip {
     private float rating;
 
     private Date createdAt;
+
+    private Date updatedAt;
+
+    public int getId(){
+        return id;
+    }
 
     public Date getUpdatedAt() {
         return updatedAt;
@@ -93,6 +118,4 @@ public class Trip {
     public Date getCreatedAt() {
         return createdAt;
     }
-
-    private Date updatedAt;
 }

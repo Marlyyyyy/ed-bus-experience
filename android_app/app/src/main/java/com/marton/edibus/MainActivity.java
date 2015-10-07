@@ -5,7 +5,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.marton.edibus.services.WebService;
+import com.marton.edibus.models.Service;
+import com.marton.edibus.services.BusWebService;
+
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +19,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebService.getServicesForStop(36290108);
+        WebCallBack webCallBack = new WebCallBack<List<Service>>() {
+            @Override
+            public void onSuccess(List<Service> data) {
+                List<Service> myData = data;
+            }
+        };
+        BusWebService.getServicesForStop(36290108, webCallBack);
     }
 
     @Override
