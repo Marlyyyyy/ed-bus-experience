@@ -12,30 +12,36 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 import dateutil.parser
 from django.db import transaction
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 def get_data(request):
-    update_services_and_stops()
+    # update_services_and_stops()
 
-    return HttpResponse("Done", content_type='application/json')
+    return HttpResponse("{'data': 'Done'}", content_type='application/json')
 
 
+@csrf_exempt
 def remove_data(request):
     delete_services_stops()
 
     return HttpResponse("Done", content_type='application/json')
 
 
+@csrf_exempt
 def get_services_for_stop(request):
     stop_id = int(request.POST.get("stop_id", ""))
+    # TODO: Handle exception
     stop = Stop.objects.filter(stop_id=stop_id)[0]
     services = list(stop.services.all())
     service_serializer = ServiceSerializer(services, many=True)
-    json_services = JSONRenderer().render(service_serializer.data)
+    json_services = JSONRenderer().render({"services": service_serializer.data})
 
     return HttpResponse(json_services, content_type='application/json')
 
 
+@csrf_exempt
 def get_closest_stops(request):
     user_latitude = request.POST.get("latitude", "")
     user_longitude = request.POST.get("longitude", "")
@@ -43,11 +49,12 @@ def get_closest_stops(request):
 
     closest_stops = Stop.objects.get_closest_stops(latitude=user_latitude, longitude=user_longitude,number_of_stops=number_of_stops)
     stop_serializer = StopSerializer(closest_stops, many=True)
-    json_stops = JSONRenderer().render(stop_serializer.data)
+    json_stops = JSONRenderer().render({"stops": stop_serializer.data})
 
     return HttpResponse(json_stops, content_type='application/json')
 
 
+@csrf_exempt
 def upload_new_trip(request):
     journey_id = request.POST.get("journey_id", None)
     new_trip = request.POST.get("trip", None)
@@ -115,6 +122,8 @@ def upload_new_trip(request):
 
     return HttpResponse(response_data, content_type='application/json')
 
+
+@csrf_exempt
 def get_diary_for_user(request):
     username = request.POST.get("username", "")
 
@@ -125,7 +134,7 @@ def get_diary_for_user(request):
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     journey_serliazer = JourneySerializer(journeys, many=True)
-    json_journeys = JSONRenderer().render(journey_serliazer.data)
+    json_journeys = JSONRenderer().render({"journeys": journey_serliazer.data})
 
     return HttpResponse(json_journeys, content_type='application/json')
 

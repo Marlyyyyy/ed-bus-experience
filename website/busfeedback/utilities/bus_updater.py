@@ -84,7 +84,7 @@ def update_services_and_stops():
             stop.services.clear()
             new_stop = new_stops.pop(stop.stop_id, None)
 
-            # If it's a new service, we'll persist it later
+            # If it's a new stop, we'll persist it later
             if new_stop:
                 stop.stop_id = new_stop["stop_id"]
                 stop.latitude = new_stop["latitude"]

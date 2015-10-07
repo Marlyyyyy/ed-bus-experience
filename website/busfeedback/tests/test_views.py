@@ -32,7 +32,7 @@ class BusViewTestCase(TestCase):
     def test_get_services_for_stop(self):
         response = self.client.post('/bus/api/get_services_for_stop', {'stop_id': '95624797'})
         response_content = json.loads(response.content.decode('utf-8'))
-        self.assertEqual("Clovenstone - Mayfield", response_content[0]["description"], "Response should contain the description of the service.")
+        self.assertEqual("Clovenstone - Mayfield", response_content["services"][0]["description"], "Response should contain the description of the service.")
 
     def test_get_closest_stops(self):
         post_parameters = {
@@ -43,9 +43,9 @@ class BusViewTestCase(TestCase):
         response = self.client.post('/bus/api/get_closest_stops', post_parameters)
         response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(len(response_content), 2, "Only two stops should be returned.")
-        self.assertEqual(response_content[0]["stop_id"], 95624797, "Response should contain the closest stop.")
-        self.assertEqual(response_content[1]["stop_id"], 95624798, "Response should contain the second closest stop.")
+        self.assertEqual(len(response_content["stops"]), 2, "Only two stops should be returned.")
+        self.assertEqual(response_content["stops"][0]["stop_id"], 95624797, "Response should contain the closest stop.")
+        self.assertEqual(response_content["stops"][1]["stop_id"], 95624798, "Response should contain the second closest stop.")
 
     def test_upload_new_trip(self):
         self.client.logout()
@@ -192,5 +192,5 @@ class BusViewTestCase(TestCase):
         response = self.client.post('/bus/api/get_diary_for_user', {'username': 'Heffalumps'})
         response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content[0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")
+        self.assertEqual(response_content['journeys'][0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")
 
