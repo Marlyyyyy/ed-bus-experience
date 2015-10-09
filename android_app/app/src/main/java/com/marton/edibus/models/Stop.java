@@ -17,13 +17,13 @@ public class Stop {
 
     private int stopId;
 
-    private float latitude;
+    private double latitude;
 
-    private float longitude;
+    private double longitude;
 
     private ArrayList<Service> services;
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -35,7 +35,7 @@ public class Stop {
         return stopId;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 

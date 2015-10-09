@@ -22,12 +22,36 @@ public class UserWebService {
         parameters.put("username", username);
         parameters.put("password", password);
 
-        String url = "/api/login";
+        String url = "/api/login/";
         client.post(getAbsoluteUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                /*data.getString("bla"))*/
+
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
+
+                int statuscode = statusCode;
+            }
+        });
+    }
+
+    public static void register(String username, String password, final WebCallBack<JSONObject> callback) {
+
+        RequestParams parameters = new RequestParams();
+        parameters.put("username", username);
+        parameters.put("password", password);
+
+        String url = "/api/accounts/";
+        client.post(getAbsoluteUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
                 callback.onSuccess(response);
             }
 

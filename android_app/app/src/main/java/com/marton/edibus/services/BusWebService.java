@@ -8,6 +8,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.marton.edibus.WebCallBack;
+import com.marton.edibus.models.Journey;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
@@ -64,7 +65,7 @@ public class BusWebService {
         });
     }
 
-    public static void getClosestStops(float latitude, long longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
+    public static void getClosestStops(double latitude, double longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("latitude", latitude);
@@ -78,7 +79,14 @@ public class BusWebService {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 Gson gson = new Gson();
-                Stop[] stopArray = gson.fromJson(response.toString(), Stop[].class);
+                JSONArray stopJsonArray = null;
+                try {
+                    stopJsonArray = response.getJSONArray("stops");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                // TODO: check for null
+                Stop[] stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
                 List<Stop> stopList = Arrays.asList(stopArray);
                 callback.onSuccess(stopList);
             }
@@ -127,6 +135,40 @@ public class BusWebService {
                 callback.onFailure(statusCode, errorResponse.toString());
             }
         });
+    }
+
+    public static void getDiaryForUser(String username, WebCallBack<List<Journey>> callback){
+
+        RequestParams parameters = new RequestParams();
+        String url = "/api/get_diary_for_user";
+        client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                JSONArray journeys = null;
+
+                try {
+                    journeys = response.getJSONArray("journeys");
+                } catch (JSONException e) {
+                    Log.e(TAG, "Was unable to get the journey ID integer from Json response");
+                }
+
+                Gson gson = new Gson();
+
+                Journey[] journey_array = gson.fromJson(journeys.toString(), Journey[].class);
+                List<Journey> stopList = Arrays.asList(journey_array);
+                // callback.onSuccess(journeyId);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                // callback.onFailure(statusCode, errorResponse.toString());
+            }
+        });
+
     }
 
     private static String getAbsoluteBusUrl(String relativeUrl) {

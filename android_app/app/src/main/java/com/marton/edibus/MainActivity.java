@@ -6,7 +6,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.marton.edibus.models.Service;
+import com.marton.edibus.models.Stop;
 import com.marton.edibus.services.BusWebService;
+import com.marton.edibus.services.UserWebService;
 
 import org.json.JSONObject;
 
@@ -19,13 +21,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebCallBack webCallBack = new WebCallBack<List<Service>>() {
+        WebCallBack<JSONObject> webCallBack = new WebCallBack<JSONObject>() {
             @Override
-            public void onSuccess(List<Service> data) {
-                List<Service> myData = data;
+            public void onSuccess(JSONObject data) {
+                JSONObject myData = data;
             }
         };
-        BusWebService.getServicesForStop(36290108, webCallBack);
+        UserWebService.register("Heffalumps", "Woozles", webCallBack);
+        UserWebService.login("Heffalumps", "Woozles", webCallBack);
     }
 
     @Override
