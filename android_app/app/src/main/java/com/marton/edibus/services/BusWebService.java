@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class BusWebService {
         parameters.put("stop_id", stopId);
 
         String url = "/api/get_services_for_stop";
-        client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -73,7 +72,7 @@ public class BusWebService {
         parameters.put("number_of_stops", numberOfStops);
 
         String url = "/api/get_closest_stops";
-        client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -141,7 +140,7 @@ public class BusWebService {
 
         RequestParams parameters = new RequestParams();
         String url = "/api/get_diary_for_user";
-        client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

@@ -30,7 +30,7 @@ class BusViewTestCase(TestCase):
         service.stops.add(closest_stop)
 
     def test_get_services_for_stop(self):
-        response = self.client.post('/bus/api/get_services_for_stop', {'stop_id': '95624797'})
+        response = self.client.get('/bus/api/get_services_for_stop', {'stop_id': '95624797'})
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual("Clovenstone - Mayfield", response_content["services"][0]["description"], "Response should contain the description of the service.")
 
@@ -40,7 +40,7 @@ class BusViewTestCase(TestCase):
             'longitude': self.user_longitude,
             'number_of_stops': 2
         }
-        response = self.client.post('/bus/api/get_closest_stops', post_parameters)
+        response = self.client.get('/bus/api/get_closest_stops', post_parameters)
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_content["stops"]), 2, "Only two stops should be returned.")
@@ -189,7 +189,7 @@ class BusViewTestCase(TestCase):
         self.client.login(username="Heffalumps", password="Woozles")
         self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
 
-        response = self.client.post('/bus/api/get_diary_for_user', {'username': 'Heffalumps'})
+        response = self.client.get('/bus/api/get_diary_for_user', {'username': 'Heffalumps'})
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response_content['journeys'][0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")

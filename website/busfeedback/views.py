@@ -31,7 +31,7 @@ def remove_data(request):
 
 @csrf_exempt
 def get_services_for_stop(request):
-    stop_id = int(request.POST.get("stop_id", ""))
+    stop_id = int(request.GET.get("stop_id", ""))
     # TODO: Handle exception
     stop = Stop.objects.filter(stop_id=stop_id)[0]
     services = list(stop.services.all())
@@ -43,9 +43,9 @@ def get_services_for_stop(request):
 
 @csrf_exempt
 def get_closest_stops(request):
-    user_latitude = request.POST.get("latitude", "")
-    user_longitude = request.POST.get("longitude", "")
-    number_of_stops = int(request.POST.get("number_of_stops", ""))
+    user_latitude = request.GET.get("latitude", "")
+    user_longitude = request.GET.get("longitude", "")
+    number_of_stops = int(request.GET.get("number_of_stops", ""))
 
     closest_stops = Stop.objects.get_closest_stops(latitude=user_latitude, longitude=user_longitude,number_of_stops=number_of_stops)
     stop_serializer = StopSerializer(closest_stops, many=True)
@@ -125,7 +125,7 @@ def upload_new_trip(request):
 
 @csrf_exempt
 def get_diary_for_user(request):
-    username = request.POST.get("username", "")
+    username = request.GET.get("username", "")
 
     try:
         journeys = Journey.objects.filter(account__username=username).prefetch_related('trips')
