@@ -1,34 +1,37 @@
 package com.marton.edibus;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.inject.Inject;
 import com.marton.edibus.models.Service;
-import com.marton.edibus.models.Stop;
 import com.marton.edibus.services.BusWebService;
 import com.marton.edibus.services.UserWebService;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import roboguice.activity.RoboActivity;
+
+
+public class MainActivity extends RoboActivity {
+
+    @Inject BusWebService busWebService;
+    @Inject UserWebService userWebService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebCallBack<JSONObject> webCallBack = new WebCallBack<JSONObject>() {
+        WebCallBack<List<Service>> webCallBack = new WebCallBack<List<Service>>() {
             @Override
-            public void onSuccess(JSONObject data) {
-                JSONObject myData = data;
+            public void onSuccess(List<Service> data) {
+                List<Service> myData = data;
             }
         };
-        UserWebService.register("Heffalumps", "Woozles", webCallBack);
-        UserWebService.login("Heffalumps", "Woozles", webCallBack);
+
+        busWebService.getServicesForStop(36234945, webCallBack);
     }
 
     @Override

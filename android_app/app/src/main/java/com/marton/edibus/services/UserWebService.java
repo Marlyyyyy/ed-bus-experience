@@ -1,5 +1,6 @@
 package com.marton.edibus.services;
 
+import com.google.inject.Singleton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -10,13 +11,17 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 
+@Singleton
 public class UserWebService {
+
+    public UserWebService(){
+    }
 
     private static final String BASE_URL_AUTHENTICATION = "http://192.168.0.9:8000/auth";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
-    public static void login(String username, String password, final WebCallBack callback) {
+    public void login(String username, String password, final WebCallBack callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("username", username);
@@ -40,7 +45,7 @@ public class UserWebService {
         });
     }
 
-    public static void register(String username, String password, final WebCallBack<JSONObject> callback) {
+    public void register(String username, String password, final WebCallBack<JSONObject> callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("username", username);

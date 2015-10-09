@@ -4,6 +4,8 @@ package com.marton.edibus.services;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -23,7 +25,13 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 
+@Singleton
 public class BusWebService {
+
+    public BusWebService(){
+    }
+
+    @Inject UserWebService userWebService;
 
     private static final String TAG = WebCallBack.class.getName();
 
@@ -31,7 +39,14 @@ public class BusWebService {
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
-    public static void getServicesForStop(int stopId, final WebCallBack<List<Service>> callback) {
+    public void getServicesForStop(int stopId, final WebCallBack<List<Service>> callback) {
+
+        userWebService.login("Marton", "pw123", new WebCallBack<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject data) {
+                JSONObject newData = data;
+            }
+        });
 
         RequestParams parameters = new RequestParams();
         parameters.put("stop_id", stopId);
@@ -64,7 +79,7 @@ public class BusWebService {
         });
     }
 
-    public static void getClosestStops(double latitude, double longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
+    public void getClosestStops(double latitude, double longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("latitude", latitude);
@@ -99,7 +114,7 @@ public class BusWebService {
         });
     }
 
-    public static void uploadNewTrip(Trip trip, final WebCallBack callback) {
+    public void uploadNewTrip(Trip trip, final WebCallBack callback) {
         uploadNewTrip(0, trip, callback);
     }
 
@@ -136,7 +151,7 @@ public class BusWebService {
         });
     }
 
-    public static void getDiaryForUser(String username, WebCallBack<List<Journey>> callback){
+    public void getDiaryForUser(String username, WebCallBack<List<Journey>> callback){
 
         RequestParams parameters = new RequestParams();
         String url = "/api/get_diary_for_user";
