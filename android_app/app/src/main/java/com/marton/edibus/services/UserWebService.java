@@ -14,12 +14,13 @@ import cz.msebera.android.httpclient.Header;
 @Singleton
 public class UserWebService {
 
-    public UserWebService(){
-    }
-
     private static final String BASE_URL_AUTHENTICATION = "http://192.168.0.9:8000/auth";
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
+    private AsyncHttpClient client;
+
+    public UserWebService(){
+        client = new AsyncHttpClient();
+    }
 
     public void login(String username, String password, final WebCallBack callback) {
 

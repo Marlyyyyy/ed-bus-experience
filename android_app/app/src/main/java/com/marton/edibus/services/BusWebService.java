@@ -28,16 +28,17 @@ import cz.msebera.android.httpclient.Header;
 @Singleton
 public class BusWebService {
 
-    public BusWebService(){
-    }
-
-    @Inject UserWebService userWebService;
-
     private static final String TAG = WebCallBack.class.getName();
 
     private static final String BASE_URL_BUS = "http://192.168.0.9:8000/bus";
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
+    @Inject private UserWebService userWebService;
+
+    private AsyncHttpClient client;
+
+    public BusWebService(){
+        client = new AsyncHttpClient();
+    }
 
     public void getServicesForStop(int stopId, final WebCallBack<List<Service>> callback) {
 
@@ -118,7 +119,7 @@ public class BusWebService {
         uploadNewTrip(0, trip, callback);
     }
 
-    public static void uploadNewTrip(final int journeyId, Trip trip, final WebCallBack<Integer> callback) {
+    public void uploadNewTrip(final int journeyId, Trip trip, final WebCallBack<Integer> callback) {
 
         RequestParams parameters = new RequestParams();
         if (journeyId != 0){
