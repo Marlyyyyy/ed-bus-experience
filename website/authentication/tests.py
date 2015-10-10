@@ -40,5 +40,7 @@ class AuthenticationViewTestCase(TestCase):
         response = self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Apple"})
         self.assertEqual(response.status_code, 401, "The password should be incorrect.")
 
-
+    def test_get_token(self):
+        response = self.client.post("/auth/api/get_token/", {"username": "Heffalumps", "password": "Woozles"})
+        self.assertEqual(response.status_code, 200, "The token should be successfully returned.")
 

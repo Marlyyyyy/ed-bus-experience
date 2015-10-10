@@ -4,6 +4,7 @@ from busfeedback.utilities.bus_updater import update_services_and_stops, delete_
 from busfeedback.models.service import Service
 from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop
+from django.contrib.auth.models import User
 from busfeedback.serializers.service_serializer import ServiceSerializer
 from busfeedback.serializers.stop_serializer import StopSerializer
 from busfeedback.serializers.journey_serializer import JourneySerializer
@@ -18,6 +19,10 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def get_data(request):
     # update_services_and_stops()
+
+    # test create user
+    account = User.objects.create(username="Martooon")
+
 
     return HttpResponse("{'data': 'Done'}", content_type='application/json')
 
