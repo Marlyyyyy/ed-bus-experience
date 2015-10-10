@@ -1,16 +1,16 @@
 from rest_framework import viewsets, status, views, permissions
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
-import json
+from django.db import IntegrityError
 
-from authentication.models import Account
+from django.contrib.auth.models import User
 from authentication.permissions import IsAccountOwner
 from authentication.serializers import AccountSerializer
 
 
 class AccountViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
-    queryset = Account.objects.all()
+    queryset = User.objects.all()
     serializer_class = AccountSerializer
 
     def get_permissions(self):
@@ -26,7 +26,8 @@ class AccountViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            Account.objects.create_user(**serializer.validated_data)
+
+            User.objects.create_user(**serializer.validated_data)
 
             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
 

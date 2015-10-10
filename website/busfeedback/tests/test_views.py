@@ -3,7 +3,7 @@ from django.test import TestCase
 from busfeedback.models.service import Service
 from busfeedback.models.stop import Stop
 from busfeedback.models.journey import Journey
-from authentication.models import Account
+from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -123,7 +123,7 @@ class BusViewTestCase(TestCase):
         )
 
         # Upload our first trip of a new journey while logged in.
-        user = Account.objects.create_user(username="Heffalumps", password="Woozles")
+        user = User.objects.create_user(username="Heffalumps", password="Woozles")
         self.client.login(username="Heffalumps", password="Woozles")
 
         self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
@@ -185,7 +185,7 @@ class BusViewTestCase(TestCase):
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
         # Upload our first trip of a new journey while logged in.
-        user = Account.objects.create_user(username="Heffalumps", password="Woozles")
+        user = User.objects.create_user(username="Heffalumps", password="Woozles")
         self.client.login(username="Heffalumps", password="Woozles")
         self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
 

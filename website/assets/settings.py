@@ -67,7 +67,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'compressor',
     'rest_framework',
-    'rest_framework.authtoken',
     'django.contrib.humanize',
     'busfeedback',
     'authentication',
@@ -150,6 +149,3 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 
 # development purposes only!
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# use our custom authentication model
-AUTH_USER_MODEL = 'authentication.Account'
