@@ -1,5 +1,5 @@
 from django.test import TestCase
-from authentication.models import Account
+from django.contrib.auth.models import User
 from django.test import Client
 import json
 from django.contrib.auth import SESSION_KEY
@@ -18,7 +18,7 @@ class AuthenticationViewTestCase(TestCase):
         self.assertEqual("Heffalumps", response_content["username"], "Response should contain the username.")
         self.assertEqual("Woozles", response_content["password"], "Response should contain the password.")
 
-        latest_account = Account.objects.latest()
+        latest_account = User.objects.latest('date_joined')
         self.assertEqual("Heffalumps", latest_account.username, "The username must be present in the database.")
 
     def test_login(self):
@@ -39,3 +39,6 @@ class AuthenticationViewTestCase(TestCase):
 
         response = self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Apple"})
         self.assertEqual(response.status_code, 401, "The password should be incorrect.")
+
+
+
