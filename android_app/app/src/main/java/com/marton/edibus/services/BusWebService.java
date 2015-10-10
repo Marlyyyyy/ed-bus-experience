@@ -28,11 +28,9 @@ import cz.msebera.android.httpclient.Header;
 @Singleton
 public class BusWebService {
 
-    private static final String TAG = WebCallBack.class.getName();
+    private static final String TAG = BusWebService.class.getName();
 
     private static final String BASE_URL_BUS = "http://192.168.0.9:8000/bus";
-
-    @Inject private UserWebService userWebService;
 
     private AsyncHttpClient client;
 
@@ -41,13 +39,6 @@ public class BusWebService {
     }
 
     public void getServicesForStop(int stopId, final WebCallBack<List<Service>> callback) {
-
-        userWebService.login("Marton", "pw123", new WebCallBack<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject data) {
-                JSONObject newData = data;
-            }
-        });
 
         RequestParams parameters = new RequestParams();
         parameters.put("stop_id", stopId);

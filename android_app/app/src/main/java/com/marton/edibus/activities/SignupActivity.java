@@ -1,38 +1,24 @@
-package com.marton.edibus;
+package com.marton.edibus.activities;
 
-import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.inject.Inject;
-import com.marton.edibus.activities.LoginActivity;
-import com.marton.edibus.services.BusWebService;
-import com.marton.edibus.services.UserWebService;
+import com.marton.edibus.R;
 
-import roboguice.activity.RoboActivity;
-
-
-public class MainActivity extends RoboActivity {
-
-    private static final String TAG = MainActivity.class.getName();
-
-    @Inject BusWebService busWebService;
-    @Inject UserWebService userWebService;
+public class SignupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        setContentView(R.layout.activity_signup);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_signup, menu);
         return true;
     }
 
