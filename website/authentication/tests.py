@@ -21,26 +21,25 @@ class AuthenticationViewTestCase(TestCase):
         latest_account = User.objects.latest('date_joined')
         self.assertEqual("Heffalumps", latest_account.username, "The username must be present in the database.")
 
-    def test_login(self):
-        self.assertTrue(SESSION_KEY not in self.client.session, "The user should not be logged in yet.")
+    def test_unauthorised_access(self):
+        response = self.client.post("/auth/api/get_token/", {"username": "Mango", "password": "Apple"})
+        self.assertEqual(response.status_code, 400, "There shouldn't be a token received.")
 
-        self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Woozles"})
-        self.assertTrue(SESSION_KEY in self.client.session, "The user should now be logged in.")
+        response = self.client.post("/auth/api/authenticated/", {}, HTTP_AUTHORIZATION='JWT {}'.format("bad token"))
+        self.assertEqual(response.status_code, 401, "There shouldn't be access granted.")
 
-    def test_logout(self):
-        self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Woozles"})
-
-        self.client.post("/auth/api/logout/")
-        self.assertTrue(SESSION_KEY not in self.client.session, "The user should not be logged in anymore.")
-
-    def test_unauthorised_login(self):
-        response = self.client.post("/auth/api/login/", {"username": "Mango", "password": "Apple"})
-        self.assertEqual(response.status_code, 401, "There shouldn't exist such a user.")
-
-        response = self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Apple"})
-        self.assertEqual(response.status_code, 401, "The password should be incorrect.")
-
-    def test_get_token(self):
+    def test_authorised_access(self):
         response = self.client.post("/auth/api/get_token/", {"username": "Heffalumps", "password": "Woozles"})
         self.assertEqual(response.status_code, 200, "The token should be successfully returned.")
+
+        response_content = json.loads(response.content.decode('utf-8'))
+        token = response_content["token"]
+
+        response = self.client.post("/auth/api/authenticated/", {}, HTTP_AUTHORIZATION='JWT {}'.format(token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_content["authenticated"], "mooh", "The user should be able to access this endpoint.")
+
+
+
 

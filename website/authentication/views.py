@@ -1,7 +1,12 @@
-from rest_framework import viewsets, status, views, permissions
+from rest_framework import viewsets, status, permissions
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+
 from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
+from django.http.response import HttpResponse
+import json
 
 from django.contrib.auth.models import User
 from authentication.permissions import IsAccountOwner
@@ -37,7 +42,7 @@ class AccountViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginView(views.APIView):
+class LoginView(APIView):
     def post(self, request, format=None):
         data = request.data
 
@@ -65,10 +70,22 @@ class LoginView(views.APIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class LogoutView(views.APIView):
+class LogoutView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
         logout(request)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+
+class RestrictedView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (JSONWebTokenAuthentication, )
+
+    def post(self, request):
+
+        response_data = json.dumps({"authenticated": "mooh"})
+        headers = request.META
+        return HttpResponse(response_data, content_type='application/json')
+
