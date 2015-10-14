@@ -59,6 +59,11 @@ REST_FRAMEWORK = {
     'FORM_CONTENTTYPE_OVERRIDE': None
 }
 
+# Currently, token expiration is switched off
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': False
+}
+
 # Application definition
 
 INSTALLED_APPS = (

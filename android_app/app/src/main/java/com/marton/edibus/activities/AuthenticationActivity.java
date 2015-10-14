@@ -1,6 +1,5 @@
 package com.marton.edibus.activities;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,18 +12,22 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.services.UserWebService;
+import com.marton.edibus.services.AuthenticationManager;
+import com.marton.edibus.network.UserWebService;
+import com.marton.edibus.network.WebClient;
 
 import org.json.JSONObject;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
-public class LoginActivity extends RoboActivity {
+public class AuthenticationActivity extends RoboActivity {
 
-    private static final String TAG = LoginActivity.class.getName();
+    private static final String TAG = AuthenticationActivity.class.getName();
 
-    @Inject UserWebService userWebService;
+    private @Inject UserWebService userWebService;
+    private @Inject AuthenticationManager authenticationManager;
+    private @Inject WebClient webClient;
 
     @InjectView(R.id.input_email) EditText usernameText;
     @InjectView(R.id.input_password) EditText passwordText;
@@ -49,22 +52,25 @@ public class LoginActivity extends RoboActivity {
     public void login() {
         Log.d(TAG, "Login");
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        // final ProgressDialog progressDialog = new ProgressDialog(AuthenticationActivity.this, R.style.AppTheme_Dark_Dialog);
+        // progressDialog.setIndeterminate(true);
+        // progressDialog.setMessage("Authenticating...");
+        // progressDialog.show();
 
-        String username = usernameText.getText().toString();
-        String password = passwordText.getText().toString();
+        // String username = usernameText.getText().toString();
+        // String password = passwordText.getText().toString();
 
         WebCallBack<JSONObject> webCallBack = new WebCallBack<JSONObject>() {
             @Override
             public void onSuccess(JSONObject data) {
                 JSONObject myData = data;
+                webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
+                boolean isUserAuthenticated2 = authenticationManager.userAuthenticated();
+                String stopPlease = "hey";
             }
         };
-        userWebService.login(username, password, webCallBack);
+
+        authenticationManager.authenticate("Marton", "pw123", webCallBack);
 
     }
 

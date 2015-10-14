@@ -1,10 +1,9 @@
-package com.marton.edibus.services;
+package com.marton.edibus.network;
 
 
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;

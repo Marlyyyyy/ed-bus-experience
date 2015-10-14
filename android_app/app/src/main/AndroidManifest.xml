@@ -22,12 +22,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:name=".activities.AuthenticationActivity"
+            android:label="@string/title_activity_login"
+            android:noHistory="true"
+            android:excludeFromRecents="true">
         </activity>
         <activity
             android:name=".activities.SignupActivity"
             android:label="@string/title_activity_signup" >
+        </activity>
+        <activity
+            android:name=".activities.ContentActivity"
+            android:label="@string/title_activity_content"
+            android:noHistory="true"
+            android:excludeFromRecents="true">
         </activity>
     </application>
 

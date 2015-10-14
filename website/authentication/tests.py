@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test import Client
 import json
-from django.contrib.auth import SESSION_KEY
 
 
 class AuthenticationViewTestCase(TestCase):
@@ -38,7 +37,7 @@ class AuthenticationViewTestCase(TestCase):
         response = self.client.post("/auth/api/authenticated/", {}, HTTP_AUTHORIZATION='JWT {}'.format(token))
         response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content["authenticated"], "mooh", "The user should be able to access this endpoint.")
+        self.assertTrue(response_content["authenticated"], "The user should be able to access this endpoint.")
 
 
 

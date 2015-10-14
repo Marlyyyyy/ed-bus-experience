@@ -85,7 +85,7 @@ class RestrictedView(APIView):
 
     def post(self, request):
 
-        response_data = json.dumps({"authenticated": "mooh"})
-        headers = request.META
+        # If the user can access this view, that means the user is authenticated
+        response_data = json.dumps({"authenticated": True})
         return HttpResponse(response_data, content_type='application/json')
 
