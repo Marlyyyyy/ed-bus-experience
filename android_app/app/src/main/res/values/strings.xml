@@ -5,4 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
+
+    <string name="error_base">&lt;strong&gt;Error!&lt;/strong&gt;\u0020</string>
+    <string name="success_base">&lt;strong&gt;Success!&lt;/strong&gt;\u0020</string>
+    <string name="title_activity_content">ContentActivity</string>
 </resources>
