@@ -75,13 +75,13 @@ def upload_new_trip(request):
     # Check if End Stop exists
     end_stop = Stop.objects.get_or_none(id=new_trip["end_stop_id"])
     if not end_stop:
-        error_message = "No existing stop could be found with ID {}".format(new_trip["end_stop"])
+        error_message = "No existing stop could be found with ID {}".format(new_trip["end_stop_id"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     # Check if Service exists
     service = Service.objects.get_or_none(id=new_trip["service_id"])
     if not service:
-        error_message = "No existing service could be found with ID {}".format(new_trip["service"])
+        error_message = "No existing service could be found with ID {}".format(new_trip["service_id"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     start_time = timezone.make_aware(dateutil.parser.parse(new_trip["start_time"]), timezone.get_current_timezone())
