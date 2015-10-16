@@ -69,7 +69,7 @@ def upload_new_trip(request):
     # Check if Start Stop exists
     start_stop = Stop.objects.get_or_none(id=new_trip["start_stop_id"])
     if not start_stop:
-        error_message = "No existing stop could be found with ID {}".format(new_trip["start_stop"])
+        error_message = "No existing stop could be found with ID {}".format(new_trip["start_stop_id"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     # Check if End Stop exists
