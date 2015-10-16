@@ -1,6 +1,9 @@
 package com.marton.edibus.fragments;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,25 +18,28 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
+import com.marton.edibus.activities.ContentActivity;
 import com.marton.edibus.network.UserWebService;
 import com.marton.edibus.network.WebClient;
 import com.marton.edibus.services.AuthenticationManager;
 
 import org.json.JSONObject;
 
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends RoboFragment {
 
     private static final String TAG = LoginFragment.class.getName();
 
-    private @Inject
-    UserWebService userWebService;
-    private @Inject
-    AuthenticationManager authenticationManager;
-    private @Inject
-    WebClient webClient;
+    private @Inject UserWebService userWebService;
+    private @Inject AuthenticationManager authenticationManager;
+    private @Inject WebClient webClient;
+
+    @InjectView(R.id.input_email) EditText usernameText;
+    @InjectView(R.id.input_password) EditText passwordText;
+    @InjectView(R.id.btn_login) Button loginButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,24 +48,42 @@ public class LoginFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
+    }
+
     public void login() {
         Log.d(TAG, "Login");
 
-        // final ProgressDialog progressDialog = new ProgressDialog(AuthenticationActivity.this, R.style.AppTheme_Dark_Dialog);
-        // progressDialog.setIndeterminate(true);
-        // progressDialog.setMessage("Authenticating...");
-        // progressDialog.show();
+        final ProgressDialog progressDialog = new ProgressDialog(this.getActivity(), R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
 
-        // String username = usernameText.getText().toString();
-        // String password = passwordText.getText().toString();
 
         WebCallBack<JSONObject> webCallBack = new WebCallBack<JSONObject>() {
             @Override
             public void onSuccess(JSONObject data) {
                 JSONObject myData = data;
                 webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
-                boolean isUserAuthenticated2 = authenticationManager.userAuthenticated();
-                String stopPlease = "hey";
+
+                progressDialog.dismiss();
+
+                Activity currentActivity = getActivity();
+                Intent intent = new Intent(currentActivity, ContentActivity.class);
+                startActivity(intent);
+
+                // No need to keep this activity anymore.
+                currentActivity.finish();
             }
         };
 

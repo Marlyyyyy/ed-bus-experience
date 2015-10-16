@@ -41,6 +41,8 @@ public class Trip {
 
     }
 
+    public Trip(){}
+
     private int id;
 
     private Date startTime;
@@ -49,11 +51,19 @@ public class Trip {
 
     private Journey journey;
 
+    private int journeyId;
+
     private Stop startStop;
+
+    private int startStopId;
 
     private Stop endStop;
 
+    private int endStopId;
+
     private Service service;
+
+    private int serviceId;
 
     private int waitDuration;
 
@@ -107,6 +117,38 @@ public class Trip {
         return travelDuration;
     }
 
+    public int getJourneyId() {
+        return journeyId;
+    }
+
+    public void setJourneyId(int journeyId) {
+        this.journeyId = journeyId;
+    }
+
+    public int getStartStopId() {
+        return startStopId;
+    }
+
+    public void setStartStopId(int startStopId) {
+        this.startStopId = startStopId;
+    }
+
+    public int getEndStopId() {
+        return endStopId;
+    }
+
+    public void setEndStopId(int endStopId) {
+        this.endStopId = endStopId;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
+
     public boolean isSeat() {
         return seat;
     }
@@ -117,5 +159,29 @@ public class Trip {
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setWaitDuration(int waitDuration) {
+        this.waitDuration = waitDuration;
+    }
+
+    public void setTravelDuration(int travelDuration) {
+        this.travelDuration = travelDuration;
+    }
+
+    public void setSeat(boolean seat) {
+        this.seat = seat;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }

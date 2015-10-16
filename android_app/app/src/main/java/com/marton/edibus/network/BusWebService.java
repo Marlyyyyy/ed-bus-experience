@@ -3,7 +3,9 @@ package com.marton.edibus.network;
 
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.Singleton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -105,7 +107,7 @@ public class BusWebService {
         });
     }
 
-    public void uploadNewTrip(Trip trip, final WebCallBack callback) {
+    public void uploadNewTrip(Trip trip, final WebCallBack<Integer> callback) {
         uploadNewTrip(0, trip, callback);
     }
 
@@ -116,17 +118,21 @@ public class BusWebService {
             parameters.put("journey_id", journeyId);
         }
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
         String tripJson = gson.toJson(trip);
         parameters.put("trip", tripJson);
 
-        String url = "/api/get_closest_stops";
+        String url = "/api/upload_new_trip";
         client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                int journeyId = 0;
                 try {
-                    int journeyId = response.getInt("journey_id");
+                    journeyId = response.getInt("journey_id");
                 } catch (JSONException e) {
                     Log.e(TAG, "Was unable to get the journey ID integer from Json response");
                 }

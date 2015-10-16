@@ -1,52 +1,53 @@
 package com.marton.edibus.activities;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
+import com.google.inject.Inject;
 import com.marton.edibus.R;
+import com.marton.edibus.WebCallBack;
+import com.marton.edibus.models.Trip;
+import com.marton.edibus.services.JourneyManager;
+
+import java.util.Date;
 
 import roboguice.activity.RoboActionBarActivity;
 
-public class ContentActivity extends RoboActionBarActivity {
+public class JourneyActivity extends RoboActionBarActivity {
 
-    private static final String TAG = ContentActivity.class.getName();
-
-    Button newJourneyButton;
+    @Inject
+    JourneyManager journeyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_content);
+        setContentView(R.layout.activity_journey);
 
-        newJourneyButton = (Button) findViewById(R.id.start_new_journey);
+        Trip trip = journeyManager.getTrip();
+        trip.setStartStopId(1);
+        trip.setEndStopId(2);
+        trip.setEndTime(new Date());
+        trip.setSeat(true);
+        trip.setServiceId(3);
+        trip.setStartTime(new Date());
+        trip.setTravelDuration(10000);
+        trip.setWaitDuration(10000);trip.setRating((float) 4.5);
 
-        newJourneyButton.setOnClickListener(new View.OnClickListener() {
-
+        journeyManager.setTrip(trip);
+        journeyManager.uploadTrip(new WebCallBack() {
             @Override
-            public void onClick(View v) {
-                startNewJourney();
+            public void onSuccess(Object data) {
+
             }
         });
-    }
-
-    public void startNewJourney(){
-        Log.d(TAG, "Start new journey");
-
-        Intent intent = new Intent(this, JourneyActivity.class);
-        startActivity(intent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_content, menu);
+        getMenuInflater().inflate(R.menu.menu_journey, menu);
         return true;
     }
 

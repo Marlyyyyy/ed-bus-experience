@@ -18,11 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def get_data(request):
-    # update_services_and_stops()
-
-    # test create user
-    account = User.objects.create(username="Martooon")
-
+    update_services_and_stops()
 
     return HttpResponse("{'data': 'Done'}", content_type='application/json')
 
@@ -71,19 +67,19 @@ def upload_new_trip(request):
     new_trip = json.loads(new_trip)
 
     # Check if Start Stop exists
-    start_stop = Stop.objects.get_or_none(id=new_trip["start_stop"])
+    start_stop = Stop.objects.get_or_none(id=new_trip["start_stop_id"])
     if not start_stop:
         error_message = "No existing stop could be found with ID {}".format(new_trip["start_stop"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     # Check if End Stop exists
-    end_stop = Stop.objects.get_or_none(id=new_trip["end_stop"])
+    end_stop = Stop.objects.get_or_none(id=new_trip["end_stop_id"])
     if not end_stop:
         error_message = "No existing stop could be found with ID {}".format(new_trip["end_stop"])
         return HttpResponseBadRequest(error_message, content_type='application/json')
 
     # Check if Service exists
-    service = Service.objects.get_or_none(id=new_trip["service"])
+    service = Service.objects.get_or_none(id=new_trip["service_id"])
     if not service:
         error_message = "No existing service could be found with ID {}".format(new_trip["service"])
         return HttpResponseBadRequest(error_message, content_type='application/json')

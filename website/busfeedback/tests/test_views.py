@@ -60,9 +60,9 @@ class BusViewTestCase(TestCase):
         trip = {
             'start_time': start_time,
             'end_time': end_time,
-            'start_stop': start_stop_id,
-            'end_stop': end_stop_id,
-            'service': service_id,
+            'start_stop_id': start_stop_id,
+            'end_stop_id': end_stop_id,
+            'service_id': service_id,
             'wait_duration': 60000,
             'travel_duration': 800000,
             'seat': True,
@@ -138,8 +138,8 @@ class BusViewTestCase(TestCase):
         service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
 
         current_time = datetime.now()
-        trip = {'start_time': current_time, 'end_time': current_time, 'start_stop': 0, 'end_stop': end_stop_id,
-                'service': service_id, 'wait_duration': 60000, 'travel_duration': 800000, 'seat': True, 'rating': 4.5}
+        trip = {'start_time': current_time, 'end_time': current_time, 'start_stop_id': 0, 'end_stop_id': end_stop_id,
+                'service_id': service_id, 'wait_duration': 60000, 'travel_duration': 800000, 'seat': True, 'rating': 4.5}
 
         # Bad Start Stop
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
@@ -148,16 +148,16 @@ class BusViewTestCase(TestCase):
         self.assertContains(response, "No existing stop could be found with ID", status_code=400)
 
         # Bad End Stop
-        trip['start_stop'] = start_stop_id
-        trip['end_stop'] = 0
+        trip['start_stop_id'] = start_stop_id
+        trip['end_stop_id'] = 0
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
         response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
         self.assertContains(response, "No existing stop could be found with ID", status_code=400)
 
         # Bad Service
-        trip['end_stop'] = end_stop_id
-        trip['service'] = 0
+        trip['end_stop_id'] = end_stop_id
+        trip['service_id'] = 0
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
         response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
@@ -174,9 +174,9 @@ class BusViewTestCase(TestCase):
         trip = {
             'start_time': start_time,
             'end_time': end_time,
-            'start_stop': start_stop_id,
-            'end_stop': end_stop_id,
-            'service': service_id,
+            'start_stop_id': start_stop_id,
+            'end_stop_id': end_stop_id,
+            'service_id': service_id,
             'wait_duration': 60000,
             'travel_duration': 800000,
             'seat': True,

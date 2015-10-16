@@ -13,6 +13,8 @@ public class Journey {
         this.trips = trips;
     }
 
+    public Journey(){}
+
     private Date startTime;
 
     private Date endTime;
