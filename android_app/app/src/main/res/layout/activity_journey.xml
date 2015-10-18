@@ -6,41 +6,33 @@
     tools:context="com.marton.edibus.activities.JourneyActivity">
 
     <TableRow>
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Username"
-
-            />
-        <EditText
-            android:id="@+id/txtusername"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
+        <Button
+            android:id="@+id/choose_start_stop"
+            android:text="Start Stop"
+            android:width="200px"
+            style="@style/btnStyleOrange"
             />
     </TableRow>
-    <TableRow>
-        <TextView
-            android:id="@+id/password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password"
 
-            />
-        <EditText
-            android:id="@+id/txtpassword"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-
-            />
-    </TableRow>
     <TableRow>
         <Button
-            android:id="@+id/login"
-            android:text="Submit Journey"
+            android:id="@+id/choose_service"
+            android:text="Service"
             android:width="200px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/btnStyleOrange"
+            />
+    </TableRow>
+
+    <TableRow>
+        <Button
+            android:id="@+id/choose_end_stop"
+            android:text="End Stop"
+            android:width="200px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/btnStyleOrange"
             />
     </TableRow>
 </TableLayout>

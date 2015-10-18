@@ -12,6 +12,7 @@ tools:context="com.marton.edibus.activities.ContentActivity">
         android:width="200px"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/btnStyleOrange"
         />
 </TableRow>
 </TableLayout>

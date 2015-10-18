@@ -31,8 +31,6 @@ public class MainActivity extends RoboActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        authenticationManager.deAuthenticate();
-
         Intent intent;
         if (authenticationManager.userAuthenticated()){
             intent = new Intent(this, ContentActivity.class);

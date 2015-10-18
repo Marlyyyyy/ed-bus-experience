@@ -10,4 +10,6 @@
     <string name="success_base">&lt;strong&gt;Success!&lt;/strong&gt;\u0020</string>
     <string name="title_activity_content">ContentActivity</string>
     <string name="title_activity_journey">JourneyActivity</string>
+    <string name="title_activity_stop">StopActivity</string>
+    <string name="title_activity_example_maps_activitiy">ExampleMapsActivitiy</string>
 </resources>
