@@ -1,15 +1,17 @@
 language: android
 android:
   components:
+    - extra-android-support
     - tools
     - build-tools-23.0.1
     - android-23
     - platform-tools
     - extra-android-m2repository
     - extra-google-google_play_services
+    - extra-google-m2repository 
 
   licenses:
-    - android-sdk-license-.+
+    - '.+'
 before_install: 
   - cd android_app
   - chmod +x gradlew
