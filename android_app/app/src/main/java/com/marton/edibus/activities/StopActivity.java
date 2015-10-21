@@ -3,15 +3,23 @@ package com.marton.edibus.activities;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
@@ -22,9 +30,9 @@ import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebService;
 import com.marton.edibus.services.JourneyManager;
+import com.marton.edibus.services.SnackbarManager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -32,6 +40,8 @@ import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
 public class StopActivity extends RoboActionBarActivity implements OnMapReadyCallback {
+
+    private static final String TAG = StopActivity.class.getName();
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -48,6 +58,8 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
     @InjectView(R.id.listView)
     ListView listView;
 
+    ArrayList<Stop> stopsArrayList;
+
     private StopAdapter stopAdapter;
 
     @Override
@@ -60,6 +72,19 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Make the ListView items selectable
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Stop stop = stopsArrayList.get(position);
+                Trip trip = journeyManager.getTrip();
+                trip.setStartStop(stop);
+                journeyManager.setTrip(trip);
+                SnackbarManager.showSnackbar(view, "success", String.valueOf(stop.getId()), resources);
+            }
+        });
     }
 
     @Override
@@ -94,20 +119,36 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
 
             @Override
             public void onSuccess(List<Stop> stops) {
-                ArrayList<Stop> stopsArrayList = new ArrayList<>(stops);
+                // Set up the list of stops
+                stopsArrayList = new ArrayList<>(stops);
                 stopAdapter = new StopAdapter(context, stopsArrayList, resources);
                 listView.setAdapter(stopAdapter);
+
+                List<Marker> markers = new ArrayList<>();
                 for (int i = 0; i<stopsArrayList.size(); i++){
                     Stop stop = stopsArrayList.get(i);
-                    googleMap.addMarker(new MarkerOptions()
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
                             .title(String.valueOf(stop.getId()))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_marker)));
+                    markers.add(marker);
                 }
+
+                // Change the camera position of the map
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers) {
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+
+                // Padding from edges of the map in pixels
+                int padding = 100;
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                googleMap.animateCamera(cameraUpdate);
             }
         };
 
-        busWebService.getClosestStops(latitude, longitude, 5, callback);
+        busWebService.getClosestStops(latitude, longitude, 4, callback);
 
         eventBus.post(new MessageEvent("Hey"));
     }

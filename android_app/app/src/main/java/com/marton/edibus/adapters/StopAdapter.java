@@ -17,38 +17,31 @@ import com.marton.edibus.models.Stop;
 
 import java.util.ArrayList;
 
-/********* Adapter class extends with BaseAdapter and implements with OnClickListener ************/
+
 public class StopAdapter extends BaseAdapter implements View.OnClickListener {
 
-
-
-    /*********** Declare Used Variables *********/
     private Activity activity;
     private ArrayList stops;
     private static LayoutInflater inflater = null;
     public Resources res;
     Stop stop = null;
-    int i = 0;
 
-    /*************  CustomAdapter Constructor *****************/
     public StopAdapter(Activity activity, ArrayList stops, Resources resources) {
 
-        /********** Take passed values **********/
-        activity = activity;
+        this.activity = activity;
         this.stops = stops;
         res = resources;
 
-        /***********  Layout inflator to call external xml layout () ***********/
-        inflater = ( LayoutInflater )activity.
+        inflater = (LayoutInflater)activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
 
-    /******** What is the size of Passed Arraylist Size ************/
     public int getCount() {
 
-        if(stops.size()<=0)
+        if(stops.size() <= 0){
             return 1;
+        }
+
         return stops.size();
     }
 
@@ -70,34 +63,24 @@ public class StopAdapter extends BaseAdapter implements View.OnClickListener {
 
     }
 
-    /****** Depends upon stops size called for each row , Create each ListView row *****/
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View vi = convertView;
-        TextView text = null;
+        View view = convertView;
+        TextView text;
 
         if( convertView == null ){
             //We must create a View:
-            vi = inflater.inflate(R.layout.stop_item, null);
+            view = inflater.inflate(R.layout.stop_item, null);
         }
 
-        /****** View Holder Object to contain tabitem.xml file elements ******/
+        text = (TextView) view.findViewById(R.id.text);
 
-        text = (TextView) vi.findViewById(R.id.text);
-
-        /***** Get each Model object from Arraylist ********/
         stop = null;
         stop = (Stop) stops.get(position);
 
-        /************  Set Model values in Holder elements ***********/
-
         text.setText(String.valueOf(stop.getId()));
 
-        /******** Set Item Click Listner for LayoutInflater for each row *******/
-
-        vi.setOnClickListener(new OnItemClickListener( position ));
-
-        return vi;
+        return view;
     }
 
     @Override
@@ -105,19 +88,9 @@ public class StopAdapter extends BaseAdapter implements View.OnClickListener {
         Log.v("CustomAdapter", "=====Row button clicked=====");
     }
 
-    /********* Called when Item click in ListView ************/
-    private class OnItemClickListener  implements View.OnClickListener {
-        private int mPosition;
-
-        OnItemClickListener(int position){
-            mPosition = position;
-        }
-
-        @Override
-        public void onClick(View arg0) {
-
-
-
-        }
+    @Override
+    public boolean isEnabled(int position)
+    {
+        return true;
     }
 }

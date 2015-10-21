@@ -129,24 +129,12 @@ public class Trip {
         return startStopId;
     }
 
-    public void setStartStopId(int startStopId) {
-        this.startStopId = startStopId;
-    }
-
     public int getEndStopId() {
         return endStopId;
     }
 
-    public void setEndStopId(int endStopId) {
-        this.endStopId = endStopId;
-    }
-
     public int getServiceId() {
         return serviceId;
-    }
-
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
     }
 
     public boolean isSeat() {
@@ -183,5 +171,20 @@ public class Trip {
 
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public void setStartStop(Stop startStop) {
+        this.startStop = startStop;
+        this.startStopId = startStop.getId();
+    }
+
+    public void setEndStop(Stop endStop) {
+        this.endStop = endStop;
+        this.endStopId = endStop.getId();
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+        this.serviceId = service.getId();
     }
 }

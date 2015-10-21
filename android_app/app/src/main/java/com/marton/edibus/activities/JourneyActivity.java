@@ -7,14 +7,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.adapters.StopAdapter;
 import com.marton.edibus.events.MessageEvent;
-import com.marton.edibus.network.BusWebService;
+import com.marton.edibus.models.Service;
+import com.marton.edibus.models.Stop;
 import com.marton.edibus.services.JourneyManager;
+import com.marton.edibus.services.SnackbarManager;
 
 import de.greenrobot.event.EventBus;
 import roboguice.activity.RoboActionBarActivity;
@@ -29,13 +30,14 @@ public class JourneyActivity extends RoboActionBarActivity {
     @Inject
     JourneyManager journeyManager;
 
-    @Inject
-    BusWebService busWebService;
-
     @InjectView(R.id.choose_start_stop)
     Button startStopButton;
 
-    private StopAdapter stopAdapter;
+    @InjectView(R.id.journey_root)
+    View rootView;
+
+    @InjectView(R.id.journey_start_stop)
+    TextView journeyStartStopTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class JourneyActivity extends RoboActionBarActivity {
         // Register as a subscriber
         eventBus.register(this);
 
+        // Configure listeners for buttons
         startStopButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -54,11 +57,30 @@ public class JourneyActivity extends RoboActionBarActivity {
         });
     }
 
-    public void startNewStopChooser(){
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        SnackbarManager.showSnackbar(rootView, "success", "Resumed", this.getResources());
+
+        this.refreshUserInterface();
+    }
+
+    private void startNewStopChooser(){
         Log.d(TAG, "Choosing new stop");
 
         Intent intent = new Intent(this, StopActivity.class);
         startActivity(intent);
+    }
+
+    // Takes care of refreshing the display of the current journey configuration
+    private void refreshUserInterface(){
+        Stop currentStartStop = journeyManager.getTrip().getStartStop();
+        if (currentStartStop != null){
+            journeyStartStopTextView.setText(String.valueOf(currentStartStop.getId()));
+        }
+        Service currentService = journeyManager.getTrip().getService();
+        Stop currentEndStop = journeyManager.getTrip().getEndStop();
     }
 
     @Override
