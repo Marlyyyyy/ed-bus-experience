@@ -1,4 +1,4 @@
-package com.marton.edibus.services;
+package com.marton.edibus.utilities;
 
 import android.content.res.Resources;
 import android.support.design.widget.Snackbar;

@@ -6,14 +6,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
@@ -21,7 +19,7 @@ import com.marton.edibus.WebCallBack;
 import com.marton.edibus.activities.ContentActivity;
 import com.marton.edibus.network.UserWebService;
 import com.marton.edibus.network.WebClient;
-import com.marton.edibus.services.AuthenticationManager;
+import com.marton.edibus.utilities.AuthenticationManager;
 
 import org.json.JSONObject;
 

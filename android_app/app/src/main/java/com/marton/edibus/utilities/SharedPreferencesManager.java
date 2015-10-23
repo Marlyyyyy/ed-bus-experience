@@ -1,4 +1,4 @@
-package com.marton.edibus.services;
+package com.marton.edibus.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;

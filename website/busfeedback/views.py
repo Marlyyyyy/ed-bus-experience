@@ -32,9 +32,9 @@ def remove_data(request):
 
 @csrf_exempt
 def get_services_for_stop(request):
-    stop_id = int(request.GET.get("stop_id", ""))
+    id = int(request.GET.get("id", ""))
     # TODO: Handle exception
-    stop = Stop.objects.filter(stop_id=stop_id)[0]
+    stop = Stop.objects.filter(id=id)[0]
     services = list(stop.services.all())
     service_serializer = ServiceSerializer(services, many=True)
     json_services = JSONRenderer().render({"services": service_serializer.data})

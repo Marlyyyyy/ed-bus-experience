@@ -3,7 +3,6 @@ package com.marton.edibus.activities;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,12 +24,13 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.adapters.StopAdapter;
+import com.marton.edibus.enums.StopEnum;
 import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebService;
-import com.marton.edibus.services.JourneyManager;
-import com.marton.edibus.services.SnackbarManager;
+import com.marton.edibus.utilities.JourneyManager;
+import com.marton.edibus.utilities.SnackbarManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,8 @@ import roboguice.inject.InjectView;
 public class StopActivity extends RoboActionBarActivity implements OnMapReadyCallback {
 
     private static final String TAG = StopActivity.class.getName();
+
+    private StopEnum stopEnum;
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -69,8 +71,14 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
 
         resources = getResources();
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
+        // Read the data passed in for the activity
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            stopEnum = (StopEnum) extras.getSerializable("STOP");
+        }
+
+        // Create the map
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // Make the ListView items selectable
@@ -79,12 +87,23 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Stop stop = stopsArrayList.get(position);
-                Trip trip = journeyManager.getTrip();
-                trip.setStartStop(stop);
-                journeyManager.setTrip(trip);
+                selectStop(stop);
                 SnackbarManager.showSnackbar(view, "success", String.valueOf(stop.getId()), resources);
             }
         });
+    }
+
+    private void selectStop(Stop stop){
+        Trip trip = journeyManager.getTrip();
+        switch (stopEnum){
+            case START:
+                trip.setStartStop(stop);
+                break;
+            case END:
+                trip.setEndStop(stop);
+                break;
+        }
+        journeyManager.setTrip(trip);
     }
 
     @Override

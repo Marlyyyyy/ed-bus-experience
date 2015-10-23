@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import com.marton.edibus.activities.AuthenticationActivity;
 import com.marton.edibus.activities.ContentActivity;
-import com.marton.edibus.services.AuthenticationManager;
+import com.marton.edibus.utilities.AuthenticationManager;
 import com.marton.edibus.network.BusWebService;
 import com.marton.edibus.network.UserWebService;
 

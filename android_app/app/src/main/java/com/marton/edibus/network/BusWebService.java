@@ -39,10 +39,10 @@ public class BusWebService {
         client = new AsyncHttpClient();
     }
 
-    public void getServicesForStop(int stopId, final WebCallBack<List<Service>> callback) {
+    public void getServicesForStop(int id, final WebCallBack<List<Service>> callback) {
 
         RequestParams parameters = new RequestParams();
-        parameters.put("stop_id", stopId);
+        parameters.put("id", id);
 
         String url = "/api/get_services_for_stop";
         client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {

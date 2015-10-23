@@ -30,7 +30,8 @@ class BusViewTestCase(TestCase):
         service.stops.add(closest_stop)
 
     def test_get_services_for_stop(self):
-        response = self.client.get('/bus/api/get_services_for_stop', {'stop_id': '95624797'})
+        stop = Stop.objects.get(stop_id=95624797)
+        response = self.client.get('/bus/api/get_services_for_stop', {'id': stop.id})
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual("Clovenstone - Mayfield", response_content["services"][0]["description"], "Response should contain the description of the service.")
 

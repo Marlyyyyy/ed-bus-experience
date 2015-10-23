@@ -1,4 +1,4 @@
-package com.marton.edibus.services;
+package com.marton.edibus.utilities;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
