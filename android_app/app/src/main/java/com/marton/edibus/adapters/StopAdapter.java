@@ -70,7 +70,7 @@ public class StopAdapter extends BaseAdapter implements View.OnClickListener {
 
         if( convertView == null ){
             //We must create a View:
-            view = inflater.inflate(R.layout.stop_item, null);
+            view = inflater.inflate(R.layout.item_stop, null);
         }
 
         text = (TextView) view.findViewById(R.id.text);

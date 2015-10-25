@@ -14,9 +14,8 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.StopActivity;
-import com.marton.edibus.enums.StopEnum;
+import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.events.JourneyUpdateEvent;
-import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.utilities.JourneyManager;
@@ -62,8 +61,8 @@ public class JourneySetupFragment extends RoboFragment{
     FragmentManager fragmentManager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =inflater.inflate(R.layout.fragment_journey_setup,container,false);
+    public void onCreate(Bundle bundle){
+        super.onCreate(bundle);
 
         fragmentManager = getFragmentManager();
 
@@ -72,8 +71,13 @@ public class JourneySetupFragment extends RoboFragment{
 
         // Create Service selector dialog
         serviceDialog = new ServiceDialogFragment();
+    }
 
-        return v;
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view =inflater.inflate(R.layout.fragment_journey_setup,container,false);
+
+        return view;
     }
 
     @Override
@@ -85,7 +89,7 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                launchStopChooserActivity(StopEnum.START);
+                launchStopChooserActivity(StopTypeEnum.START);
             }
         });
 
@@ -101,7 +105,7 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                launchStopChooserActivity(StopEnum.END);
+                launchStopChooserActivity(StopTypeEnum.END);
             }
         });
     }
@@ -115,7 +119,7 @@ public class JourneySetupFragment extends RoboFragment{
         this.refreshUserInterface();
     }
 
-    private void launchStopChooserActivity(StopEnum stop){
+    private void launchStopChooserActivity(StopTypeEnum stop){
         Log.d(TAG, "Choosing new start stop");
 
         Intent intent = new Intent(getActivity(), StopActivity.class);
@@ -139,10 +143,6 @@ public class JourneySetupFragment extends RoboFragment{
         if (currentService != null){
             journeyServiceTextView.setText(String.valueOf(currentService.getId()));
         }
-    }
-
-    public void onEvent(MessageEvent event){
-        Log.d(TAG, "JourneyActivity has received the message event!");
     }
 
     public void onEvent(JourneyUpdateEvent event){

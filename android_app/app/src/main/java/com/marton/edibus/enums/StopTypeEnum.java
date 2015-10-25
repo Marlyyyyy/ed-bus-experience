@@ -1,7 +1,7 @@
 package com.marton.edibus.enums;
 
 
-public enum StopEnum {
+public enum StopTypeEnum {
     START,
     END
 }

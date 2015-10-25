@@ -9,8 +9,6 @@ import com.google.inject.Inject;
 import com.marton.edibus.activities.AuthenticationActivity;
 import com.marton.edibus.activities.ContentActivity;
 import com.marton.edibus.utilities.AuthenticationManager;
-import com.marton.edibus.network.BusWebService;
-import com.marton.edibus.network.UserWebService;
 
 import roboguice.activity.RoboActivity;
 
@@ -20,16 +18,14 @@ public class MainActivity extends RoboActivity {
     private static final String TAG = MainActivity.class.getName();
 
     @Inject
-    BusWebService busWebService;
-    @Inject
-    UserWebService userWebService;
-    @Inject
     AuthenticationManager authenticationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        authenticationManager.deAuthenticate();
 
         Intent intent;
         if (authenticationManager.userAuthenticated()){

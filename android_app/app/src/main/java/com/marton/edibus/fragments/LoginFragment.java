@@ -41,7 +41,7 @@ public class LoginFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =inflater.inflate(R.layout.tab_login,container,false);
+        View v =inflater.inflate(R.layout.fragment_login,container,false);
 
         return v;
     }

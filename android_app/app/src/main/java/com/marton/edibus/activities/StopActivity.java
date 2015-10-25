@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.adapters.StopAdapter;
-import com.marton.edibus.enums.StopEnum;
+import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
@@ -43,7 +43,7 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
 
     private static final String TAG = StopActivity.class.getName();
 
-    private StopEnum stopEnum;
+    private StopTypeEnum stopTypeEnum;
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -74,7 +74,7 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
         // Read the data passed in for the activity
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            stopEnum = (StopEnum) extras.getSerializable("STOP");
+            stopTypeEnum = (StopTypeEnum) extras.getSerializable("STOP");
         }
 
         // Create the map
@@ -95,7 +95,7 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
 
     private void selectStop(Stop stop){
         Trip trip = journeyManager.getTrip();
-        switch (stopEnum){
+        switch (stopTypeEnum){
             case START:
                 trip.setStartStop(stop);
                 break;
