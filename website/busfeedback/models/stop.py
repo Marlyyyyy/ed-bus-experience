@@ -56,8 +56,10 @@ class StopManager(BulkUpdateManager):
 class Stop(models.Model):
 
     stop_id = models.IntegerField(blank=False, unique=True)
+    name = models.CharField(max_length=100, default="Default")
     latitude = models.FloatField()
     longitude = models.FloatField()
+    orientation = models.FloatField(default=0.0)
 
     objects = StopManager()
 

@@ -10,11 +10,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.enums.JourneyControlEnum;
 import com.marton.edibus.events.JourneyControlEvent;
 import com.marton.edibus.events.MessageEvent;
+import com.marton.edibus.events.TripControlEvent;
 import com.marton.edibus.services.LocationService;
+import com.marton.edibus.utilities.JourneyManager;
+import com.marton.edibus.utilities.SnackbarManager;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
@@ -25,6 +28,8 @@ public class JourneyTrackerFragment extends RoboFragment {
     private static final String TAG = JourneySetupFragment.class.getName();
 
     private EventBus eventBus = EventBus.getDefault();
+
+    @Inject private JourneyManager journeyManager;
 
     @InjectView(R.id.elapsed_time)
     TextView elapsedTimeTextView;
@@ -65,7 +70,7 @@ public class JourneyTrackerFragment extends RoboFragment {
 
             @Override
             public void onClick(View v) {
-                eventBus.post(new JourneyControlEvent(JourneyControlEnum.START));
+                journeyManager.startTrip();
                 startJourneyButton.setVisibility(View.GONE);
                 pauseJourneyButton.setVisibility(View.VISIBLE);
             }
@@ -75,7 +80,7 @@ public class JourneyTrackerFragment extends RoboFragment {
 
             @Override
             public void onClick(View v) {
-                eventBus.post(new JourneyControlEvent(JourneyControlEnum.PAUSE));
+                journeyManager.pauseTrip();
                 pauseJourneyButton.setVisibility(View.GONE);
                 continueJourneyButton.setVisibility(View.VISIBLE);
             }
@@ -85,7 +90,7 @@ public class JourneyTrackerFragment extends RoboFragment {
 
             @Override
             public void onClick(View v) {
-                eventBus.post(new JourneyControlEvent(JourneyControlEnum.START));
+                journeyManager.continueTrip();
                 continueJourneyButton.setVisibility(View.GONE);
                 pauseJourneyButton.setVisibility(View.VISIBLE);
             }
@@ -95,5 +100,19 @@ public class JourneyTrackerFragment extends RoboFragment {
     public void onEventMainThread(MessageEvent event){
 
         elapsedTimeTextView.setText(event.message);
+    }
+
+    public void onEventMainThread(TripControlEvent tripControlEvent){
+
+        switch(tripControlEvent.tripControlEnum){
+            case START:
+                break;
+            case PAUSE:
+                SnackbarManager.showSnackbar(getView(), "success", "Trip has paused", getResources());
+                break;
+            case FINISH:
+                SnackbarManager.showSnackbar(getView(), "success", "Trip has finished, do something", getResources());
+                break;
+        }
     }
 }

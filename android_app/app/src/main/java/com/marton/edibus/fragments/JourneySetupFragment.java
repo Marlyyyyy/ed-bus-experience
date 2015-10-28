@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
@@ -58,6 +60,9 @@ public class JourneySetupFragment extends RoboFragment{
     @InjectView(R.id.journey_end_stop)
     TextView journeyEndStopTextView;
 
+    @InjectView(R.id.auto_sync_switch)
+    Switch autoSyncSwitch;
+
     FragmentManager fragmentManager;
 
     @Override
@@ -106,6 +111,17 @@ public class JourneySetupFragment extends RoboFragment{
             @Override
             public void onClick(View v) {
                 launchStopChooserActivity(StopTypeEnum.END);
+            }
+        });
+
+        autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    journeyManager.setAutomaticFinish(true);
+                } else {
+                    journeyManager.setAutomaticFinish(false);
+                }
             }
         });
     }

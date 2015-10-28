@@ -7,7 +7,7 @@ class StopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stop
 
-        fields = ('id', 'stop_id', 'latitude', 'longitude')
+        fields = ('id', 'stop_id', 'name', 'latitude', 'longitude', 'orientation')
         read_only_fields = ('id')
 
     def get_validation_exclusions(self, *args, **kwargs):

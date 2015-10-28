@@ -1,24 +1,22 @@
 package com.marton.edibus.services;
 
 
-import android.app.IntentService;
 import android.content.Intent;
 
-import com.marton.edibus.enums.JourneyControlEnum;
-import com.marton.edibus.events.JourneyControlEvent;
+import com.google.inject.Inject;
 import com.marton.edibus.events.MessageEvent;
+import com.marton.edibus.utilities.JourneyManager;
 
 import de.greenrobot.event.EventBus;
+import roboguice.service.RoboIntentService;
 
-public class LocationService extends IntentService{
+public class LocationService extends RoboIntentService {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    @Inject private JourneyManager journeyManager;
+
     private MessageEvent messageEvent;
-
-    private boolean paused = true;
-
-    private boolean stopped = false;
 
     /**
      * Creates an IntentService.
@@ -28,42 +26,50 @@ public class LocationService extends IntentService{
         super("LocationService");
 
         this.messageEvent = new MessageEvent();
-
-        // Register as a subscriber
-        eventBus.register(this);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         int counter = 0;
         while(true){
-            if (!this.paused){
-                messageEvent.message = String.valueOf(counter);
-                this.eventBus.post(this.messageEvent);
-                counter++;
+
+            // If the service is not paused, do the update
+            if (!this.journeyManager.getPaused()){
+
+                if (shouldTripFinish(counter)){
+
+                    this.journeyManager.finishTrip();
+
+                    // Automatically upload trip and/or fire events
+                    if (this.journeyManager.getAutomaticFinish())
+                    {
+                    }else
+                    {
+                    }
+                }else{
+                    // Broadcast location updates
+                    messageEvent.message = String.valueOf(counter);
+                    this.eventBus.post(this.messageEvent);
+                    counter++;
+                }
             }
 
+            // Sleep this thread for a short time
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            if (this.stopped){
+            // If the service can be safely shut down
+            if (this.journeyManager.getFinished()){
                 break;
             }
         }
     }
 
-    public void onEvent(JourneyControlEvent journeyControlEvent){
-
-        switch(journeyControlEvent.journeyControlEnum){
-            case START:
-                this.paused = false;
-                break;
-            case PAUSE:
-                this.paused = true;
-                break;
-        }
+    // TODO: let this use the latitude and the longitude of the user's current location
+    private boolean shouldTripFinish(int counter){
+        return counter > 20;
     }
 }

@@ -3,6 +3,7 @@ package com.marton.edibus.activities;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,8 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
 
     private final Activity context = this;
 
+    private Marker latestClickedMarker;
+
     @Inject
     JourneyManager journeyManager;
 
@@ -88,6 +91,7 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Stop stop = stopsArrayList.get(position);
                 selectStop(stop);
+                // listView.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright));
                 SnackbarManager.showSnackbar(view, "success", String.valueOf(stop.getId()), resources);
             }
         });
@@ -131,8 +135,37 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
     @Override
     public void onMapReady(final GoogleMap googleMap) {
 
+        // Handle clicks on markers
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if(latestClickedMarker != null){
+                    latestClickedMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker));
+                }
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_logo_clicked));
+                latestClickedMarker = marker;
+                return false;
+            }
+        });
+
         double latitude = 55.928042085586306;
         double longitude = -3.1669341400265694;
+
+        // TODO: put the list of services in the display
+        /*googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Getting view from the layout file info_window_layout
+                View view = getLayoutInflater().inflate(R.layout.info_window_stop, null);
+
+                return view;
+            }
+        });*/
 
         WebCallBack<List<Stop>> callback = new WebCallBack<List<Stop>>(){
 
@@ -146,10 +179,13 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
                 List<Marker> markers = new ArrayList<>();
                 for (int i = 0; i<stopsArrayList.size(); i++){
                     Stop stop = stopsArrayList.get(i);
-                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                    MarkerOptions markerOptions = new MarkerOptions()
                             .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
-                            .title(String.valueOf(stop.getId()))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_marker)));
+                            .title(stop.getName())
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                            .anchor((float) 0.5, (float) 0.5)
+                            .rotation(stop.getOrientation());
+                    Marker marker = googleMap.addMarker(markerOptions);
                     markers.add(marker);
                 }
 
@@ -167,7 +203,14 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
             }
         };
 
-        busWebService.getClosestStops(latitude, longitude, 4, callback);
+        switch (stopTypeEnum){
+            case START:
+                busWebService.getClosestStops(latitude, longitude, 4, callback);
+                break;
+            case END:
+                busWebService.getStopsForService(this.journeyManager.getTrip().getServiceId(), callback);
+                break;
+        }
 
         eventBus.post(new MessageEvent("Hey"));
     }

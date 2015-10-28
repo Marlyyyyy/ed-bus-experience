@@ -1,7 +1,7 @@
 package com.marton.edibus.enums;
 
 
-public enum JourneyControlEnum {
+public enum TripControlEnum {
     START,
     CONTINUE,
     PAUSE,

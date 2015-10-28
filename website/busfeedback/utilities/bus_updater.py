@@ -80,25 +80,29 @@ def update_services_and_stops():
         for stop in stops:
             new_stops[stop["stop_id"]] = stop
 
+        # Update existing stops
         for stop in existing_stops:
             stop.services.clear()
-            new_stop = new_stops.pop(stop.stop_id, None)
+            existing_stop = new_stops.pop(stop.stop_id, None)
 
-            # If it's a new stop, we'll persist it later
-            if new_stop:
-                stop.stop_id = new_stop["stop_id"]
-                stop.latitude = new_stop["latitude"]
-                stop.longitude = new_stop["longitude"]
-
-        for service in existing_services:
-            new_service = new_services.pop(service.name, None)
-            if new_service:
-                service.name = new_service["name"]
-                service.type = new_service["service_type"]
-                service.description = new_service["description"]
+            if existing_stop:
+                stop.stop_id = existing_stop["stop_id"]
+                stop.name = existing_stop["name"]
+                stop.latitude = existing_stop["latitude"]
+                stop.longitude = existing_stop["longitude"]
+                stop.orientation = existing_stop["orientation"]
 
         # Update existing
         Stop.objects.bulk_update(existing_stops)
+
+        for service in existing_services:
+            existing_service = new_services.pop(service.name, None)
+            if existing_service:
+                service.name = existing_service["name"]
+                service.type = existing_service["service_type"]
+                service.description = existing_service["description"]
+
+        # Update existing
         Service.objects.bulk_update(existing_services)
 
         # Insert new
@@ -158,6 +162,10 @@ def create_and_insert_new_stops_from_dictionary(stops):
     # Create a list of stop objects to be inserted into the database
     new_stops = []
     for stop in stops:
-        new_stops.append(Stop(stop_id=stop["stop_id"], latitude=stop["latitude"], longitude=stop["longitude"]))
+        new_stops.append(Stop(stop_id=stop["stop_id"],
+                              name=stop["name"],
+                              latitude=stop["latitude"],
+                              longitude=stop["longitude"],
+                              orientation=stop["orientation"]))
 
     Stop.objects.bulk_create(new_stops)

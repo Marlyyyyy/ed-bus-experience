@@ -72,6 +72,39 @@ public class BusWebService {
         });
     }
 
+    public void getStopsForService(int id, final WebCallBack<List<Stop>> callback) {
+
+        RequestParams parameters = new RequestParams();
+        parameters.put("service_id", id);
+
+        String url = "/api/get_stops_for_service";
+        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                Gson gson = new Gson();
+                Stop[] stopArray = new Stop[0];
+                try {
+                    JSONArray stopJsonArray = response.getJSONArray("stops");
+                    stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Was unable to get the array of stops from Json");
+                }
+                List<Stop> stopList = Arrays.asList(stopArray);
+                callback.onSuccess(stopList);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                callback.onFailure(statusCode, errorResponse.toString());
+            }
+        });
+    }
+
     public void getClosestStops(double latitude, double longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
 
         RequestParams parameters = new RequestParams();
