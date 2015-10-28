@@ -43,6 +43,18 @@ def get_services_for_stop(request):
 
 
 @csrf_exempt
+def get_stops_for_service(request):
+    service_id = int(request.GET.get("service_id", ""))
+    # TODO: Handle exception
+    service = Service.objects.get(id=service_id)
+    stops = list(service.stops.all())
+    stop_serializer = StopSerializer(stops, many=True)
+    json_stops = JSONRenderer().render({"stops": stop_serializer.data})
+
+    return HttpResponse(json_stops, content_type='application/json')
+
+
+@csrf_exempt
 def get_closest_stops(request):
     user_latitude = request.GET.get("latitude", "")
     user_longitude = request.GET.get("longitude", "")

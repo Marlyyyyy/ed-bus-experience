@@ -35,6 +35,12 @@ class BusViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual("Clovenstone - Mayfield", response_content["services"][0]["description"], "Response should contain the description of the service.")
 
+    def test_get_stops_for_service(self):
+        service = Service.objects.get(name="3")
+        response = self.client.get('/bus/api/get_stops_for_service', {'service_id': service.id})
+        response_content = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_content), 1, "There should be 3 stops returnd for this service")
+
     def test_get_closest_stops(self):
         post_parameters = {
             'latitude': self.user_latitude,
