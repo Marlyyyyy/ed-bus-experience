@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -40,13 +41,13 @@ public class JourneySetupFragment extends RoboFragment{
     JourneyManager journeyManager;
 
     @InjectView(R.id.choose_start_stop)
-    Button startStopButton;
+    LinearLayout startStopLayout;
 
     @InjectView(R.id.choose_service)
-    Button serviceButton;
+    LinearLayout serviceLayout;
 
     @InjectView(R.id.choose_end_stop)
-    Button endStopButton;
+    LinearLayout endStopLayout;
 
     @InjectView(R.id.journey_root)
     View rootView;
@@ -90,7 +91,7 @@ public class JourneySetupFragment extends RoboFragment{
         super.onViewCreated(view, savedInstanceState);
 
         // Configure listeners for buttons
-        startStopButton.setOnClickListener(new View.OnClickListener() {
+        startStopLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -98,7 +99,7 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        serviceButton.setOnClickListener(new View.OnClickListener() {
+        serviceLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -106,7 +107,7 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        endStopButton.setOnClickListener(new View.OnClickListener() {
+        endStopLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

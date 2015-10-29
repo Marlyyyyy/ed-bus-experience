@@ -12,10 +12,9 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.events.JourneyControlEvent;
 import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.events.TripControlEvent;
-import com.marton.edibus.services.LocationService;
+import com.marton.edibus.services.LocationProviderService;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -62,7 +61,7 @@ public class JourneyTrackerFragment extends RoboFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Intent locationServiceIntent = new Intent(getActivity(), LocationService.class);
+        Intent locationServiceIntent = new Intent(getActivity(), LocationProviderService.class);
         getActivity().startService(locationServiceIntent);
 
         // Configure listeners for buttons
