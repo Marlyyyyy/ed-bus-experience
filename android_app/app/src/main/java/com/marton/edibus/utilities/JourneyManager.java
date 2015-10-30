@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.TripControlEnum;
-import com.marton.edibus.events.JourneyControlEvent;
 import com.marton.edibus.events.TripControlEvent;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebService;
@@ -29,7 +28,7 @@ public class JourneyManager {
     private boolean finished = false;
 
     // The flag indicating whether the trip should be uploaded automatically
-    private boolean automaticFinish = false;
+    private boolean automaticUpload = false;
 
     public JourneyManager(){
         trip = new Trip();
@@ -51,12 +50,12 @@ public class JourneyManager {
         return finished;
     }
 
-    public boolean getAutomaticFinish() {
-        return automaticFinish;
+    public boolean getAutomaticUpload() {
+        return automaticUpload;
     }
 
-    public void setAutomaticFinish(boolean automaticFinish) {
-        this.automaticFinish = automaticFinish;
+    public void setAutomaticUpload(boolean automaticUpload) {
+        this.automaticUpload = automaticUpload;
     }
 
     public void pauseTrip(){
@@ -79,6 +78,11 @@ public class JourneyManager {
         this.eventBus.post(new TripControlEvent(TripControlEnum.FINISH));
     }
 
+    // Returns a flag indicating if a trip has been set up
+    public boolean tripSetupComplete(){
+        return this.trip.getStartStopId() != 0 && this.trip.getEndStopId() != 0 && this.trip.getServiceId() != 0;
+    }
+
     public void uploadTrip(WebCallBack callback){
 
         WebCallBack<Integer> serviceCallback = new WebCallBack<Integer>() {
@@ -90,6 +94,7 @@ public class JourneyManager {
             }
         };
 
+        // Upload as a new journey, or as an existing one
         if (this.trip.getJourneyId() == 0){
             busWebService.uploadNewTrip(this.trip, serviceCallback);
         }else{

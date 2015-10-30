@@ -1,28 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<TableLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/journey_root"
+    android:padding="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/elapsed_time"
-        android:layout_gravity="center_horizontal" />
-    <Button
-        android:id="@+id/start_journey"
-        android:text="Start"
-        android:width="400px"
-        style="@style/AppTheme.Dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        />
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+    <TableRow
+        android:minHeight="30dp">
+
+        <LinearLayout
+            android:id="@+id/choose_start_stop"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:text="Elapsed Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+            <TextView
+                android:text="0"
+                android:id="@+id/elapsed_time"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#000000"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+        </LinearLayout>
+
+
+
+    </TableRow>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
+
+    <TableRow
+        android:minHeight="30dp">
+
+        <LinearLayout
+            android:id="@+id/choose_service"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:text="Remaining distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+            <TextView
+                android:text="None"
+                android:id="@+id/remaining_distance"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#000000"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
+
+    <TableRow
+        android:minHeight="30dp">
+
+        <LinearLayout
+            android:id="@+id/choose_end_stop"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:text="Passed distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+            <TextView
+                android:text="None"
+                android:id="@+id/passed_distance"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#000000"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
+
+    <TableRow
+        android:minHeight="30dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/start_journey"
+            android:text="Start"
+            android:width="400px"
+            style="@style/AppTheme.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            />
+
         <Button
             android:id="@+id/pause_journey"
             android:text="Stop"
@@ -34,16 +166,25 @@
             android:visibility="gone"/>
 
         <Button
+            android:id="@+id/finish_journey"
+            android:text="End"
+            android:width="200px"
+            style="@style/btnStyleOrange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/continue_journey"
             android:text="Continue"
-            android:width="400px"
+            android:width="200px"
             style="@style/btnStyleGreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:visibility="gone"/>
 
+    </TableRow>
 
-    </LinearLayout>
-
-</LinearLayout>
+</TableLayout>

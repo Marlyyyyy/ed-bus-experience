@@ -7,16 +7,22 @@ import android.support.v7.widget.Toolbar;
 
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
+import com.marton.edibus.enums.JourneyTabEnum;
+import com.marton.edibus.events.TripControlEvent;
 import com.marton.edibus.fragments.JourneyFeedbackFragment;
 import com.marton.edibus.fragments.JourneySetupFragment;
 import com.marton.edibus.fragments.JourneyTrackerFragment;
+import com.marton.edibus.utilities.SnackbarManager;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
+import de.greenrobot.event.EventBus;
 import roboguice.activity.RoboActionBarActivity;
 
 public class JourneyActivity extends RoboActionBarActivity {
 
     private static final String TAG = JourneyActivity.class.getName();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     Toolbar toolbar;
     ViewPager pager;
@@ -30,6 +36,9 @@ public class JourneyActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journey);
 
+        // Register as a subscriber
+        eventBus.register(this);
+
         // Create The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -38,11 +47,11 @@ public class JourneyActivity extends RoboActionBarActivity {
             @Override
             public Fragment getItem(int position){
 
-                if(position == 0)
+                if(position == JourneyTabEnum.SETUP.ordinal())
                 {
                     return new JourneySetupFragment();
                 }
-                else if(position == 1)
+                else if(position == JourneyTabEnum.TRACKER.ordinal())
                 {
                     return new JourneyTrackerFragment();
                 }
@@ -72,5 +81,14 @@ public class JourneyActivity extends RoboActionBarActivity {
 
         // Set the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
+    }
+
+    public void onEventMainThread(TripControlEvent tripControlEvent){
+
+        switch(tripControlEvent.tripControlEnum){
+            case SETUP_COMPLETE:
+                this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
+                break;
+        }
     }
 }

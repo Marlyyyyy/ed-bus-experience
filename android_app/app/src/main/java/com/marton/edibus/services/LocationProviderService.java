@@ -10,8 +10,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.inject.Inject;
-import com.marton.edibus.events.MessageEvent;
-import com.marton.edibus.models.TrackerPoint;
+import com.marton.edibus.models.TrackerState;
 import com.marton.edibus.utilities.JourneyManager;
 
 import de.greenrobot.event.EventBus;
@@ -24,24 +23,20 @@ public class LocationProviderService extends RoboIntentService implements Locati
     @Inject
     private JourneyManager journeyManager;
 
-    private MessageEvent messageEvent;
-
-    private TrackerPoint latestTrackerPoint;
+    private TrackerState currentTrackerState;
 
     private GoogleApiClient googleApiClient;
 
     LocationRequest locationRequest;
 
     /**
-     * Creates an IntentService.
+     * Creates the LocationProvider IntentService.
      *
      */
     public LocationProviderService() {
         super("LocationProviderService");
 
-        this.messageEvent = new MessageEvent();
-
-        this.latestTrackerPoint = new TrackerPoint();
+        this.currentTrackerState = new TrackerState();
     }
 
     @Override
@@ -64,57 +59,34 @@ public class LocationProviderService extends RoboIntentService implements Locati
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        int counter = 0;
+
         while(true){
 
-            // If the service is not paused, do the update
+            // If the service can be safely shut down
+            if (this.journeyManager.getFinished()){
+                googleApiClient.disconnect();
+                break;
+            }
+
             if (!this.journeyManager.getPaused()){
 
-                if (shouldTripFinish(counter)){
-
-                    this.journeyManager.finishTrip();
-
-                    // Automatically upload trip and/or fire events
-                    if (this.journeyManager.getAutomaticFinish())
-                    {
-                    }else
-                    {
-                    }
-                }else{
-                    // Broadcast location updates
-                    messageEvent.message = String.valueOf(this.latestTrackerPoint.getLatitude());
-                    this.eventBus.post(this.messageEvent);
-                    counter++;
-                }
+                // TODO: Make sure we only publish the event if we moved a minimum distance
+                eventBus.post(currentTrackerState);
             }
 
             // Sleep this thread for a short time
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-
-            // If the service can be safely shut down
-            if (this.journeyManager.getFinished()){
-                break;
             }
         }
     }
 
-    /**
-     * Returns the flag indicating whether the trip is finished.
-     * @return A flag indicating whether the trip should be finished or not.
-     * */
-    // TODO: let this use the latitude and the longitude of the user's current location
-    private boolean shouldTripFinish(int counter){
-        return counter > 200;
-    }
-
     @Override
     public void onLocationChanged(Location location) {
-        this.latestTrackerPoint.setLatitude(location.getLatitude());
-        this.latestTrackerPoint.setLongitude(location.getLongitude());
+        this.currentTrackerState.setLatitude(location.getLatitude());
+        this.currentTrackerState.setLongitude(location.getLongitude());
     }
 
     @Override

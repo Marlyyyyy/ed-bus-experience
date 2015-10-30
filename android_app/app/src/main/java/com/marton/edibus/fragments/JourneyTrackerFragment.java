@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.events.TripControlEvent;
+import com.marton.edibus.models.Stop;
+import com.marton.edibus.models.TrackerState;
 import com.marton.edibus.services.LocationProviderService;
+import com.marton.edibus.utilities.DistanceCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -33,6 +35,12 @@ public class JourneyTrackerFragment extends RoboFragment {
     @InjectView(R.id.elapsed_time)
     TextView elapsedTimeTextView;
 
+    @InjectView(R.id.remaining_distance)
+    TextView remainingDistanceTextView;
+
+    @InjectView(R.id.passed_distance)
+    TextView passedDistanceTextView;
+
     @InjectView(R.id.start_journey)
     Button startJourneyButton;
 
@@ -41,6 +49,9 @@ public class JourneyTrackerFragment extends RoboFragment {
 
     @InjectView(R.id.continue_journey)
     Button continueJourneyButton;
+
+    @InjectView(R.id.finish_journey)
+    Button finishJourneyButton;
 
     @Override
     public void onCreate(Bundle bundle){
@@ -69,9 +80,14 @@ public class JourneyTrackerFragment extends RoboFragment {
 
             @Override
             public void onClick(View v) {
-                journeyManager.startTrip();
-                startJourneyButton.setVisibility(View.GONE);
-                pauseJourneyButton.setVisibility(View.VISIBLE);
+                if (journeyManager.tripSetupComplete()){
+                    journeyManager.startTrip();
+                    startJourneyButton.setVisibility(View.GONE);
+                    pauseJourneyButton.setVisibility(View.VISIBLE);
+                }else{
+                    SnackbarManager.showSnackbar(getView(), "error", "Trip needs to be set up first!", getResources());
+                }
+
             }
         });
 
@@ -82,6 +98,7 @@ public class JourneyTrackerFragment extends RoboFragment {
                 journeyManager.pauseTrip();
                 pauseJourneyButton.setVisibility(View.GONE);
                 continueJourneyButton.setVisibility(View.VISIBLE);
+                finishJourneyButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -91,14 +108,17 @@ public class JourneyTrackerFragment extends RoboFragment {
             public void onClick(View v) {
                 journeyManager.continueTrip();
                 continueJourneyButton.setVisibility(View.GONE);
+                finishJourneyButton.setVisibility(View.GONE);
                 pauseJourneyButton.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    public void onEventMainThread(MessageEvent event){
-
-        elapsedTimeTextView.setText(event.message);
+        
+        finishJourneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                journeyManager.finishTrip();
+            }
+        });
     }
 
     public void onEventMainThread(TripControlEvent tripControlEvent){
@@ -113,5 +133,37 @@ public class JourneyTrackerFragment extends RoboFragment {
                 SnackbarManager.showSnackbar(getView(), "success", "Trip has finished, do something", getResources());
                 break;
         }
+    }
+
+    public void onEventMainThread(TrackerState trackerState){
+
+        // Calculate the remaining distance
+        Stop endStop = this.journeyManager.getTrip().getEndStop();
+        double remainingDistance = DistanceCalculator.getDistanceBetweenPoints(
+                trackerState.getLatitude(), trackerState.getLongitude(), endStop.getLatitude(), endStop.getLongitude());
+        trackerState.setDistanceFromGoal(remainingDistance);
+
+        Stop startStop = this.journeyManager.getTrip().getStartStop();
+        double distanceFromStart = DistanceCalculator.getDistanceBetweenPoints(
+                trackerState.getLatitude(), trackerState.getLongitude(), startStop.getLatitude(), startStop.getLongitude());
+        trackerState.setDistanceFromStart(distanceFromStart);
+
+        // If we are near the end, finish the tracking
+        if (remainingDistance < 50){
+
+            this.journeyManager.finishTrip();
+
+            // Automatically upload trip and/or fire events
+            if (this.journeyManager.getAutomaticUpload())
+            {
+                SnackbarManager.showSnackbar(getView(), "success", "Uploading the trip...", getResources());
+            }else
+            {
+                SnackbarManager.showSnackbar(getView(), "success", "Please upload the trip...", getResources());
+            }
+        }
+
+        // Update the UI
+        this.remainingDistanceTextView.setText(String.valueOf(trackerState.getDistanceFromGoal()));
     }
 }

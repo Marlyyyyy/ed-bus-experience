@@ -17,8 +17,11 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.StopActivity;
+import com.marton.edibus.enums.JourneyTabEnum;
 import com.marton.edibus.enums.StopTypeEnum;
+import com.marton.edibus.enums.TripControlEnum;
 import com.marton.edibus.events.JourneyUpdateEvent;
+import com.marton.edibus.events.TripControlEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.utilities.JourneyManager;
@@ -64,6 +67,9 @@ public class JourneySetupFragment extends RoboFragment{
     @InjectView(R.id.auto_sync_switch)
     Switch autoSyncSwitch;
 
+    @InjectView(R.id.journey_setup_complete)
+    Button continueButton;
+
     FragmentManager fragmentManager;
 
     @Override
@@ -90,7 +96,7 @@ public class JourneySetupFragment extends RoboFragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Configure listeners for buttons
+        // Configure listeners for buttons and switches
         startStopLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -119,10 +125,17 @@ public class JourneySetupFragment extends RoboFragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    journeyManager.setAutomaticFinish(true);
+                    journeyManager.setAutomaticUpload(true);
                 } else {
-                    journeyManager.setAutomaticFinish(false);
+                    journeyManager.setAutomaticUpload(false);
                 }
+            }
+        });
+
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventBus.post(new TripControlEvent(TripControlEnum.SETUP_COMPLETE));
             }
         });
     }
