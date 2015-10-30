@@ -6,7 +6,7 @@ import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.TripControlEnum;
 import com.marton.edibus.events.TripControlEvent;
 import com.marton.edibus.models.Trip;
-import com.marton.edibus.network.BusWebService;
+import com.marton.edibus.network.BusWebClient;
 
 import de.greenrobot.event.EventBus;
 
@@ -14,7 +14,7 @@ import de.greenrobot.event.EventBus;
 public class JourneyManager {
 
     @Inject
-    BusWebService busWebService;
+    BusWebClient busWebService;
 
     private EventBus eventBus = EventBus.getDefault();
 

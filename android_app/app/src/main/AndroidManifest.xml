@@ -40,10 +40,6 @@
             android:noHistory="true" >
         </activity>
         <activity
-            android:name=".activities.SignupActivity"
-            android:label="@string/title_activity_signup" >
-        </activity>
-        <activity
             android:name=".activities.ContentActivity"
             android:label="@string/title_activity_content" >
         </activity>
@@ -52,7 +48,7 @@
             android:label="@string/title_activity_journey" >
         </activity>
         <activity
-            android:name=".activities.StopActivity"
+            android:name=".activities.StopSetupActivity"
             android:label="@string/title_activity_stop" >
         </activity>
 

@@ -3,7 +3,6 @@ package com.marton.edibus.activities;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +25,9 @@ import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.adapters.StopAdapter;
 import com.marton.edibus.enums.StopTypeEnum;
-import com.marton.edibus.events.MessageEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
-import com.marton.edibus.network.BusWebService;
+import com.marton.edibus.network.BusWebClient;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -40,9 +38,9 @@ import de.greenrobot.event.EventBus;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class StopActivity extends RoboActionBarActivity implements OnMapReadyCallback {
+public class StopSetupActivity extends RoboActionBarActivity implements OnMapReadyCallback {
 
-    private static final String TAG = StopActivity.class.getName();
+    private static final String TAG = StopSetupActivity.class.getName();
 
     private StopTypeEnum stopTypeEnum;
 
@@ -58,7 +56,7 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
     JourneyManager journeyManager;
 
     @Inject
-    BusWebService busWebService;
+    BusWebClient busWebService;
 
     @InjectView(R.id.listView)
     ListView listView;
@@ -211,7 +209,5 @@ public class StopActivity extends RoboActionBarActivity implements OnMapReadyCal
                 busWebService.getStopsForService(this.journeyManager.getTrip().getServiceId(), callback);
                 break;
         }
-
-        eventBus.post(new MessageEvent("Hey"));
     }
 }

@@ -16,8 +16,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.activities.StopActivity;
-import com.marton.edibus.enums.JourneyTabEnum;
+import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.enums.TripControlEnum;
 import com.marton.edibus.events.JourneyUpdateEvent;
@@ -152,7 +151,7 @@ public class JourneySetupFragment extends RoboFragment{
     private void launchStopChooserActivity(StopTypeEnum stop){
         Log.d(TAG, "Choosing new start stop");
 
-        Intent intent = new Intent(getActivity(), StopActivity.class);
+        Intent intent = new Intent(getActivity(), StopSetupActivity.class);
         intent.putExtra("STOP", stop);
         startActivity(intent);
     }

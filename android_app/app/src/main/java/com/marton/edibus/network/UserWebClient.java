@@ -12,9 +12,9 @@ import cz.msebera.android.httpclient.Header;
 
 
 @Singleton
-public class UserWebService {
+public class UserWebClient {
 
-    private static final String TAG = UserWebService.class.getName();
+    private static final String TAG = UserWebClient.class.getName();
 
     private static final String BASE_URL_AUTHENTICATION = "http://192.168.0.9:8000/auth";
 

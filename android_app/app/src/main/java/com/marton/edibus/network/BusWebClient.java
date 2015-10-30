@@ -27,15 +27,15 @@ import cz.msebera.android.httpclient.Header;
 
 
 @Singleton
-public class BusWebService {
+public class BusWebClient {
 
-    private static final String TAG = BusWebService.class.getName();
+    private static final String TAG = BusWebClient.class.getName();
 
     private static final String BASE_URL_BUS = "http://192.168.0.9:8000/bus";
 
     private AsyncHttpClient client;
 
-    public BusWebService(){
+    public BusWebClient(){
         client = new AsyncHttpClient();
     }
 

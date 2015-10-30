@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.activities.ContentActivity;
-import com.marton.edibus.network.UserWebService;
+import com.marton.edibus.network.UserWebClient;
 import com.marton.edibus.network.WebClient;
 import com.marton.edibus.utilities.AuthenticationManager;
 
@@ -31,7 +31,8 @@ public class LoginFragment extends RoboFragment {
 
     private static final String TAG = LoginFragment.class.getName();
 
-    private @Inject UserWebService userWebService;
+    private @Inject
+    UserWebClient userWebService;
     private @Inject AuthenticationManager authenticationManager;
     private @Inject WebClient webClient;
 
