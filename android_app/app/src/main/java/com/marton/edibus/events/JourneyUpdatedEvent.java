@@ -1,5 +1,5 @@
 package com.marton.edibus.events;
 
 
-public class JourneyUpdateEvent {
+public class JourneyUpdatedEvent {
 }

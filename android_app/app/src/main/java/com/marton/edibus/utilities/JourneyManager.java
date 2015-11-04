@@ -3,8 +3,8 @@ package com.marton.edibus.utilities;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.enums.TripControlEnum;
-import com.marton.edibus.events.TripControlEvent;
+import com.marton.edibus.enums.JourneyStateEnum;
+import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebClient;
 
@@ -21,17 +21,29 @@ public class JourneyManager {
     // The current trip of the user
     private Trip trip;
 
+    // The stop that is currently under review by the user
+    private Stop reviewStop;
+
+    private JourneyStateEnum journeyState = JourneyStateEnum.NOT_STARTED;
+
     // The flag indicating whether the journey has been paused
     private boolean paused = true;
 
     // The flag indicating whether the journey has been finished
     private boolean finished = false;
 
+    // The flag indicating whether the journey has been started
+    private boolean started = false;
+
     // The flag indicating whether the trip should be uploaded automatically
     private boolean automaticUpload = false;
 
     public JourneyManager(){
         trip = new Trip();
+    }
+
+    public JourneyStateEnum getJourneyState() {
+        return journeyState;
     }
 
     public Trip getTrip() {
@@ -42,12 +54,24 @@ public class JourneyManager {
         this.trip = trip;
     }
 
+    public Stop getReviewStop() {
+        return reviewStop;
+    }
+
+    public void setReviewStop(Stop reviewStop) {
+        this.reviewStop = reviewStop;
+    }
+
     public boolean getPaused() {
         return paused;
     }
 
     public boolean getFinished() {
         return finished;
+    }
+
+    public boolean getStarted() {
+        return started;
     }
 
     public boolean getAutomaticUpload() {
@@ -59,23 +83,24 @@ public class JourneyManager {
     }
 
     public void pauseTrip(){
+        this.journeyState = JourneyStateEnum.PAUSED;
         this.paused = true;
-        this.eventBus.post(new TripControlEvent(TripControlEnum.PAUSE));
     }
 
     public void continueTrip(){
+        this.journeyState = JourneyStateEnum.RUNNING;
         this.paused = false;
-        this.eventBus.post(new TripControlEvent(TripControlEnum.CONTINUE));
     }
 
     public void startTrip(){
+        this.journeyState = JourneyStateEnum.RUNNING;
         this.paused = false;
-        this.eventBus.post(new TripControlEvent(TripControlEnum.START));
+        this.started = true;
     }
 
     public void finishTrip(){
+        this.journeyState = JourneyStateEnum.FINISHED;
         this.finished = true;
-        this.eventBus.post(new TripControlEvent(TripControlEnum.FINISH));
     }
 
     // Returns a flag indicating if a trip has been set up
@@ -90,7 +115,8 @@ public class JourneyManager {
             public void onSuccess(Integer data) {
                 trip = new Trip();
                 trip.setJourneyId(data);
-                eventBus.post(new TripControlEvent(TripControlEnum.UPLOAD));
+
+                journeyState = JourneyStateEnum.UPLOADED;
             }
         };
 

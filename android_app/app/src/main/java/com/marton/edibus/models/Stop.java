@@ -29,6 +29,9 @@ public class Stop {
 
     private ArrayList<Service> services;
 
+    // Extra attributes
+    private double distance;
+
     public double getLongitude() {
         return longitude;
     }
@@ -75,5 +78,13 @@ public class Stop {
 
     public void setServices(ArrayList<Service> services) {
         this.services = services;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }

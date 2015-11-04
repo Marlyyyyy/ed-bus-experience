@@ -8,11 +8,11 @@ import android.support.v7.widget.Toolbar;
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
 import com.marton.edibus.enums.JourneyTabEnum;
-import com.marton.edibus.events.TripControlEvent;
+import com.marton.edibus.events.JourneyStateUpdatedEvent;
+import com.marton.edibus.events.JourneyUpdatedEvent;
 import com.marton.edibus.fragments.JourneyFeedbackFragment;
 import com.marton.edibus.fragments.JourneySetupFragment;
 import com.marton.edibus.fragments.JourneyTrackerFragment;
-import com.marton.edibus.utilities.SnackbarManager;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
 import de.greenrobot.event.EventBus;
@@ -83,10 +83,10 @@ public class JourneyActivity extends RoboActionBarActivity {
         tabs.setViewPager(pager);
     }
 
-    public void onEventMainThread(TripControlEvent tripControlEvent){
+    public void onEventMainThread(JourneyStateUpdatedEvent journeyStateUpdatedEvent){
 
-        switch(tripControlEvent.tripControlEnum){
-            case SETUP_COMPLETE:
+        switch(journeyStateUpdatedEvent.getJourneyStateEnum()){
+            case SETUP_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
                 break;
         }

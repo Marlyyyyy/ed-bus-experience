@@ -12,11 +12,9 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.events.TripControlEvent;
-import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.TrackerState;
+import com.marton.edibus.events.TrackerStateUpdatedEvent;
+import com.marton.edibus.services.LocationProcessorService;
 import com.marton.edibus.services.LocationProviderService;
-import com.marton.edibus.utilities.DistanceCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -30,16 +28,17 @@ public class JourneyTrackerFragment extends RoboFragment {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    private Intent locationProviderService;
+
+    private Intent locationProcessorService;
+
     @Inject private JourneyManager journeyManager;
 
-    @InjectView(R.id.elapsed_time)
-    TextView elapsedTimeTextView;
+    @InjectView(R.id.travelled_distance)
+    TextView travelledDistanceTextView;
 
     @InjectView(R.id.remaining_distance)
     TextView remainingDistanceTextView;
-
-    @InjectView(R.id.passed_distance)
-    TextView passedDistanceTextView;
 
     @InjectView(R.id.start_journey)
     Button startJourneyButton;
@@ -72,22 +71,27 @@ public class JourneyTrackerFragment extends RoboFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Intent locationServiceIntent = new Intent(getActivity(), LocationProviderService.class);
-        getActivity().startService(locationServiceIntent);
+        this.locationProviderService = new Intent(getActivity(), LocationProviderService.class);
+        this.locationProcessorService = new Intent(getActivity(), LocationProcessorService.class);
+
+
+        // Set visibility of specific views
+        this.refreshUserInterface();
 
         // Configure listeners for buttons
         startJourneyButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (journeyManager.tripSetupComplete()){
+                if (journeyManager.tripSetupComplete()) {
                     journeyManager.startTrip();
-                    startJourneyButton.setVisibility(View.GONE);
-                    pauseJourneyButton.setVisibility(View.VISIBLE);
-                }else{
+                    refreshUserInterface();
+
+                    getActivity().startService(locationProviderService);
+                    getActivity().startService(locationProcessorService);
+                } else {
                     SnackbarManager.showSnackbar(getView(), "error", "Trip needs to be set up first!", getResources());
                 }
-
             }
         });
 
@@ -96,9 +100,7 @@ public class JourneyTrackerFragment extends RoboFragment {
             @Override
             public void onClick(View v) {
                 journeyManager.pauseTrip();
-                pauseJourneyButton.setVisibility(View.GONE);
-                continueJourneyButton.setVisibility(View.VISIBLE);
-                finishJourneyButton.setVisibility(View.VISIBLE);
+                refreshUserInterface();
             }
         });
 
@@ -107,9 +109,7 @@ public class JourneyTrackerFragment extends RoboFragment {
             @Override
             public void onClick(View v) {
                 journeyManager.continueTrip();
-                continueJourneyButton.setVisibility(View.GONE);
-                finishJourneyButton.setVisibility(View.GONE);
-                pauseJourneyButton.setVisibility(View.VISIBLE);
+                refreshUserInterface();
             }
         });
         
@@ -117,39 +117,24 @@ public class JourneyTrackerFragment extends RoboFragment {
             @Override
             public void onClick(View v) {
                 journeyManager.finishTrip();
+                refreshUserInterface();
+                getActivity().stopService(locationProviderService);
+                getActivity().stopService(locationProcessorService);
             }
         });
     }
 
-    public void onEventMainThread(TripControlEvent tripControlEvent){
-
-        switch(tripControlEvent.tripControlEnum){
-            case START:
-                break;
-            case PAUSE:
-                SnackbarManager.showSnackbar(getView(), "success", "Trip has paused", getResources());
-                break;
-            case FINISH:
-                SnackbarManager.showSnackbar(getView(), "success", "Trip has finished, do something", getResources());
-                break;
-        }
+    @Override
+    public void onDestroy(){
+        this.getActivity().stopService(this.locationProviderService);
+        this.getActivity().stopService(this.locationProcessorService);
+        super.onDestroy();
     }
 
-    public void onEventMainThread(TrackerState trackerState){
-
-        // Calculate the remaining distance
-        Stop endStop = this.journeyManager.getTrip().getEndStop();
-        double remainingDistance = DistanceCalculator.getDistanceBetweenPoints(
-                trackerState.getLatitude(), trackerState.getLongitude(), endStop.getLatitude(), endStop.getLongitude());
-        trackerState.setDistanceFromGoal(remainingDistance);
-
-        Stop startStop = this.journeyManager.getTrip().getStartStop();
-        double distanceFromStart = DistanceCalculator.getDistanceBetweenPoints(
-                trackerState.getLatitude(), trackerState.getLongitude(), startStop.getLatitude(), startStop.getLongitude());
-        trackerState.setDistanceFromStart(distanceFromStart);
+    public void onEventMainThread(TrackerStateUpdatedEvent trackerState){
 
         // If we are near the end, finish the tracking
-        if (remainingDistance < 50){
+        if (trackerState.getDistanceFromGoal() < 50){
 
             this.journeyManager.finishTrip();
 
@@ -165,5 +150,41 @@ public class JourneyTrackerFragment extends RoboFragment {
 
         // Update the UI
         this.remainingDistanceTextView.setText(String.valueOf(trackerState.getDistanceFromGoal()));
+        this.travelledDistanceTextView.setText(String.valueOf(trackerState.getDistanceFromStart()));
+    }
+
+    private void refreshUserInterface(){
+
+        switch (this.journeyManager.getJourneyState()){
+            case NOT_STARTED:
+                this.startJourneyButton.setVisibility(View.VISIBLE);
+                this.pauseJourneyButton.setVisibility(View.GONE);
+                this.continueJourneyButton.setVisibility(View.GONE);
+                this.finishJourneyButton.setVisibility(View.GONE);
+                break;
+            case RUNNING:
+                this.startJourneyButton.setVisibility(View.GONE);
+                this.pauseJourneyButton.setVisibility(View.VISIBLE);
+                this.continueJourneyButton.setVisibility(View.GONE);
+                this.finishJourneyButton.setVisibility(View.GONE);
+                break;
+            case PAUSED:
+                this.startJourneyButton.setVisibility(View.GONE);
+                this.pauseJourneyButton.setVisibility(View.GONE);
+                this.continueJourneyButton.setVisibility(View.VISIBLE);
+                this.finishJourneyButton.setVisibility(View.VISIBLE);
+                break;
+            case FINISHED:
+                this.startJourneyButton.setVisibility(View.GONE);
+                this.pauseJourneyButton.setVisibility(View.GONE);
+                this.continueJourneyButton.setVisibility(View.GONE);
+                this.finishJourneyButton.setVisibility(View.GONE);
+                break;
+            case UPLOADED:
+                break;
+            default:
+                SnackbarManager.showSnackbar(getView(), "error", "Journey is in an undefined state!", getResources());
+                break;
+        }
     }
 }

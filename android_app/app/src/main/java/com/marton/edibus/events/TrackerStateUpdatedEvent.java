@@ -1,44 +1,22 @@
-package com.marton.edibus.models;
+package com.marton.edibus.events;
 
 
-public class TrackerState {
+public class TrackerStateUpdatedEvent {
 
-    public TrackerState(){
+    public TrackerStateUpdatedEvent(){
     }
 
-    public TrackerState(double currentLatitude, double currentLongitude, double distanceFromGoal, double distanceFromStart, double currentSpeed){
-        this.latitude = currentLatitude;
-        this.longitude = currentLongitude;
+    public TrackerStateUpdatedEvent(double distanceFromGoal, double distanceFromStart, double currentSpeed){
         this.distanceFromGoal = distanceFromGoal;
         this.distanceFromStart = distanceFromStart;
         this.currentSpeed = currentSpeed;
     }
-
-    private double latitude;
-
-    private double longitude;
 
     private double distanceFromGoal;
 
     private double distanceFromStart;
 
     private double currentSpeed;
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     public double getDistanceFromGoal() {
         return distanceFromGoal;

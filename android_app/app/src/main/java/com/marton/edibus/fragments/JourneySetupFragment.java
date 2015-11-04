@@ -17,10 +17,10 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.StopSetupActivity;
+import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.StopTypeEnum;
-import com.marton.edibus.enums.TripControlEnum;
-import com.marton.edibus.events.JourneyUpdateEvent;
-import com.marton.edibus.events.TripControlEvent;
+import com.marton.edibus.events.JourneyStateUpdatedEvent;
+import com.marton.edibus.events.JourneyUpdatedEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.utilities.JourneyManager;
@@ -38,6 +38,8 @@ public class JourneySetupFragment extends RoboFragment{
     private EventBus eventBus = EventBus.getDefault();
 
     ServiceDialogFragment serviceDialog;
+
+    JourneyStateUpdatedEvent journeyStateUpdatedEvent;
 
     @Inject
     JourneyManager journeyManager;
@@ -75,13 +77,16 @@ public class JourneySetupFragment extends RoboFragment{
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
 
-        fragmentManager = getFragmentManager();
+        this.fragmentManager = getFragmentManager();
 
         // Register as a subscriber
-        eventBus.register(this);
+        this.eventBus.register(this);
 
         // Create Service selector dialog
-        serviceDialog = new ServiceDialogFragment();
+        this.serviceDialog = new ServiceDialogFragment();
+
+        // Initialise event objects
+        this.journeyStateUpdatedEvent = new JourneyStateUpdatedEvent();
     }
 
     @Override
@@ -134,7 +139,12 @@ public class JourneySetupFragment extends RoboFragment{
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eventBus.post(new TripControlEvent(TripControlEnum.SETUP_COMPLETE));
+                if (journeyManager.tripSetupComplete()){
+                    journeyStateUpdatedEvent.setJourneyStateEnum(JourneyStateEnum.SETUP_COMPLETED);
+                    eventBus.post(journeyStateUpdatedEvent);
+                }else{
+                    SnackbarManager.showSnackbar(rootView, "error", "Setup is incomplete.", getResources());
+                }
             }
         });
     }
@@ -142,8 +152,6 @@ public class JourneySetupFragment extends RoboFragment{
     @Override
     public void onResume(){
         super.onResume();
-
-        SnackbarManager.showSnackbar(rootView, "success", "Resumed", this.getResources());
 
         this.refreshUserInterface();
     }
@@ -174,7 +182,7 @@ public class JourneySetupFragment extends RoboFragment{
         }
     }
 
-    public void onEvent(JourneyUpdateEvent event){
+    public void onEvent(JourneyUpdatedEvent event){
         refreshUserInterface();
     }
 }

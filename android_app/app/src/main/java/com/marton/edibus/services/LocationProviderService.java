@@ -1,92 +1,66 @@
 package com.marton.edibus.services;
 
-
+import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.os.Bundle;
 
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.inject.Inject;
-import com.marton.edibus.models.TrackerState;
-import com.marton.edibus.utilities.JourneyManager;
+import com.marton.edibus.events.LocationUpdatedEvent;
 
 import de.greenrobot.event.EventBus;
-import roboguice.service.RoboIntentService;
 
-public class LocationProviderService extends RoboIntentService implements LocationListener, GoogleApiClient.ConnectionCallbacks {
+
+public class LocationProviderService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks {
+
+    private static final String TAG = Service.class.getName();
 
     private EventBus eventBus = EventBus.getDefault();
 
-    @Inject
-    private JourneyManager journeyManager;
-
-    private TrackerState currentTrackerState;
+    private LocationUpdatedEvent locationUpdateEvent;
 
     private GoogleApiClient googleApiClient;
 
     LocationRequest locationRequest;
 
-    /**
-     * Creates the LocationProvider IntentService.
-     *
-     */
     public LocationProviderService() {
-        super("LocationProviderService");
-
-        this.currentTrackerState = new TrackerState();
+        this.locationUpdateEvent = new LocationUpdatedEvent();
     }
 
     @Override
     public void onCreate(){
 
-        super.onCreate();
-
-        googleApiClient = new GoogleApiClient.Builder(this)
+        this.googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(8000);
-        locationRequest.setFastestInterval(3000);
-        locationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY);
+        this.locationRequest = new LocationRequest();
+        this.locationRequest.setInterval(8000);
+        this.locationRequest.setFastestInterval(3000);
+        this.locationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        googleApiClient.connect();
+        this.googleApiClient.connect();
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-
-        while(true){
-
-            // If the service can be safely shut down
-            if (this.journeyManager.getFinished()){
-                googleApiClient.disconnect();
-                break;
-            }
-
-            if (!this.journeyManager.getPaused()){
-
-                // TODO: Make sure we only publish the event if we moved a minimum distance
-                eventBus.post(currentTrackerState);
-            }
-
-            // Sleep this thread for a short time
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public void onDestroy()
+    {
+        this.googleApiClient.disconnect();
+        Toast.makeText(this, "LocationProviderService Stopped", Toast.LENGTH_LONG).show();
     }
 
+    @Nullable
     @Override
-    public void onLocationChanged(Location location) {
-        this.currentTrackerState.setLatitude(location.getLatitude());
-        this.currentTrackerState.setLongitude(location.getLongitude());
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
@@ -94,12 +68,22 @@ public class LocationProviderService extends RoboIntentService implements Locati
         startLocationUpdates();
     }
 
-    protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-    }
-
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.locationUpdateEvent.setLatitude(location.getLatitude());
+        this.locationUpdateEvent.setLongitude(location.getLongitude());
+
+        Toast.makeText(this, "Location update yaaay", Toast.LENGTH_LONG).show();
+
+        this.eventBus.post(this.locationUpdateEvent);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
 }

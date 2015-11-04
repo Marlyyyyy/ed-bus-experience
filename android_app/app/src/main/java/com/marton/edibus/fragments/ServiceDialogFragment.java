@@ -13,7 +13,7 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.events.JourneyUpdateEvent;
+import com.marton.edibus.events.JourneyUpdatedEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.network.BusWebClient;
 import com.marton.edibus.utilities.JourneyManager;
@@ -61,7 +61,7 @@ public class ServiceDialogFragment extends RoboDialogFragment {
 
                 // Select new service and fire update event
                 journeyManager.getTrip().setService(availableServices.get(position));
-                eventBus.post(new JourneyUpdateEvent());
+                eventBus.post(new JourneyUpdatedEvent());
                 getDialog().cancel();
             }
         });

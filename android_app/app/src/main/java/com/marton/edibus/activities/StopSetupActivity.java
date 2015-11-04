@@ -1,6 +1,7 @@
 package com.marton.edibus.activities;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,13 +26,16 @@ import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.adapters.StopAdapter;
 import com.marton.edibus.enums.StopTypeEnum;
+import com.marton.edibus.fragments.StopDialogFragment;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebClient;
+import com.marton.edibus.utilities.DistanceCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -52,6 +56,12 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     private Marker latestClickedMarker;
 
+    private HashMap<Marker, Stop> markerStopHashMap = new HashMap<>();
+
+    private StopDialogFragment stopDialog;
+
+    private FragmentManager fragmentManager;
+
     @Inject
     JourneyManager journeyManager;
 
@@ -71,6 +81,8 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         setContentView(R.layout.activity_stop);
 
         resources = getResources();
+
+        fragmentManager = getSupportFragmentManager();
 
         // Read the data passed in for the activity
         Bundle extras = getIntent().getExtras();
@@ -93,6 +105,12 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 SnackbarManager.showSnackbar(view, "success", String.valueOf(stop.getId()), resources);
             }
         });
+
+        // Create Stop details dialog
+        stopDialog = new StopDialogFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("STOP_TYPE", stopTypeEnum);
+        stopDialog.setArguments(args);
     }
 
     private void selectStop(Stop stop){
@@ -137,33 +155,24 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
+                // Change the look of the icons
                 if(latestClickedMarker != null){
                     latestClickedMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker));
                 }
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_logo_clicked));
                 latestClickedMarker = marker;
-                return false;
+
+                // Launch custom dialog fragment
+                journeyManager.setReviewStop(markerStopHashMap.get(marker));
+                stopDialog.show(fragmentManager, "Stop Dialog Fragment");
+
+                return true;
             }
         });
 
-        double latitude = 55.928042085586306;
-        double longitude = -3.1669341400265694;
-
-        // TODO: put the list of services in the display
-        /*googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Getting view from the layout file info_window_layout
-                View view = getLayoutInflater().inflate(R.layout.info_window_stop, null);
-
-                return view;
-            }
-        });*/
+        final double latitude = 55.928042085586306;
+        final double longitude = -3.1669341400265694;
 
         WebCallBack<List<Stop>> callback = new WebCallBack<List<Stop>>(){
 
@@ -171,6 +180,13 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
             public void onSuccess(List<Stop> stops) {
                 // Set up the list of stops
                 stopsArrayList = new ArrayList<>(stops);
+
+                // Set the distance for each stop
+                for (int i=0; i<stopsArrayList.size(); i++){
+                    Stop stop = stopsArrayList.get(i);
+                    stop.setDistance(DistanceCalculator.getDistanceBetweenPoints(latitude, longitude, stop.getLatitude(), stop.getLongitude()));
+                }
+
                 stopAdapter = new StopAdapter(context, stopsArrayList, resources);
                 listView.setAdapter(stopAdapter);
 
@@ -185,6 +201,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                             .rotation(stop.getOrientation());
                     Marker marker = googleMap.addMarker(markerOptions);
                     markers.add(marker);
+                    markerStopHashMap.put(marker, stop);
                 }
 
                 // Change the camera position of the map
@@ -192,12 +209,12 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 for (Marker marker : markers) {
                     builder.include(marker.getPosition());
                 }
-                LatLngBounds bounds = builder.build();
 
                 // Padding from edges of the map in pixels
                 int padding = 100;
+                LatLngBounds bounds = builder.build();
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                googleMap.animateCamera(cameraUpdate);
+                googleMap.moveCamera(cameraUpdate);
             }
         };
 

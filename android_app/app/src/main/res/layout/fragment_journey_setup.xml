@@ -8,170 +8,148 @@
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip" />
 
     <TableRow
-        android:minHeight="30dp">
+        android:id="@+id/choose_start_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:focusable="true"
+        android:background="@drawable/row_blue_bg">
 
-        <LinearLayout
-            android:id="@+id/choose_start_stop"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+        <TextView
+            android:text="Start Stop"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <TextView
-                android:text="Start Stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textStyle="bold"
-                android:width="0px"
-                android:layout_weight="7"/>
+        <TextView
+            android:text="None"
+            android:id="@+id/journey_start_stop"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <TextView
-                android:text="None"
-                android:id="@+id/journey_start_stop"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="#000000"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:width="0px"
-                android:layout_weight="7"/>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/right_arrow_head"
-                android:width="0px"
+        <ImageView
+            android:src="@drawable/right_arrow_head"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
                 android:layout_weight="1"/>
-
-        </LinearLayout>
-
-
 
     </TableRow>
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip" />
 
     <TableRow
-        android:minHeight="30dp">
+        android:id="@+id/choose_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/row_blue_bg">
 
-        <LinearLayout
-            android:id="@+id/choose_service"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
 
-            <TextView
-                android:text="Service"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:width="0px"
-                android:layout_weight="7"/>
+        <TextView
+            android:text="Service"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <TextView
-                android:text="None"
-                android:id="@+id/journey_service"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="#000000"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:width="0px"
-                android:layout_weight="7"/>
+        <TextView
+            android:text="None"
+            android:id="@+id/journey_service"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/right_arrow_head"
-                android:width="0px"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
+        <ImageView
+            android:src="@drawable/right_arrow_head"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"/>
 
     </TableRow>
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip"/>
 
     <TableRow
-        android:minHeight="30dp">
+        android:id="@+id/choose_end_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/row_blue_bg">
 
-        <LinearLayout
-            android:id="@+id/choose_end_stop"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+        <TextView
+            android:text="End Stop"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <TextView
-                android:text="End Stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:width="0px"
-                android:layout_weight="7"/>
+        <TextView
+            android:text="None"
+            android:id="@+id/journey_end_stop"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
-            <TextView
-                android:text="None"
-                android:id="@+id/journey_end_stop"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="#000000"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:width="0px"
-                android:layout_weight="7"/>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/right_arrow_head"
-                android:width="0px"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
+        <ImageView
+            android:src="@drawable/right_arrow_head"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"/>
 
     </TableRow>
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip" />
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:text="Auto Sync"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"/>
 
         <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Auto sync"
             android:id="@+id/auto_sync_switch"
-            android:layout_column="0" />
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="7"
+            android:gravity="center_vertical" />
     </TableRow>
 
     <Button
