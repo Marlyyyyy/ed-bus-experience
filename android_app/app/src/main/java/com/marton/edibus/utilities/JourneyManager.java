@@ -24,7 +24,7 @@ public class JourneyManager {
     // The stop that is currently under review by the user
     private Stop reviewStop;
 
-    private JourneyStateEnum journeyState = JourneyStateEnum.NOT_STARTED;
+    private JourneyStateEnum journeyState = JourneyStateEnum.SETUP_INCOMPLETE;
 
     // The flag indicating whether the journey has been paused
     private boolean paused = true;

@@ -86,7 +86,7 @@ public class JourneyActivity extends RoboActionBarActivity {
     public void onEventMainThread(JourneyStateUpdatedEvent journeyStateUpdatedEvent){
 
         switch(journeyStateUpdatedEvent.getJourneyStateEnum()){
-            case SETUP_COMPLETED:
+            case READY_TO_START:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
                 break;
         }

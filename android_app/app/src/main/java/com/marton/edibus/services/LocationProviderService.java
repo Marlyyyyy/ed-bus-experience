@@ -43,8 +43,8 @@ public class LocationProviderService extends Service implements LocationListener
                 .build();
 
         this.locationRequest = new LocationRequest();
-        this.locationRequest.setInterval(8000);
-        this.locationRequest.setFastestInterval(3000);
+        this.locationRequest.setInterval(3000);
+        this.locationRequest.setFastestInterval(2000);
         this.locationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         this.googleApiClient.connect();

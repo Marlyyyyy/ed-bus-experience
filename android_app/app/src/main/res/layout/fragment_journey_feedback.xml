@@ -13,7 +13,9 @@
         android:layout_alignParentTop="true"/>
 
     <TableRow
-        android:minHeight="30dp">
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding">
 
         <LinearLayout
             android:clickable="true"
@@ -35,8 +37,12 @@
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:switchMinWidth="@dimen/switch_min_width"
                 android:width="0px"
-                android:layout_weight="7"/>
+                android:layout_weight="7"
+                android:showText="true"
+                android:textOn="Yes"
+                android:textOff="No"/>
 
         </LinearLayout>
 
@@ -51,7 +57,9 @@
         android:layout_alignParentTop="true"/>
 
     <TableRow
-        android:minHeight="30dp">
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding">
 
         <LinearLayout
             android:clickable="true"
@@ -89,21 +97,33 @@
         android:layout_alignParentTop="true"/>
 
     <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding">
+
+        <TextView
+            android:text="Did the driver greet?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:width="0px"
+            android:layout_weight="7"/>
 
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Auto sync"
+            android:switchMinWidth="@dimen/switch_min_width"
             android:id="@+id/auto_sync_switch"
-            android:layout_column="0" />
+            android:layout_column="0"
+            android:width="0px"
+            android:layout_weight="7"/>
     </TableRow>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue"
+        android:text="Save"
         android:id="@+id/journey_setup_complete"
         android:layout_column="0" />
 

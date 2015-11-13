@@ -80,14 +80,14 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop);
 
-        resources = getResources();
+        this.resources = getResources();
 
-        fragmentManager = getSupportFragmentManager();
+        this.fragmentManager = getSupportFragmentManager();
 
         // Read the data passed in for the activity
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            stopTypeEnum = (StopTypeEnum) extras.getSerializable("STOP");
+            this.stopTypeEnum = (StopTypeEnum) extras.getSerializable("STOP");
         }
 
         // Create the map
@@ -95,8 +95,8 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         mapFragment.getMapAsync(this);
 
         // Make the ListView items selectable
-        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Stop stop = stopsArrayList.get(position);
@@ -107,15 +107,15 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         });
 
         // Create Stop details dialog
-        stopDialog = new StopDialogFragment();
+        this.stopDialog = new StopDialogFragment();
         Bundle args = new Bundle();
         args.putSerializable("STOP_TYPE", stopTypeEnum);
-        stopDialog.setArguments(args);
+        this.stopDialog.setArguments(args);
     }
 
     private void selectStop(Stop stop){
-        Trip trip = journeyManager.getTrip();
-        switch (stopTypeEnum){
+        Trip trip = this.journeyManager.getTrip();
+        switch (this.stopTypeEnum){
             case START:
                 trip.setStartStop(stop);
                 break;
@@ -123,7 +123,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 trip.setEndStop(stop);
                 break;
         }
-        journeyManager.setTrip(trip);
+        this.journeyManager.setTrip(trip);
     }
 
     @Override
@@ -171,6 +171,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
             }
         });
 
+        // TODO: get actual coordinates
         final double latitude = 55.928042085586306;
         final double longitude = -3.1669341400265694;
 

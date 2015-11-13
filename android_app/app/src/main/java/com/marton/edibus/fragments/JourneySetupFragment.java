@@ -140,7 +140,7 @@ public class JourneySetupFragment extends RoboFragment{
             @Override
             public void onClick(View v) {
                 if (journeyManager.tripSetupComplete()){
-                    journeyStateUpdatedEvent.setJourneyStateEnum(JourneyStateEnum.SETUP_COMPLETED);
+                    journeyStateUpdatedEvent.setJourneyStateEnum(JourneyStateEnum.READY_TO_START);
                     eventBus.post(journeyStateUpdatedEvent);
                 }else{
                     SnackbarManager.showSnackbar(rootView, "error", "Setup is incomplete.", getResources());
