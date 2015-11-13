@@ -17,10 +17,10 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.StopSetupActivity;
-import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.StopTypeEnum;
-import com.marton.edibus.events.JourneyStateUpdatedEvent;
+import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.JourneyUpdatedEvent;
+import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.utilities.JourneyManager;
@@ -39,7 +39,7 @@ public class JourneySetupFragment extends RoboFragment{
 
     ServiceDialogFragment serviceDialog;
 
-    JourneyStateUpdatedEvent journeyStateUpdatedEvent;
+    TripActionFiredEvent tripActionFiredEvent;
 
     @Inject
     JourneyManager journeyManager;
@@ -86,7 +86,7 @@ public class JourneySetupFragment extends RoboFragment{
         this.serviceDialog = new ServiceDialogFragment();
 
         // Initialise event objects
-        this.journeyStateUpdatedEvent = new JourneyStateUpdatedEvent();
+        this.tripActionFiredEvent = new TripActionFiredEvent();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class JourneySetupFragment extends RoboFragment{
         super.onViewCreated(view, savedInstanceState);
 
         // Configure listeners for buttons and switches
-        startStopLayout.setOnClickListener(new View.OnClickListener() {
+        this.startStopLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -109,7 +109,7 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        serviceLayout.setOnClickListener(new View.OnClickListener() {
+        this.serviceLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -117,7 +117,7 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        endStopLayout.setOnClickListener(new View.OnClickListener() {
+        this.endStopLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -125,7 +125,7 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -136,12 +136,12 @@ public class JourneySetupFragment extends RoboFragment{
             }
         });
 
-        continueButton.setOnClickListener(new View.OnClickListener() {
+        this.continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (journeyManager.tripSetupComplete()){
-                    journeyStateUpdatedEvent.setJourneyStateEnum(JourneyStateEnum.READY_TO_START);
-                    eventBus.post(journeyStateUpdatedEvent);
+                    tripActionFiredEvent.setTripActionEnum(TripActionEnum.SETUP_COMPLETED);
+                    eventBus.post(tripActionFiredEvent);
                 }else{
                     SnackbarManager.showSnackbar(rootView, "error", "Setup is incomplete.", getResources());
                 }
@@ -161,28 +161,28 @@ public class JourneySetupFragment extends RoboFragment{
 
         Intent intent = new Intent(getActivity(), StopSetupActivity.class);
         intent.putExtra("STOP", stop);
-        startActivity(intent);
+        this.startActivity(intent);
     }
 
     // Takes care of refreshing the display of the current journey configuration
     private void refreshUserInterface(){
-        Stop currentStartStop = journeyManager.getTrip().getStartStop();
+        Stop currentStartStop = this.journeyManager.getTrip().getStartStop();
         if (currentStartStop != null){
-            journeyStartStopTextView.setText(String.valueOf(currentStartStop.getId()));
+            this.journeyStartStopTextView.setText(String.valueOf(currentStartStop.getId()));
         }
 
-        Stop currentEndStop = journeyManager.getTrip().getEndStop();
+        Stop currentEndStop = this.journeyManager.getTrip().getEndStop();
         if (currentEndStop != null){
-            journeyEndStopTextView.setText(String.valueOf(currentEndStop.getId()));
+            this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getId()));
         }
 
-        Service currentService = journeyManager.getTrip().getService();
+        Service currentService = this.journeyManager.getTrip().getService();
         if (currentService != null){
-            journeyServiceTextView.setText(String.valueOf(currentService.getId()));
+            this.journeyServiceTextView.setText(String.valueOf(currentService.getId()));
         }
     }
 
     public void onEvent(JourneyUpdatedEvent event){
-        refreshUserInterface();
+        this.refreshUserInterface();
     }
 }

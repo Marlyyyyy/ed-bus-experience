@@ -155,7 +155,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue"
+        android:text="Continue >"
         android:id="@+id/journey_setup_complete"
         android:layout_column="0" />
 

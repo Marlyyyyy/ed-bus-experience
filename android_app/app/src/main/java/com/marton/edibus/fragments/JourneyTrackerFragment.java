@@ -19,7 +19,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
+import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
+import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.services.LocationProcessorService;
@@ -47,11 +49,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private double latestUserLongitude;
 
-    ArrayList<Marker> stopMarkers;
+    private ArrayList<Marker> stopMarkers;
 
-    Marker userMarker;
+    private Marker userMarker;
 
-    GoogleMap googleMap;
+    private GoogleMap googleMap;
+
+    private TripActionFiredEvent tripActionFiredEvent;
 
     @Inject private JourneyManager journeyManager;
 
@@ -89,6 +93,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         // Register as a subscriber
         this.eventBus.register(this);
         this.stopMarkers = new ArrayList<>();
+
+        // Initialise event objects
+        this.tripActionFiredEvent = new TripActionFiredEvent();
     }
 
     @Override
@@ -121,6 +128,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 if (journeyManager.tripSetupComplete()) {
                     journeyManager.startTrip();
                     refreshButtons();
+
+                    // Move on to the feedback page
+                    tripActionFiredEvent.setTripActionEnum(TripActionEnum.TRIP_STARTED);
+                    eventBus.post(tripActionFiredEvent);
 
                     getActivity().startService(locationProviderService);
                     getActivity().startService(locationProcessorService);
