@@ -1,15 +1,20 @@
 package com.marton.edibus.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -102,7 +107,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 Stop stop = stopsArrayList.get(position);
                 selectStop(stop);
                 // listView.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright));
-                SnackbarManager.showSnackbar(view, "success", String.valueOf(stop.getId()), resources);
+                SnackbarManager.showSnackbar(view, String.valueOf(stop.getId()));
             }
         });
 
@@ -111,6 +116,31 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         Bundle args = new Bundle();
         args.putSerializable("STOP_TYPE", stopTypeEnum);
         this.stopDialog.setArguments(args);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        final ActionBar actionBar = this.getSupportActionBar();
+
+        if (actionBar != null){
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.actionbar_journey, null);
+            actionBar.setCustomView(view, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            TextView activityTitleTextView = (TextView) view.findViewById(R.id.activity_title);
+
+            switch (this.stopTypeEnum){
+                case START:
+                    activityTitleTextView.setText("Start Stop");
+                    break;
+                case END:
+                    activityTitleTextView.setText("End Stop");
+                    break;
+            }
+
+        }
     }
 
     private void selectStop(Stop stop){

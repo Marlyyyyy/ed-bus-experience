@@ -8,6 +8,8 @@ import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebClient;
 
+import java.util.Date;
+
 import de.greenrobot.event.EventBus;
 
 @Singleton
@@ -24,22 +26,33 @@ public class JourneyManager {
     // The stop that is currently under review by the user
     private Stop reviewStop;
 
-    private JourneyStateEnum journeyState = JourneyStateEnum.SETUP_INCOMPLETE;
+    private JourneyStateEnum journeyState;
 
     // The flag indicating whether the journey has been paused
-    private boolean paused = true;
+    private boolean paused;
 
     // The flag indicating whether the journey has been finished
-    private boolean finished = false;
+    private boolean finished;
 
     // The flag indicating whether the journey has been started
-    private boolean started = false;
+    private boolean started;
 
     // The flag indicating whether the trip should be uploaded automatically
-    private boolean automaticUpload = false;
+    private boolean automaticUpload;
 
     public JourneyManager(){
-        trip = new Trip();
+        this.setDefaults();
+    }
+
+    // Set the defaults for the Journey
+    public void setDefaults(){
+        this.trip = new Trip();
+        this.reviewStop = null;
+        this.journeyState = JourneyStateEnum.SETUP_INCOMPLETE;
+        this.paused = true;
+        this.finished = false;
+        this.started = false;
+        this.automaticUpload = false;
     }
 
     public JourneyStateEnum getJourneyState() {
@@ -96,11 +109,15 @@ public class JourneyManager {
         this.journeyState = JourneyStateEnum.RUNNING;
         this.paused = false;
         this.started = true;
+
+        this.trip.setStartTime(new Date());
     }
 
     public void finishTrip(){
         this.journeyState = JourneyStateEnum.FINISHED;
         this.finished = true;
+
+        this.trip.setEndTime(new Date());
     }
 
     // Returns a flag indicating if a trip has been set up
@@ -110,21 +127,11 @@ public class JourneyManager {
 
     public void uploadTrip(WebCallBack callback){
 
-        WebCallBack<Integer> serviceCallback = new WebCallBack<Integer>() {
-            @Override
-            public void onSuccess(Integer data) {
-                trip = new Trip();
-                trip.setJourneyId(data);
-
-                journeyState = JourneyStateEnum.UPLOADED;
-            }
-        };
-
         // Upload as a new journey, or as an existing one
         if (this.trip.getJourneyId() == 0){
-            busWebService.uploadNewTrip(this.trip, serviceCallback);
+            busWebService.uploadNewTrip(this.trip, callback);
         }else{
-            busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, serviceCallback);
+            busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, callback);
         }
     }
 }

@@ -25,19 +25,37 @@ public class MainActivity extends RoboActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        authenticationManager.deAuthenticate();
+        Thread welcomeThread = new Thread() {
 
-        Intent intent;
-        if (authenticationManager.userAuthenticated()){
-            intent = new Intent(this, ContentActivity.class);
-        }else{
-            intent = new Intent(this, AuthenticationActivity.class);
-        }
+            @Override
+            public void run() {
+                try {
+                    super.run();
+                    // sleep(10000);
+                } catch (Exception e) {
 
-        startActivity(intent);
+                } finally {
 
-        // No need to keep this activity anymore.
-        this.finish();
+                    authenticationManager.deAuthenticate();
+
+                    // Launch the right activity depending on if the user is logged in
+                    Intent intent;
+                    if (authenticationManager.userAuthenticated()){
+                        intent = new Intent(MainActivity.this, ContentActivity.class);
+                    }else{
+                        intent = new Intent(MainActivity.this, AuthenticationActivity.class);
+                    }
+
+                    startActivity(intent);
+
+                    // No need to keep this activity anymore.
+                    finish();
+                }
+            }
+        };
+        welcomeThread.start();
+
+
     }
 
     @Override

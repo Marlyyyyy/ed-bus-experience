@@ -9,14 +9,27 @@
     sothree:umanoShadowHeight="4dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:context="com.marton.edibus.activities.StopSetupActivity"
-    sothree:umanoScrollableView="@+id/listView"
-    >
+    sothree:umanoScrollableView="@+id/listView">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/map"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/tool_bar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -5,14 +5,107 @@ android:layout_height="fill_parent"
 xmlns:android="http://schemas.android.com/apk/res/android"
 tools:context="com.marton.edibus.activities.ContentActivity">
 
-<TableRow>
-    <Button
-        android:id="@+id/start_new_journey"
-        android:text="Start New Journey"
-        android:width="200px"
-        android:layout_width="wrap_content"
+
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/btnStyleOrange"
-        />
-</TableRow>
+        android:minHeight="@dimen/profile_statistics_row_min_height"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:text="Journeys"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:width="0px"
+            android:layout_weight="7"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/profile_statistics_row_min_height"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:text="Total Waiting Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:width="0px"
+            android:layout_weight="7"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/profile_statistics_row_min_height"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:text="Total Travelling Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:width="0px"
+            android:layout_weight="7"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/profile_statistics_row_min_height"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:text="Total Distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:width="0px"
+            android:layout_weight="7"/>
+
+    </TableRow>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
+
+    <TableRow
+        android:minHeight="30dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/start_new_journey"
+            android:text="Start New Journey"
+            android:width="400px"
+            style="@style/AppTheme.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+    </TableRow>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_centerVertical ="true"
+        android:layout_alignParentTop="true"/>
 </TableLayout>

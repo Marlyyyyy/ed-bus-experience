@@ -1,24 +1,31 @@
 package com.marton.edibus.fragments;
 
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
+import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.TripActionFiredEvent;
@@ -35,7 +42,7 @@ import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
-public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCallback {
+public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     private static final String TAG = JourneySetupFragment.class.getName();
 
@@ -56,6 +63,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     private GoogleMap googleMap;
 
     private TripActionFiredEvent tripActionFiredEvent;
+
+    private AlertDialog deleteJourneyDialog;
+
+    private AlertDialog continueJourneyDialog;
 
     @Inject private JourneyManager journeyManager;
 
@@ -86,6 +97,12 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @InjectView(R.id.finish_journey)
     Button finishJourneyButton;
 
+    @InjectView(R.id.delete_journey)
+    Button deleteJourneyButton;
+
+    @InjectView(R.id.upload_journey)
+    Button uploadJourneyButton;
+
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -96,6 +113,37 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Initialise event objects
         this.tripActionFiredEvent = new TripActionFiredEvent();
+
+        // Set up Delete Journey alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Are you sure?");
+        builder.setPositiveButton("Yes, delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                journeyManager.setDefaults();
+                getActivity().finish();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        this.deleteJourneyDialog = builder.create();
+
+        // Set up Continue Journey alert dialog
+        builder.setTitle("Add another trip?");
+        builder.setPositiveButton("Yes, let's continue", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                eventBus.post(new TripActionFiredEvent(TripActionEnum.NEW_TRIP));
+            }
+        });
+        builder.setNegativeButton("No, I'm finished", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                journeyManager.setDefaults();
+                getActivity().finish();
+                SnackbarManager.showSucess(getView(), "Thank you for your feedback!");
+            }
+        });
+        this.continueJourneyDialog = builder.create();
     }
 
     @Override
@@ -127,16 +175,19 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             public void onClick(View v) {
                 if (journeyManager.tripSetupComplete()) {
                     journeyManager.startTrip();
+
                     refreshButtons();
 
                     // Move on to the feedback page
                     tripActionFiredEvent.setTripActionEnum(TripActionEnum.TRIP_STARTED);
                     eventBus.post(tripActionFiredEvent);
 
+                    // Start the services
                     getActivity().startService(locationProviderService);
                     getActivity().startService(locationProcessorService);
+
                 } else {
-                    SnackbarManager.showSnackbar(getView(), "error", "Trip needs to be set up first!", getResources());
+                    SnackbarManager.showSnackbar(getView(), "Trip needs to be set up first!");
                 }
             }
         });
@@ -164,8 +215,54 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             public void onClick(View v) {
                 journeyManager.finishTrip();
                 refreshButtons();
+
+                // Stop the services
                 getActivity().stopService(locationProviderService);
                 getActivity().stopService(locationProcessorService);
+            }
+        });
+
+        this.uploadJourneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Uploading...");
+                progressDialog.show();
+
+                WebCallBack<Integer> callback = new WebCallBack<Integer>() {
+                    @Override
+                    public void onSuccess(Integer data) {
+                        Stop previousEndStop = journeyManager.getTrip().getEndStop();
+                        Trip trip = new Trip();
+                        trip.setJourneyId(data);
+                        trip.setStartStop(previousEndStop);
+
+                        journeyManager.setDefaults();
+                        journeyManager.setTrip(trip);
+
+                        continueJourneyDialog.show();
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String message){
+                        SnackbarManager.showSnackbar(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
+
+                        progressDialog.dismiss();
+                    }
+                };
+
+                journeyManager.uploadTrip(callback);
+            }
+        });
+
+        this.deleteJourneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                deleteJourneyDialog.show();
             }
         });
     }
@@ -180,12 +277,14 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        //this.googleMap.setOnMapClickListener(this);
         this.refreshMap();
     }
 
     // Sets all tracking related text-fields
     private void refreshDataInterface(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
+        // TODO: make them default on demand
         this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
         this.remainingDistanceTextView.setText(String.valueOf(trackerStateUpdatedEvent.getDistanceFromGoal()));
         this.travelledDistanceTextView.setText(String.valueOf(trackerStateUpdatedEvent.getDistanceFromStart()));
@@ -205,35 +304,45 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 this.pauseJourneyButton.setVisibility(View.GONE);
                 this.continueJourneyButton.setVisibility(View.GONE);
                 this.finishJourneyButton.setVisibility(View.GONE);
+                this.uploadJourneyButton.setVisibility(View.GONE);
+                this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
             case READY_TO_START:
                 this.startJourneyButton.setVisibility(View.VISIBLE);
                 this.pauseJourneyButton.setVisibility(View.GONE);
                 this.continueJourneyButton.setVisibility(View.GONE);
                 this.finishJourneyButton.setVisibility(View.GONE);
+                this.uploadJourneyButton.setVisibility(View.GONE);
+                this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
             case RUNNING:
                 this.startJourneyButton.setVisibility(View.GONE);
                 this.pauseJourneyButton.setVisibility(View.VISIBLE);
                 this.continueJourneyButton.setVisibility(View.GONE);
                 this.finishJourneyButton.setVisibility(View.GONE);
+                this.uploadJourneyButton.setVisibility(View.GONE);
+                this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
             case PAUSED:
                 this.startJourneyButton.setVisibility(View.GONE);
                 this.pauseJourneyButton.setVisibility(View.GONE);
                 this.continueJourneyButton.setVisibility(View.VISIBLE);
                 this.finishJourneyButton.setVisibility(View.VISIBLE);
+                this.uploadJourneyButton.setVisibility(View.GONE);
+                this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
             case FINISHED:
                 this.startJourneyButton.setVisibility(View.GONE);
                 this.pauseJourneyButton.setVisibility(View.GONE);
                 this.continueJourneyButton.setVisibility(View.GONE);
                 this.finishJourneyButton.setVisibility(View.GONE);
+                this.uploadJourneyButton.setVisibility(View.VISIBLE);
+                this.deleteJourneyButton.setVisibility(View.VISIBLE);
                 break;
             case UPLOADED:
                 break;
             default:
-                SnackbarManager.showSnackbar(getView(), "error", "Journey is in an undefined state!", getResources());
+                SnackbarManager.showSnackbar(getView(), "Journey is in an undefined state!");
                 break;
         }
     }
@@ -291,15 +400,14 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             this.userMarker = marker;
 
             // TODO: put in separate method. Detect when user moves the map.
-            /*// Change the camera position of the map
+
+            // Move view over the user's current position
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(this.userMarker.getPosition());
-
-            // Padding from edges of the map in pixels
-            int padding = 100;
+            int padding = 200;
             LatLngBounds bounds = builder.build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            googleMap.moveCamera(cameraUpdate);*/
+            googleMap.moveCamera(cameraUpdate);
         }
     }
 
@@ -313,15 +421,30 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             // Automatically upload trip and/or fire events
             if (this.journeyManager.getAutomaticUpload())
             {
-                SnackbarManager.showSnackbar(getView(), "success", "Uploading the trip...", getResources());
+                SnackbarManager.showSnackbar(getView(), "Uploading the trip...");
             }else
             {
-                SnackbarManager.showSnackbar(getView(), "success", "Please upload the trip...", getResources());
+                SnackbarManager.showSnackbar(getView(), "Please upload the trip...");
             }
         }
 
         // Refresh the UI
         this.refreshDataInterface(trackerStateUpdatedEvent);
         this.refreshMap();
+    }
+
+    public void onEventMainThread(TripActionFiredEvent tripActionFiredEvent){
+        switch (tripActionFiredEvent.getTripActionEnum()){
+            case NEW_TRIP:
+                this.refreshButtons();
+                this.refreshButtons();
+                this.refreshDataInterface(new TrackerStateUpdatedEvent());
+                break;
+        }
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        SnackbarManager.showSnackbar(getView(), "Clicked the map!");
     }
 }

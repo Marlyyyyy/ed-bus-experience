@@ -31,7 +31,7 @@ public class TrackerStateUpdatedEvent {
 
     private int travellingTime;
 
-    private CurrentActivityEnum currentActivityEnum;
+    private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.WAITING;
 
     public CurrentActivityEnum getCurrentActivityEnum() {
         return currentActivityEnum;

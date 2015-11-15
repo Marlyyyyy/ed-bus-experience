@@ -1,24 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/stop_name" />
+    <TableRow
+        android:gravity="center"
+        android:minHeight="@dimen/stop_dialog_row_min_height">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/stop_distance" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name:" />
 
-    <Button
-        android:text="Select"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Theme.AppCompat.Light.NoActionBar"
-        android:id="@+id/stop_select"/>
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sample Stop Name"
+            android:id="@+id/stop_name" />
+
+    </TableRow>
+
+    <TableRow
+        android:gravity="center"
+        android:minHeight="@dimen/stop_dialog_row_min_height">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance:"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Same Stop Distance"
+            android:id="@+id/stop_distance" />
+
+    </TableRow>
+
+    <TableRow
+        android:gravity="center"
+        android:minHeight="@dimen/stop_dialog_row_min_height">
+
+        <Button
+            android:text="Select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/stop_select"/>
+
+    </TableRow>
+</TableLayout>

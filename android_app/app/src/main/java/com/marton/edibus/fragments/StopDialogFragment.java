@@ -40,15 +40,16 @@ public class StopDialogFragment extends RoboDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getDialog().setTitle("Stop Details");
         View view = inflater.inflate(R.layout.dialog_stop, container, false);
 
         // Read the type of the stop that the user is about to choose
         Bundle bundle = this.getArguments();
         this.stopTypeEnum = (StopTypeEnum) bundle.get("STOP_TYPE");
 
-        stopNameTextView = (TextView) view.findViewById(R.id.stop_name);
-        stopDistanceTextView = (TextView) view.findViewById(R.id.stop_distance);
-        stopSelectButton = (Button) view.findViewById(R.id.stop_select);
+        this.stopNameTextView = (TextView) view.findViewById(R.id.stop_name);
+        this.stopDistanceTextView = (TextView) view.findViewById(R.id.stop_distance);
+        this.stopSelectButton = (Button) view.findViewById(R.id.stop_select);
 
         this.stop = this.journeyManager.getReviewStop();
         this.stopNameTextView.setText(String.valueOf(this.stop.getName()));

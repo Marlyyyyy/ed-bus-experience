@@ -20,6 +20,7 @@ import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.JourneyUpdatedEvent;
+import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
@@ -143,7 +144,7 @@ public class JourneySetupFragment extends RoboFragment{
                     tripActionFiredEvent.setTripActionEnum(TripActionEnum.SETUP_COMPLETED);
                     eventBus.post(tripActionFiredEvent);
                 }else{
-                    SnackbarManager.showSnackbar(rootView, "error", "Setup is incomplete.", getResources());
+                    SnackbarManager.showSnackbar(rootView, "Setup is incomplete.");
                 }
             }
         });
@@ -184,5 +185,13 @@ public class JourneySetupFragment extends RoboFragment{
 
     public void onEvent(JourneyUpdatedEvent event){
         this.refreshUserInterface();
+    }
+
+    public void onEventMainThread(TripActionFiredEvent tripActionFiredEvent){
+        switch (tripActionFiredEvent.getTripActionEnum()){
+            case NEW_TRIP:
+                this.refreshUserInterface();
+                break;
+        }
     }
 }
