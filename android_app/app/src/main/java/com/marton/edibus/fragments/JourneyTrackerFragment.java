@@ -103,6 +103,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @InjectView(R.id.upload_journey)
     Button uploadJourneyButton;
 
+    @InjectView(R.id.elapsed_time)
+    TextView elapsedTimeTextView;
+
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -290,6 +293,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.travelledDistanceTextView.setText(String.valueOf(trackerStateUpdatedEvent.getDistanceFromStart()));
         this.waitingDurationTextView.setText(String.valueOf(trackerStateUpdatedEvent.getWaitingTime()));
         this.travellingDuration.setText(String.valueOf(trackerStateUpdatedEvent.getTravellingTime()));
+        this.elapsedTimeTextView.setText(String.valueOf(trackerStateUpdatedEvent.getWaitingTime() + trackerStateUpdatedEvent.getTravellingTime()));
 
         this.latestUserLatitude = trackerStateUpdatedEvent.getLatitude();
         this.latestUserLongitude = trackerStateUpdatedEvent.getLongitude();

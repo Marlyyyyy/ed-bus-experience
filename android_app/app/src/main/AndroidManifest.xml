@@ -53,10 +53,6 @@
         </activity>
 
         <service
-            android:name=".services.LocationProviderIntentService"
-            android:exported="false"/>
-
-        <service
             android:name=".services.LocationProviderService"
             android:exported="false"/>
 

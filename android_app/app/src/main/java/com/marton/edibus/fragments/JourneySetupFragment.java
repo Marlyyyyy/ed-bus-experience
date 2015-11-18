@@ -140,10 +140,10 @@ public class JourneySetupFragment extends RoboFragment{
         this.continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (journeyManager.tripSetupComplete()){
+                if (journeyManager.tripSetupComplete()) {
                     tripActionFiredEvent.setTripActionEnum(TripActionEnum.SETUP_COMPLETED);
                     eventBus.post(tripActionFiredEvent);
-                }else{
+                } else {
                     SnackbarManager.showSnackbar(rootView, "Setup is incomplete.");
                 }
             }
@@ -169,17 +169,23 @@ public class JourneySetupFragment extends RoboFragment{
     private void refreshUserInterface(){
         Stop currentStartStop = this.journeyManager.getTrip().getStartStop();
         if (currentStartStop != null){
-            this.journeyStartStopTextView.setText(String.valueOf(currentStartStop.getId()));
+            this.journeyStartStopTextView.setText(String.valueOf(currentStartStop.getName()));
+        }else{
+            this.journeyStartStopTextView.setText("None");
         }
 
         Stop currentEndStop = this.journeyManager.getTrip().getEndStop();
         if (currentEndStop != null){
-            this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getId()));
+            this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
+        }else{
+            this.journeyEndStopTextView.setText("None");
         }
 
         Service currentService = this.journeyManager.getTrip().getService();
         if (currentService != null){
-            this.journeyServiceTextView.setText(String.valueOf(currentService.getId()));
+            this.journeyServiceTextView.setText(String.valueOf(currentService.getName()));
+        }else{
+            this.journeyServiceTextView.setText("None");
         }
     }
 
