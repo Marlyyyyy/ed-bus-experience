@@ -13,36 +13,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.marton.edibus.R;
-import com.marton.edibus.models.Stop;
+import com.marton.edibus.models.Service;
 
 import java.util.ArrayList;
 
 
-public class StopAdapter extends BaseAdapter implements View.OnClickListener {
+public class ServiceAdapter extends BaseAdapter implements View.OnClickListener {
 
     private Activity activity;
-    private ArrayList stops;
-    private static LayoutInflater inflater = null;
-    public Resources res;
-    Stop stop = null;
+    private ArrayList services;
+    private LayoutInflater inflater = null;
+    public Resources resources;
+    Service service = null;
 
-    public StopAdapter(Activity activity, ArrayList stops, Resources resources) {
+    public ServiceAdapter(Activity activity, ArrayList services, Resources resources) {
 
         this.activity = activity;
-        this.stops = stops;
-        res = resources;
+        this.services = services;
+        this.resources = resources;
 
-        inflater = (LayoutInflater)activity.
+        this.inflater = (LayoutInflater)activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {
 
-        if(stops.size() <= 0){
+        if(this.services.size() <= 0){
             return 1;
         }
 
-        return stops.size();
+        return this.services.size();
     }
 
     public Object getItem(int position) {
@@ -53,32 +53,23 @@ public class StopAdapter extends BaseAdapter implements View.OnClickListener {
         return position;
     }
 
-    /********* Create a holder Class to contain inflated xml file elements *********/
-    public static class ViewHolder{
-
-        public TextView text;
-        public TextView text1;
-        public TextView textWide;
-        public ImageView image;
-
-    }
-
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view = convertView;
-        TextView text;
 
         if( convertView == null ){
-            //We must create a View:
-            view = inflater.inflate(R.layout.item_stop, null);
+            view = this.inflater.inflate(R.layout.item_service, null);
         }
 
-        text = (TextView) view.findViewById(R.id.text);
+        TextView nameTextView = (TextView) view.findViewById(R.id.name);
+        TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
 
-        stop = null;
-        stop = (Stop) stops.get(position);
 
-        text.setText(String.valueOf(stop.getId()));
+        this.service = null;
+        this.service = (Service) this.services.get(position);
+
+        nameTextView.setText(String.valueOf(this.service.getId()));
+        descriptionTextView.setText(String.valueOf(this.service.getDescription()));
 
         return view;
     }

@@ -47,15 +47,15 @@ public class ServiceDialogFragment extends RoboDialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_service, container, false);
 
-        serviceListView = (ListView) view.findViewById(R.id.service_list);
+        this.serviceListView = (ListView) view.findViewById(R.id.service_list);
 
         getDialog().setTitle("Select a service");
 
-        availableServicesNames = new ArrayList<>();
+        this.availableServicesNames = new ArrayList<>();
 
-        serviceAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, availableServicesNames);
-        serviceListView.setAdapter(serviceAdapter);
-        serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.serviceAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, this.availableServicesNames);
+        this.serviceListView.setAdapter(this.serviceAdapter);
+        this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -78,12 +78,12 @@ public class ServiceDialogFragment extends RoboDialogFragment {
             public void onSuccess(List<Service> services) {
                 for (int i=0; i<services.size(); i++){
                     availableServices = new ArrayList<>(services);
-                    serviceAdapter.add(String.valueOf(availableServices.get(i).getId()));
+                    serviceAdapter.add(String.valueOf(availableServices.get(i).getName()));
                 }
             }
         };
 
-        busWebService.getServicesForStop(journeyManager.getTrip().getStartStopId(), webCallBack);
+        this.busWebService.getServicesForStop(this.journeyManager.getTrip().getStartStopId(), webCallBack);
     }
 
     @Override

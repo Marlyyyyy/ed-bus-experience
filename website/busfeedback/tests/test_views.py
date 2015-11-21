@@ -201,3 +201,9 @@ class BusViewTestCase(TestCase):
 
         self.assertEqual(response_content['journeys'][0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")
 
+    def test_get_all_services(self):
+
+        response = self.client.get('/bus/api/get_all_services')
+        response_content = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_content), 1, "There should be 1 service returned")
+

@@ -152,4 +152,13 @@ def get_diary_for_user(request):
     return HttpResponse(json_journeys, content_type='application/json')
 
 
+@csrf_exempt
+def get_all_services(request):
+
+    services = Service.objects.all().order_by('name')
+    service_serliazer = ServiceSerializer(services, many=True)
+    json_services = JSONRenderer().render({"services": service_serliazer.data})
+
+    return HttpResponse(json_services, content_type='application/json')
+
 

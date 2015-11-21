@@ -31,31 +31,36 @@
     </LinearLayout>
 
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|top"
-            android:text="Stops"
-            android:textSize="16sp" />
+        <TableRow>
+            <ImageView
+                android:src="@drawable/bus_icon"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|top"
+                android:text="Services"
+                android:textSize="20sp" />
+        </TableRow>
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:padding="@dimen/activity_vertical_margin"
-            android:drawSelectorOnTop="false"
-            android:listSelector="@android:color/transparent"
-            android:choiceMode="singleChoice"
-            android:scrollbars="none" />
+        <TableRow>
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:padding="@dimen/activity_vertical_margin"
+                android:drawSelectorOnTop="false"
+                android:listSelector="@android:color/transparent"
+                android:choiceMode="singleChoice"
+                android:scrollbars="none" />
+        </TableRow>
 
-    </LinearLayout>
-
+    </TableLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

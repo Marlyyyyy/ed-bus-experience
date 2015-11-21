@@ -72,6 +72,36 @@ public class BusWebClient {
         });
     }
 
+    public void getAllServices(final WebCallBack<List<Service>> callback) {
+
+        String url = "/api/get_all_services";
+        client.get(getAbsoluteBusUrl(url), new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                Gson gson = new Gson();
+                Service[] serviceArray = new Service[0];
+                try {
+                    JSONArray serviceJsonArray = response.getJSONArray("services");
+                    serviceArray = gson.fromJson(serviceJsonArray.toString(), Service[].class);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Was unable to get the array of services from Json");
+                }
+                List<Service> serviceList = Arrays.asList(serviceArray);
+                callback.onSuccess(serviceList);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                callback.onFailure(statusCode, errorResponse.toString());
+            }
+        });
+    }
+
     public void getStopsForService(int id, final WebCallBack<List<Stop>> callback) {
 
         RequestParams parameters = new RequestParams();
