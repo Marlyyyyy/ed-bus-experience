@@ -9,7 +9,7 @@ import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
-import com.marton.edibus.utilities.DistanceCalculator;
+import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 
 import java.util.Timer;
@@ -30,7 +30,11 @@ public class LocationProcessorService extends RoboService {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    private TrackerStateUpdatedEvent previousTrackerStateUpdatedEvent;
+
     private TrackerStateUpdatedEvent trackerStateUpdatedEvent;
+
+    private long latestUpdateTime;
 
     private Timer timer;
 
@@ -74,35 +78,70 @@ public class LocationProcessorService extends RoboService {
         return null;
     }
 
-    public void onEvent(LocationUpdatedEvent locationUpdateEvent){
+    public void onEvent(LocationUpdatedEvent locationUpdatedEvent){
 
-        this.processLocationUpdate(locationUpdateEvent.getLatitude(), locationUpdateEvent.getLongitude());
+        this.processLocationUpdate(locationUpdatedEvent.getLatitude(), locationUpdatedEvent.getLongitude());
     }
 
     private void processLocationUpdate(double latitude, double longitude){
 
-        Stop endStop = this.journeyManager.getTrip().getEndStop();
-        double remainingDistance = DistanceCalculator.getDistanceBetweenPoints(
-                latitude, longitude, endStop.getLatitude(), endStop.getLongitude());
-
-        Stop startStop = this.journeyManager.getTrip().getStartStop();
-        double distanceFromStart = DistanceCalculator.getDistanceBetweenPoints(
-                latitude, longitude, startStop.getLatitude(), startStop.getLongitude());
-
-        switch (this.journeyManager.getJourneyState()){
-            case RUNNING:
-
-                this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
-                this.trackerStateUpdatedEvent.setDistanceFromStart(distanceFromStart);
-                this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
-                this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds*1000);
-        }
+        long currentUpdateTime = System.currentTimeMillis();
 
         this.trackerStateUpdatedEvent.setLatitude(latitude);
         this.trackerStateUpdatedEvent.setLongitude(longitude);
 
+        // Calculate the remaining distance
+        Stop endStop = this.journeyManager.getTrip().getEndStop();
+        double remainingDistance = GpsCalculator.getDistanceBetweenPoints(
+                latitude, longitude, endStop.getLatitude(), endStop.getLongitude()
+        );
+
+        switch (this.journeyManager.getJourneyState()){
+            case RUNNING:
+                this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
+                this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
+                this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds*1000);
+
+                // Calculate travelled distance
+                double pastDistanceDelta = 0.0;
+                if (this.previousTrackerStateUpdatedEvent != null){
+                    double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
+                    pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
+                            this.trackerStateUpdatedEvent.getLatitude(),
+                            this.trackerStateUpdatedEvent.getLongitude(),
+                            this.previousTrackerStateUpdatedEvent.getLatitude(),
+                            this.previousTrackerStateUpdatedEvent.getLongitude());
+                    this.trackerStateUpdatedEvent.setDistanceFromStart(previousDistanceFromStart + pastDistanceDelta);
+                }else{
+                    this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
+                }
+
+                // Calculate the current speed in km/h
+                if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
+                    long timeDelta = currentUpdateTime - this.latestUpdateTime;
+                    double speed = pastDistanceDelta/(timeDelta / 3600f);
+                    this.trackerStateUpdatedEvent.setCurrentSpeed(speed);
+                }
+
+                // Calculate the maximum speed
+                double currentSpeed = this.trackerStateUpdatedEvent.getCurrentSpeed();
+                if (currentSpeed > this.trackerStateUpdatedEvent.getMaximumSpeed()){
+                    this.trackerStateUpdatedEvent.setMaximumSpeed(currentSpeed);
+                }
+
+                // Calculate the average speed
+                if (this.currentActivityEnum == CurrentActivityEnum.TRAVELLING){
+                    this.trackerStateUpdatedEvent.setAverageSpeed(this.trackerStateUpdatedEvent.getDistanceFromStart()/this.trackerStateUpdatedEvent.getTravellingTime());
+                }
+        }
+
         // Check if the user has left their start-stop
-        if (distanceFromStart < START_STOP_DISTANCE_THRESHOLD){
+        Stop startStop = this.journeyManager.getTrip().getStartStop();
+        double passedDistance = GpsCalculator.getDistanceBetweenPoints(
+                latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
+        );
+
+        if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
             this.currentActivityEnum = CurrentActivityEnum.WAITING;
         }else{
             this.currentActivityEnum = CurrentActivityEnum.TRAVELLING;
@@ -110,9 +149,13 @@ public class LocationProcessorService extends RoboService {
 
         this.trackerStateUpdatedEvent.setCurrentActivityEnum(this.currentActivityEnum);
 
-        this.eventBus.post(trackerStateUpdatedEvent);
+        this.eventBus.post(this.trackerStateUpdatedEvent);
 
-        // If the user has arrived the their destination
+        // Store the current state for later
+        this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
+        this.latestUpdateTime = currentUpdateTime;
+
+        // If the user has arrived at their destination
         if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
             this.journeyManager.finishTrip();
         }

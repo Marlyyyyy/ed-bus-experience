@@ -1,7 +1,7 @@
 package com.marton.edibus.utilities;
 
 
-public class DistanceCalculator {
+public class GpsCalculator {
 
     // Returns the distance between two points in meters
     public static double getDistanceBetweenPoints(double firstLatitude, double firstLongitude, double secondLatitude, double secondLongitude){

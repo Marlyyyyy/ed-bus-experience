@@ -1,14 +1,15 @@
 from django.conf.urls import patterns, url
-from busfeedback.views import get_services_for_stop, get_closest_stops, upload_new_trip, get_diary_for_user,\
-    get_stops_for_service, get_all_services
+from busfeedback.views import ClosestStops, TripView, get_diary_for_user,\
+    StopsForServiceView, ServiceView, ServicesForStopView, StopsWithinRadius
 
 
 urlpatterns = patterns(
     '',
-    url(r'^api/get_services_for_stop$', get_services_for_stop, name='get_services_for_stop'),
-    url(r'^api/get_closest_stops', get_closest_stops, name='get_closest_stops'),
-    url(r'^api/get_stops_for_service', get_stops_for_service, name='get_stops_for_service'),
-    url(r'^api/upload_new_trip', upload_new_trip, name='upload_new_trip'),
-    url(r'^api/get_diary_for_user', get_diary_for_user, name='get_diary_for_user'),
-    url(r'^api/get_all_services', get_all_services, name='get_all_services'),
+    url(r'^api/services_for_stop/$', ServicesForStopView.as_view(), name='services_for_stop'),
+    url(r'^api/closest_stops/$', ClosestStops.as_view(), name='closest_stops'),
+    url(r'^api/stops_within_radius/$', StopsWithinRadius.as_view(), name='stops_within_radius'),
+    url(r'^api/stops_for_service/$', StopsForServiceView.as_view(), name='stops_for_service'),
+    url(r'^api/trip/$', TripView.as_view(), name='upload_new_trip'),
+    url(r'^api/get_diary_for_user/$', get_diary_for_user, name='get_diary_for_user'),
+    url(r'^api/service/$', ServiceView.as_view(), name='all_services'),
 )

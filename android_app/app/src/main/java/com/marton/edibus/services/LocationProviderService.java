@@ -44,7 +44,7 @@ public class LocationProviderService extends Service implements LocationListener
 
         this.locationRequest = new LocationRequest();
         this.locationRequest.setInterval(3000);
-        this.locationRequest.setFastestInterval(2000);
+        this.locationRequest.setFastestInterval(3000);
         this.locationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         this.googleApiClient.connect();
@@ -77,9 +77,6 @@ public class LocationProviderService extends Service implements LocationListener
     public void onLocationChanged(Location location) {
         this.locationUpdateEvent.setLatitude(location.getLatitude());
         this.locationUpdateEvent.setLongitude(location.getLongitude());
-
-        Toast.makeText(this, "Location update yaaay", Toast.LENGTH_LONG).show();
-
         this.eventBus.post(this.locationUpdateEvent);
     }
 

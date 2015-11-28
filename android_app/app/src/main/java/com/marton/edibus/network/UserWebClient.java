@@ -28,7 +28,7 @@ public class UserWebClient {
         parameters.put("password", password);
 
         String url = getAbsoluteUrl("/api/login/");
-        webClient.post(url, parameters, new JsonHttpResponseHandler() {
+        this.webClient.post(url, parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

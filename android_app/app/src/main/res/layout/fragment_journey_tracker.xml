@@ -253,7 +253,7 @@
             <Button
                 android:id="@+id/start_journey"
                 android:text="Start"
-                android:width="400px"
+                android:width="400dp"
                 style="@style/AppTheme.Dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -263,7 +263,7 @@
             <Button
                 android:id="@+id/pause_journey"
                 android:text="Stop"
-                android:width="400px"
+                android:width="400dp"
                 style="@style/btnStyleOrange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -273,7 +273,7 @@
             <Button
                 android:id="@+id/finish_journey"
                 android:text="End"
-                android:width="200px"
+                android:width="200dp"
                 style="@style/btnStyleOrange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -283,7 +283,7 @@
             <Button
                 android:id="@+id/continue_journey"
                 android:text="Continue"
-                android:width="200px"
+                android:width="200dp"
                 style="@style/btnStyleGreen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -293,7 +293,7 @@
             <Button
                 android:id="@+id/delete_journey"
                 android:text="Delete Journey"
-                android:width="200px"
+                android:width="200dp"
                 style="@style/btnStyleOrange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -303,7 +303,7 @@
             <Button
                 android:id="@+id/upload_journey"
                 android:text="Upload"
-                android:width="200px"
+                android:width="200dp"
                 style="@style/AppTheme.Dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

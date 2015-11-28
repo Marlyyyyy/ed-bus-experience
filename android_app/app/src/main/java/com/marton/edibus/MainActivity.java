@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import com.marton.edibus.activities.AuthenticationActivity;
 import com.marton.edibus.activities.ContentActivity;
+import com.marton.edibus.network.WebClient;
 import com.marton.edibus.utilities.AuthenticationManager;
 
 import roboguice.activity.RoboActivity;
@@ -19,6 +20,9 @@ public class MainActivity extends RoboActivity {
 
     @Inject
     AuthenticationManager authenticationManager;
+
+    @Inject
+    WebClient webClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +40,11 @@ public class MainActivity extends RoboActivity {
 
                 } finally {
 
-                    authenticationManager.deAuthenticate();
-
                     // Launch the right activity depending on if the user is logged in
                     Intent intent;
                     if (authenticationManager.userAuthenticated()){
+                        // Prepare the web client with the authentication token
+                        webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
                         intent = new Intent(MainActivity.this, ContentActivity.class);
                     }else{
                         intent = new Intent(MainActivity.this, AuthenticationActivity.class);
@@ -48,7 +52,7 @@ public class MainActivity extends RoboActivity {
 
                     startActivity(intent);
 
-                    // No need to keep this activity anymore.
+                    // No need to keep this activity any more.
                     finish();
                 }
             }

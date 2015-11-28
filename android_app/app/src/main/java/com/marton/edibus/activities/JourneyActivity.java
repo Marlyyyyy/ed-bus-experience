@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
 import com.marton.edibus.enums.JourneyTabEnum;
@@ -18,6 +19,7 @@ import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.fragments.JourneyFeedbackFragment;
 import com.marton.edibus.fragments.JourneySetupFragment;
 import com.marton.edibus.fragments.JourneyTrackerFragment;
+import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
 import de.greenrobot.event.EventBus;
@@ -31,12 +33,12 @@ public class JourneyActivity extends RoboActionBarActivity {
 
     private final String activityTitle = "Journey";
 
-    Toolbar toolbar;
-    ViewPager pager;
-    ViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence titles[] = {"Options", "Tracking", "Feedback"};
-    int numberOfTabs = titles.length;
+    private ViewPager pager;
+    private CharSequence titles[] = {"Options", "Tracking", "Feedback"};
+    private int numberOfTabs = titles.length;
+
+    @Inject
+    private JourneyManager journeyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +48,22 @@ public class JourneyActivity extends RoboActionBarActivity {
         // Register as a subscriber
         this.eventBus.register(this);
 
+        this.journeyManager.setDefaults();
+
         // Create The Toolbar and setting it as the Toolbar for the activity
-        this.toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
         // Configure sliding pages
-        this.adapter =  new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs){
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs) {
             @Override
-            public Fragment getItem(int position){
+            public Fragment getItem(int position) {
 
-                if(position == JourneyTabEnum.SETUP.ordinal())
-                {
+                if (position == JourneyTabEnum.SETUP.ordinal()) {
                     return new JourneySetupFragment();
-                }
-                else if(position == JourneyTabEnum.TRACKER.ordinal())
-                {
+                } else if (position == JourneyTabEnum.TRACKER.ordinal()) {
                     return new JourneyTrackerFragment();
-                }
-                else
-                {
+                } else {
                     return new JourneyFeedbackFragment();
                 }
             }
@@ -75,12 +74,12 @@ public class JourneyActivity extends RoboActionBarActivity {
         this.pager.setAdapter(adapter);
 
         // Assign the Sliding Tab Layout View
-        this.tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         // To make the Tabs Fixed set this true. This makes the tabs Space Evenly in Available width
-        this.tabs.setDistributeEvenly(true);
+        tabs.setDistributeEvenly(true);
 
         // Set Custom Color for the Scroll bar indicator of the Tab View
-        this.tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
@@ -88,7 +87,7 @@ public class JourneyActivity extends RoboActionBarActivity {
         });
 
         // Set the ViewPager For the SlidingTabsLayout
-        this.tabs.setViewPager(pager);
+        tabs.setViewPager(this.pager);
     }
 
     @Override

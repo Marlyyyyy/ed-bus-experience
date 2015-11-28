@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -33,10 +34,10 @@ public class BusWebClient {
 
     private static final String BASE_URL_BUS = "http://192.168.0.9:8000/bus";
 
-    private AsyncHttpClient client;
+    @Inject
+    private WebClient webClient;
 
     public BusWebClient(){
-        client = new AsyncHttpClient();
     }
 
     public void getServicesForStop(int id, final WebCallBack<List<Service>> callback) {
@@ -44,8 +45,8 @@ public class BusWebClient {
         RequestParams parameters = new RequestParams();
         parameters.put("id", id);
 
-        String url = "/api/get_services_for_stop";
-        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        String url = "/api/services_for_stop/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -74,8 +75,8 @@ public class BusWebClient {
 
     public void getAllServices(final WebCallBack<List<Service>> callback) {
 
-        String url = "/api/get_all_services";
-        client.get(getAbsoluteBusUrl(url), new JsonHttpResponseHandler() {
+        String url = "/api/service/";
+        this.webClient.get(getAbsoluteBusUrl(url), new RequestParams(), new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -107,8 +108,8 @@ public class BusWebClient {
         RequestParams parameters = new RequestParams();
         parameters.put("service_id", id);
 
-        String url = "/api/get_stops_for_service";
-        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        String url = "/api/stops_for_service/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -142,8 +143,43 @@ public class BusWebClient {
         parameters.put("longitude", longitude);
         parameters.put("number_of_stops", numberOfStops);
 
-        String url = "/api/get_closest_stops";
-        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        String url = "/api/closest_stops/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                Gson gson = new Gson();
+                JSONArray stopJsonArray = null;
+                try {
+                    stopJsonArray = response.getJSONArray("stops");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                // TODO: check for null
+                Stop[] stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
+                List<Stop> stopList = Arrays.asList(stopArray);
+                callback.onSuccess(stopList);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                callback.onFailure(statusCode, errorResponse.toString());
+            }
+        });
+    }
+
+    public void getStopsWithinRadius(double latitude, double longitude, double radius, final WebCallBack<List<Stop>> callback) {
+
+        RequestParams parameters = new RequestParams();
+        parameters.put("latitude", latitude);
+        parameters.put("longitude", longitude);
+        parameters.put("radius", radius);
+
+        String url = "/api/stops_within_radius/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -187,8 +223,8 @@ public class BusWebClient {
         String tripJson = gson.toJson(trip);
         parameters.put("trip", tripJson);
 
-        String url = "/api/upload_new_trip";
-        client.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        String url = "/api/trip/";
+        this.webClient.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -214,8 +250,8 @@ public class BusWebClient {
     public void getDiaryForUser(String username, WebCallBack<List<Journey>> callback){
 
         RequestParams parameters = new RequestParams();
-        String url = "/api/get_diary_for_user";
-        client.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+        String url = "/api/get_diary_for_user/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

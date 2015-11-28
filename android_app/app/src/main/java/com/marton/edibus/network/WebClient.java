@@ -12,18 +12,18 @@ public class WebClient {
     private AsyncHttpClient client;
 
     public WebClient(){
-        client = new AsyncHttpClient();
+        this.client = new AsyncHttpClient();
     }
 
     public void get(String url, RequestParams requestParameters, AsyncHttpResponseHandler responseHandler){
-        client.get(url, requestParameters, responseHandler);
+        this.client.get(url, requestParameters, responseHandler);
     }
 
     public void post(String url, RequestParams requestParameters, AsyncHttpResponseHandler responseHandler){
-        client.post(url, requestParameters, responseHandler);
+        this.client.post(url, requestParameters, responseHandler);
     }
 
     public void setAuthenticationToken(String token){
-        client.addHeader("Authorization", "JWT " + token);
+        this.client.addHeader("Authorization", "JWT " + token);
     }
 }

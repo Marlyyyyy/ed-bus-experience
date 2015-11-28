@@ -27,6 +27,10 @@ public class TrackerStateUpdatedEvent {
 
     private double currentSpeed;
 
+    private double maximumSpeed;
+
+    private double averageSpeed;
+
     private int waitingTime;
 
     private int travellingTime;
@@ -95,5 +99,33 @@ public class TrackerStateUpdatedEvent {
 
     public void setCurrentSpeed(double currentSpeed) {
         this.currentSpeed = currentSpeed;
+    }
+
+    public double getMaximumSpeed() {
+        return maximumSpeed;
+    }
+
+    public void setMaximumSpeed(double maximumSpeed) {
+        this.maximumSpeed = maximumSpeed;
+    }
+
+    public double getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public void setAverageSpeed(double averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
+    public void copyValuesFrom(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
+        this.latitude = trackerStateUpdatedEvent.getLatitude();
+        this.longitude = trackerStateUpdatedEvent.getLongitude();
+        this.distanceFromGoal = trackerStateUpdatedEvent.getDistanceFromGoal();
+        this.distanceFromStart = trackerStateUpdatedEvent.getDistanceFromStart();
+        this.currentSpeed = trackerStateUpdatedEvent.getCurrentSpeed();
+        this.maximumSpeed = trackerStateUpdatedEvent.getMaximumSpeed();
+        this.averageSpeed = trackerStateUpdatedEvent.getAverageSpeed();
+        this.waitingTime = trackerStateUpdatedEvent.getWaitingTime();
+        this.travellingTime = trackerStateUpdatedEvent.getTravellingTime();
     }
 }

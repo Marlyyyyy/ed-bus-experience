@@ -19,7 +19,6 @@ import com.marton.edibus.utilities.JourneyManager;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboDialogFragment;
-import roboguice.inject.InjectView;
 
 
 public class StopDialogFragment extends RoboDialogFragment {
@@ -27,15 +26,12 @@ public class StopDialogFragment extends RoboDialogFragment {
     private EventBus eventBus = EventBus.getDefault();
 
     @Inject
-    JourneyManager journeyManager;
+    private JourneyManager journeyManager;
 
-    StopTypeEnum stopTypeEnum;
+    private StopTypeEnum stopTypeEnum;
+    private boolean serviceSelected;
 
-    TextView stopNameTextView;
-    TextView stopDistanceTextView;
-    Button stopSelectButton;
-
-    public Stop stop;
+    private Stop stop;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,23 +42,21 @@ public class StopDialogFragment extends RoboDialogFragment {
         // Read the type of the stop that the user is about to choose
         Bundle bundle = this.getArguments();
         this.stopTypeEnum = (StopTypeEnum) bundle.get("STOP_TYPE");
+        this.serviceSelected = (boolean) bundle.get("SERVICE_SELECTED");
 
-        this.stopNameTextView = (TextView) view.findViewById(R.id.stop_name);
-        this.stopDistanceTextView = (TextView) view.findViewById(R.id.stop_distance);
-        this.stopSelectButton = (Button) view.findViewById(R.id.stop_select);
+
+        TextView stopNameTextView = (TextView) view.findViewById(R.id.stop_name);
+        TextView stopDistanceTextView = (TextView) view.findViewById(R.id.stop_distance);
+        Button stopSelectButton = (Button) view.findViewById(R.id.stop_select);
 
         this.stop = this.journeyManager.getReviewStop();
-        this.stopNameTextView.setText(String.valueOf(this.stop.getName()));
-        this.stopDistanceTextView.setText(String.valueOf(this.stop.getDistance()));
+        stopNameTextView.setText(String.valueOf(this.stop.getName()));
+        stopDistanceTextView.setText(String.valueOf(this.stop.getDistance()));
 
-        this.stopSelectButton.setOnClickListener(new View.OnClickListener() {
+        stopSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectStop(stop);
-
-                // Close down the activity
-                Activity currentActivity = getActivity();
-                currentActivity.finish();
             }
         });
 
@@ -85,9 +79,21 @@ public class StopDialogFragment extends RoboDialogFragment {
         switch (this.stopTypeEnum){
             case START:
                 trip.setStartStop(stop);
+
+                if (this.serviceSelected){
+
+                }else{
+                    // Close down the activity
+                    Activity currentActivity = getActivity();
+                    currentActivity.finish();
+                }
                 break;
             case END:
                 trip.setEndStop(stop);
+
+                // Close down the activity
+                Activity currentActivity = getActivity();
+                currentActivity.finish();
                 break;
         }
         this.journeyManager.setTrip(trip);

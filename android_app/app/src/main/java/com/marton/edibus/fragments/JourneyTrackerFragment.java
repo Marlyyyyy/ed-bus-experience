@@ -36,7 +36,13 @@ import com.marton.edibus.services.LocationProviderService;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
@@ -67,6 +73,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     private AlertDialog deleteJourneyDialog;
 
     private AlertDialog continueJourneyDialog;
+
+    private DecimalFormat decimalFormat;
+
+    private DateFormat dateFormat;
 
     @Inject private JourneyManager journeyManager;
 
@@ -106,6 +116,12 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @InjectView(R.id.elapsed_time)
     TextView elapsedTimeTextView;
 
+    @InjectView(R.id.average_speed)
+    TextView averageSpeedTextView;
+
+    @InjectView(R.id.maximum_speed)
+    TextView maximumSpeedTextView;
+
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -116,6 +132,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Initialise event objects
         this.tripActionFiredEvent = new TripActionFiredEvent();
+
+        // Set up text view formats
+        this.decimalFormat = new DecimalFormat(".##");
+        this.dateFormat = new SimpleDateFormat("mm:ss");
 
         // Set up Delete Journey alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -289,11 +309,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // TODO: make them default on demand
         this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
-        this.remainingDistanceTextView.setText(String.valueOf(trackerStateUpdatedEvent.getDistanceFromGoal()));
-        this.travelledDistanceTextView.setText(String.valueOf(trackerStateUpdatedEvent.getDistanceFromStart()));
-        this.waitingDurationTextView.setText(String.valueOf(trackerStateUpdatedEvent.getWaitingTime()));
-        this.travellingDuration.setText(String.valueOf(trackerStateUpdatedEvent.getTravellingTime()));
-        this.elapsedTimeTextView.setText(String.valueOf(trackerStateUpdatedEvent.getWaitingTime() + trackerStateUpdatedEvent.getTravellingTime()));
+        this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()));
+        this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()));
+        this.waitingDurationTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime()));
+        this.travellingDuration.setText(this.dateFormat.format(trackerStateUpdatedEvent.getTravellingTime()));
+        this.elapsedTimeTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime() + trackerStateUpdatedEvent.getTravellingTime()));
+        this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed()));
+        this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed()));
 
         this.latestUserLatitude = trackerStateUpdatedEvent.getLatitude();
         this.latestUserLongitude = trackerStateUpdatedEvent.getLongitude();

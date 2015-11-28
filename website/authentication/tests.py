@@ -12,6 +12,7 @@ class AuthenticationViewTestCase(TestCase):
     def setUp(self):
         self.response = self.client.post("/auth/api/accounts/", {"username": "Heffalumps", "password": "Woozles"})
 
+
     def test_create_account(self):
         response_content = json.loads(self.response.content.decode('utf-8'))
         self.assertEqual("Heffalumps", response_content["username"], "Response should contain the username.")

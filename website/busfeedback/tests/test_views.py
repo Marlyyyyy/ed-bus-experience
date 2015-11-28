@@ -11,10 +11,19 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 class BusViewTestCase(TestCase):
     client = Client()
+    token = None
 
     def setUp(self):
         self.user_latitude = 27.710184
         self.user_longitude = 85.323429
+
+        # Create new user
+        self.response = self.client.post("/auth/api/accounts/", {"username": "Heffalumps", "password": "Woozles"})
+
+        # Set the authentication token
+        response = self.client.post("/auth/api/get_token/", {"username": "Heffalumps", "password": "Woozles"})
+        response_content = json.loads(response.content.decode('utf-8'))
+        self.token = response_content["token"]
 
         # Each stop is farther and farther from the user
         closest_stop = Stop.objects.create(stop_id=95624797, latitude=27.710298, longitude=85.322099)
@@ -31,13 +40,13 @@ class BusViewTestCase(TestCase):
 
     def test_get_services_for_stop(self):
         stop = Stop.objects.get(stop_id=95624797)
-        response = self.client.get('/bus/api/get_services_for_stop', {'id': stop.id})
+        response = self.client.get('/bus/api/services_for_stop/', {'id': stop.id}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual("Clovenstone - Mayfield", response_content["services"][0]["description"], "Response should contain the description of the service.")
 
     def test_get_stops_for_service(self):
         service = Service.objects.get(name="3")
-        response = self.client.get('/bus/api/get_stops_for_service', {'service_id': service.id})
+        response = self.client.get('/bus/api/stops_for_service/', {'service_id': service.id}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_content), 1, "There should be 3 stops returnd for this service")
 
@@ -47,7 +56,7 @@ class BusViewTestCase(TestCase):
             'longitude': self.user_longitude,
             'number_of_stops': 2
         }
-        response = self.client.get('/bus/api/get_closest_stops', post_parameters)
+        response = self.client.get('/bus/api/closest_stops/', post_parameters, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_content["stops"]), 2, "Only two stops should be returned.")
@@ -78,14 +87,14 @@ class BusViewTestCase(TestCase):
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
         # Upload our first trip of a new journey.
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        response = self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         first_response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Journey.objects.all().count(), 1, "There should only be one journey in the database.")
 
         # Upload our first trip of a new journey.
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        response = self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         second_response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
@@ -101,10 +110,10 @@ class BusViewTestCase(TestCase):
         trip['end_time'] = end_time
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
-        response = self.client.post('/bus/api/upload_new_trip',
+        response = self.client.post('/bus/api/trip/',
                                     {'trip': trip_json,
-                                     'journey_id': second_response_content['journey_id']
-                                     })
+                                     'journey_id': second_response_content['journey_id']},
+                                    HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         third_response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response.status_code, 200)
@@ -130,14 +139,12 @@ class BusViewTestCase(TestCase):
         )
 
         # Upload our first trip of a new journey while logged in.
-        user = User.objects.create_user(username="Heffalumps", password="Woozles")
-        self.client.login(username="Heffalumps", password="Woozles")
+        self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
 
-        self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
-
+        user = User.objects.latest('username')
         user_journeys = user.journeys.all()
 
-        self.assertEqual(user_journeys.count(), 1, "The user should have one journey in their diary.")
+        self.assertEqual(user_journeys.count(), 3, "The user should have now three journeys in their diary.")
 
     def test_upload_bad_trip(self):
         start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
@@ -151,7 +158,7 @@ class BusViewTestCase(TestCase):
         # Bad Start Stop
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        response = self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertContains(response, "No existing stop could be found with ID", status_code=400)
 
         # Bad End Stop
@@ -159,7 +166,7 @@ class BusViewTestCase(TestCase):
         trip['end_stop_id'] = 0
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        response = self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertContains(response, "No existing stop could be found with ID", status_code=400)
 
         # Bad Service
@@ -167,7 +174,7 @@ class BusViewTestCase(TestCase):
         trip['service_id'] = 0
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
-        response = self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        response = self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertContains(response, "No existing service could be found with ID", status_code=400)
 
     def test_get_diary_for_user(self):
@@ -192,18 +199,16 @@ class BusViewTestCase(TestCase):
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
 
         # Upload our first trip of a new journey while logged in.
-        user = User.objects.create_user(username="Heffalumps", password="Woozles")
-        self.client.login(username="Heffalumps", password="Woozles")
-        self.client.post('/bus/api/upload_new_trip', {'trip': trip_json})
+        self.client.post('/bus/api/trip/', {'trip': trip_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
 
-        response = self.client.get('/bus/api/get_diary_for_user', {'username': 'Heffalumps'})
+        response = self.client.get('/bus/api/get_diary_for_user/', {'username': 'Heffalumps'}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response_content['journeys'][0]['trips'][0]['rating'], 4.5, "The only uploaded trip should have a rating of 4.5")
 
     def test_get_all_services(self):
 
-        response = self.client.get('/bus/api/get_all_services')
+        response = self.client.get('/bus/api/service/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_content), 1, "There should be 1 service returned")
 
