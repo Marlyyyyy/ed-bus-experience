@@ -35,7 +35,7 @@ public class JourneyActivity extends RoboActionBarActivity {
 
     private ViewPager pager;
     private CharSequence titles[] = {"Options", "Tracking", "Feedback"};
-    private int numberOfTabs = titles.length;
+    private int numberOfTabs = this.titles.length;
 
     @Inject
     private JourneyManager journeyManager;
@@ -53,7 +53,7 @@ public class JourneyActivity extends RoboActionBarActivity {
         setSupportActionBar(toolbar);
 
         // Configure sliding pages
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), this.titles, this.numberOfTabs) {
             @Override
             public Fragment getItem(int position) {
 

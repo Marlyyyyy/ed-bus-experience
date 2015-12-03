@@ -1,0 +1,165 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:alpha="0.5"
+            android:src="@drawable/content_activity_header"
+            android:scaleType="centerCrop"/>
+
+        <TableLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="120dp"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            tools:context="com.marton.edibus.activities.ContentActivity">
+
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/profile_statistics_row_min_height"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:text="Journeys"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/jet"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:text="5"
+                    android:id="@+id/journeys"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/profile_statistics_row_min_height"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:text="Total Waiting Time"
+                    android:textColor="@color/jet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+                <TextView
+                    android:text="45:32"
+                    android:id="@+id/total_waiting_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/profile_statistics_row_min_height"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:text="Total Travelling Time"
+                    android:textColor="@color/jet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+                <TextView
+                    android:text="25:32"
+                    android:id="@+id/total_travelling_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/profile_statistics_row_min_height"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:text="Total Distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/jet"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+                <TextView
+                    android:text="120 km"
+                    android:id="@+id/total_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:width="0px"
+                    android:layout_weight="7"/>
+
+            </TableRow>
+
+        </TableLayout>
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/start_new_journey"
+        android:text="Start New Journey"
+        android:width="400dp"
+        style="@style/AppTheme.Dark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

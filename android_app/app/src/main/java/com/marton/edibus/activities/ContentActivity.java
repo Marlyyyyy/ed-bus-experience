@@ -1,80 +1,63 @@
 package com.marton.edibus.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.utilities.JourneyManager;
-import com.marton.edibus.utilities.StatisticsManager;
+import com.marton.edibus.adapters.ViewPagerAdapter;
+import com.marton.edibus.fragments.DashboardFragment;
+import com.marton.edibus.fragments.FavouritesFragment;
+import com.marton.edibus.widgets.SlidingTabLayout;
 
 import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.InjectView;
 
 public class ContentActivity extends RoboActionBarActivity {
 
     private static final String TAG = ContentActivity.class.getName();
 
-    @Inject
-    private JourneyManager journeyManager;
-
-    @InjectView(R.id.start_new_journey)
-    private Button newJourneyButton;
-
-    @InjectView(R.id.journeys)
-    private TextView journeysTextView;
-
-    @InjectView(R.id.total_waiting_time)
-    private TextView totalWaitingTimeTextView;
-
-    @InjectView(R.id.total_travelling_time)
-    private TextView totalTravellingTimeTextView;
+    private ViewPager pager;
+    private CharSequence titles[] = {"Dashboard", "Favourites"};
+    private int numberOfTabs = this.titles.length;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
 
-        this.newJourneyButton.setOnClickListener(new View.OnClickListener() {
-
+        // Configure sliding pages
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), this.titles, this.numberOfTabs) {
             @Override
-            public void onClick(View v) {
-                journeyManager.setDefaults();
-                startNewJourney();
+            public Fragment getItem(int position) {
+
+                if (position == 0) {
+                    return new DashboardFragment();
+                } else{
+                    return new FavouritesFragment();
+                }
+            }
+        };
+
+        // Assign ViewPager View and set the adapter
+        this.pager = (ViewPager) findViewById(R.id.pager);
+        this.pager.setAdapter(adapter);
+
+        // Assign the Sliding Tab Layout View
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        // To make the Tabs Fixed set this true. This makes the tabs Space Evenly in Available width
+        tabs.setDistributeEvenly(true);
+
+        // Set Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        this.refreshUserInterface();
-    }
-
-    private void refreshUserInterface(){
-
-        // Fill in statistics
-        int journeys = StatisticsManager.readJourneysFromSharedPreferences();
-        int totalWaitingTime = StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
-        int totalTravellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
-
-        this.journeysTextView.setText(String.valueOf(journeys));
-        this.totalWaitingTimeTextView.setText(String.valueOf(totalWaitingTime));
-        this.totalTravellingTimeTextView.setText(String.valueOf(totalTravellingTime));
-    }
-
-    public void startNewJourney(){
-        Log.d(TAG, "Start new journey");
-
-        Intent intent = new Intent(this, JourneyActivity.class);
-        startActivity(intent);
+        // Set the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(this.pager);
     }
 
     @Override
