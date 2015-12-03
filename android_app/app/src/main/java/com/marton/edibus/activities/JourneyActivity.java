@@ -31,7 +31,7 @@ public class JourneyActivity extends RoboActionBarActivity {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    private final String activityTitle = "Journey";
+    private final String activityTitle = "New Journey";
 
     private ViewPager pager;
     private CharSequence titles[] = {"Options", "Tracking", "Feedback"};
@@ -47,8 +47,6 @@ public class JourneyActivity extends RoboActionBarActivity {
 
         // Register as a subscriber
         this.eventBus.register(this);
-
-        this.journeyManager.setDefaults();
 
         // Create The Toolbar and setting it as the Toolbar for the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);

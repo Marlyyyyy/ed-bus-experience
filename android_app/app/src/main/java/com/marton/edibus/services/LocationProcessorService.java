@@ -9,6 +9,7 @@ import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
+import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 
@@ -102,7 +103,13 @@ public class LocationProcessorService extends RoboService {
                 this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
                 this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds*1000);
 
-                // Calculate travelled distance
+                // Update the waiting times on the trip
+                Trip trip = this.journeyManager.getTrip();
+                trip.setWaitDuration(this.waitingSeconds * 1000);
+                trip.setTravelDuration(this.travellingSeconds * 1000);
+                this.journeyManager.setTrip(trip);
+
+                // Calculate travelled distance in metres
                 double pastDistanceDelta = 0.0;
                 if (this.previousTrackerStateUpdatedEvent != null){
                     double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
@@ -116,22 +123,23 @@ public class LocationProcessorService extends RoboService {
                     this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
                 }
 
-                // Calculate the current speed in km/h
+                // Calculate the current speed in metre per second
                 if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
-                    long timeDelta = currentUpdateTime - this.latestUpdateTime;
-                    double speed = pastDistanceDelta/(timeDelta / 3600f);
+                    long timeDelta = (currentUpdateTime - this.latestUpdateTime)/1000;
+                    double speed = pastDistanceDelta/timeDelta;
                     this.trackerStateUpdatedEvent.setCurrentSpeed(speed);
                 }
 
-                // Calculate the maximum speed
+                // Calculate the maximum speed in metre per second
                 double currentSpeed = this.trackerStateUpdatedEvent.getCurrentSpeed();
                 if (currentSpeed > this.trackerStateUpdatedEvent.getMaximumSpeed()){
                     this.trackerStateUpdatedEvent.setMaximumSpeed(currentSpeed);
                 }
 
-                // Calculate the average speed
+                // Calculate the average speed in metre per second
                 if (this.currentActivityEnum == CurrentActivityEnum.TRAVELLING){
-                    this.trackerStateUpdatedEvent.setAverageSpeed(this.trackerStateUpdatedEvent.getDistanceFromStart()/this.trackerStateUpdatedEvent.getTravellingTime());
+                    double averageSpeed = this.trackerStateUpdatedEvent.getDistanceFromStart()/(this.trackerStateUpdatedEvent.getTravellingTime()/1000);
+                    this.trackerStateUpdatedEvent.setAverageSpeed(averageSpeed);
                 }
         }
 

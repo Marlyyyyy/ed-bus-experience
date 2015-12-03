@@ -16,7 +16,7 @@ public class UserWebClient {
 
     private static final String TAG = UserWebClient.class.getName();
 
-    private static final String BASE_URL_AUTHENTICATION = "http://192.168.0.9:8000/auth";
+    private static final String BASE_URL_AUTHENTICATION = "http://192.168.0.5:8000/auth";
 
     @Inject
     private WebClient webClient;

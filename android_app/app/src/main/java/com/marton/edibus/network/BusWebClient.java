@@ -32,7 +32,7 @@ public class BusWebClient {
 
     private static final String TAG = BusWebClient.class.getName();
 
-    private static final String BASE_URL_BUS = "http://192.168.0.9:8000/bus";
+    private static final String BASE_URL_BUS = "http://192.168.0.5:8000/bus";
 
     @Inject
     private WebClient webClient;

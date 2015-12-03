@@ -148,6 +148,8 @@ public class JourneySetupFragment extends RoboFragment{
                 }
             }
         });
+
+        this.refreshUserInterface();
     }
 
     @Override

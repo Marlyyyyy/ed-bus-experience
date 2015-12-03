@@ -2,6 +2,7 @@ package com.marton.edibus.utilities;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.marton.edibus.App;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.models.Stop;
@@ -125,13 +126,28 @@ public class JourneyManager {
         return this.trip.getStartStopId() != 0 && this.trip.getEndStopId() != 0 && this.trip.getServiceId() != 0;
     }
 
-    public void uploadTrip(WebCallBack callback){
+    public void saveTrip(WebCallBack<Integer> callback){
+
+        // Read current statistics
+        int journeys = StatisticsManager.readJourneysFromSharedPreferences();
+        int totalWaitingTime = StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
+        int totalTravellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
 
         // Upload as a new journey, or as an existing one
         if (this.trip.getJourneyId() == 0){
-            busWebService.uploadNewTrip(this.trip, callback);
+            this.busWebService.uploadNewTrip(this.trip, callback);
+            journeys++;
         }else{
-            busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, callback);
+            this.busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, callback);
         }
+
+        // Store user statistics
+
+        totalWaitingTime += this.trip.getWaitDuration();
+        totalTravellingTime += this.trip.getTravelDuration();
+
+        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.JOURNEYS_KEY, String.valueOf(journeys));
+        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_WAITING_TIME_KEY, String.valueOf(totalWaitingTime));
+        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_TIME_KEY, String.valueOf(totalTravellingTime));
     }
 }

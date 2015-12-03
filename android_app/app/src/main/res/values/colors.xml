@@ -16,6 +16,8 @@
     <color name="ColorPrimaryDark">#bb004b69</color>
     <color name="tabsScrollColor">#005ca2</color>
 
+    <color name="row_division_color">#2f000000</color>
+
     # ListView item colours
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>

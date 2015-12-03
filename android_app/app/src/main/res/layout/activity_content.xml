@@ -4,11 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/content_activity_header"
-        android:scaleType="fitStart"/>
 
     <TableLayout
         xmlns:tools="http://schemas.android.com/tools"
@@ -33,7 +28,17 @@
                 android:gravity="left"
                 android:textStyle="bold"
                 android:width="0px"
-                android:layout_weight="7"/>
+                android:layout_weight="1"/>
+
+            <TextView
+                android:text="5"
+                android:id="@+id/journeys"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="1"/>
 
         </TableRow>
 
@@ -47,6 +52,16 @@
 
             <TextView
                 android:text="Total Waiting Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+            <TextView
+                android:text="45:32"
+                android:id="@+id/total_waiting_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
@@ -73,6 +88,16 @@
                 android:width="0px"
                 android:layout_weight="7"/>
 
+            <TextView
+                android:text="25:32"
+                android:id="@+id/total_travelling_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
         </TableRow>
 
         <TableRow
@@ -85,6 +110,16 @@
 
             <TextView
                 android:text="Total Distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:width="0px"
+                android:layout_weight="7"/>
+
+            <TextView
+                android:text="120 km"
+                android:id="@+id/total_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"

@@ -10,5 +10,13 @@
 
     <dimen name="stop_dialog_row_min_height">40dp</dimen>
 
+    <!-- TrackerFragment -->
+    <dimen name="tracker_fragment_small_row_min_height">15dp</dimen>
+    <dimen name="tracker_fragment_big_row_min_height">25dp</dimen>
+
+    <dimen name="tracker_fragment_very_small_text">8sp</dimen>
+    <dimen name="tracker_fragment_small_text">17sp</dimen>
+    <dimen name="tracker_fragment_big_text">25sp</dimen>
+
     <dimen name="switch_min_width">80dp</dimen>
 </resources>

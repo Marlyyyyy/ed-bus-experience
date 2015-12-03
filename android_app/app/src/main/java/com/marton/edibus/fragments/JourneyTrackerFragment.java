@@ -13,14 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
@@ -38,11 +36,8 @@ import com.marton.edibus.utilities.SnackbarManager;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
@@ -277,7 +272,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     }
                 };
 
-                journeyManager.uploadTrip(callback);
+                journeyManager.saveTrip(callback);
             }
         });
 
@@ -309,13 +304,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // TODO: make them default on demand
         this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
-        this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()));
-        this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()));
+        this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
+        this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
         this.waitingDurationTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime()));
         this.travellingDuration.setText(this.dateFormat.format(trackerStateUpdatedEvent.getTravellingTime()));
         this.elapsedTimeTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime() + trackerStateUpdatedEvent.getTravellingTime()));
-        this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed()));
-        this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed()));
+        this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
+        this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed() * 3.6) + "km/h");
 
         this.latestUserLatitude = trackerStateUpdatedEvent.getLatitude();
         this.latestUserLongitude = trackerStateUpdatedEvent.getLongitude();
@@ -393,8 +388,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     .anchor((float) 0.5, (float) 0.5)
                     .rotation(startStop.getOrientation());
 
-            Marker marker = this.googleMap.addMarker(markerOptions);
-            this.stopMarkers.add(marker);
+            this.googleMap.addMarker(markerOptions);
 
             // Add end-stop to the map
             markerOptions = new MarkerOptions()
@@ -404,8 +398,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     .anchor((float) 0.5, (float) 0.5)
                     .rotation(endStop.getOrientation());
 
-            marker = this.googleMap.addMarker(markerOptions);
-            this.stopMarkers.add(marker);
+            this.googleMap.addMarker(markerOptions);
 
             // Add user to the map
             if (this.latestUserLatitude == 0.0){
@@ -419,21 +412,15 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             markerOptions = new MarkerOptions()
                     .position(new LatLng(this.latestUserLatitude, this.latestUserLongitude))
                     .title("You")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user_marker))
                     .anchor((float) 0.5, (float) 0.5);
 
-            marker = this.googleMap.addMarker(markerOptions);
-            this.userMarker = marker;
+            this.userMarker = this.googleMap.addMarker(markerOptions);
 
             // TODO: put in separate method. Detect when user moves the map.
 
             // Move view over the user's current position
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            builder.include(this.userMarker.getPosition());
-            int padding = 200;
-            LatLngBounds bounds = builder.build();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            googleMap.moveCamera(cameraUpdate);
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(this.userMarker.getPosition(),15));
         }
     }
 
