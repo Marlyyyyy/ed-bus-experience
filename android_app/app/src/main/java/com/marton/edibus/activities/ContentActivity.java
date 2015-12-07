@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
 import com.marton.edibus.fragments.DashboardFragment;
-import com.marton.edibus.fragments.FavouritesFragment;
+import com.marton.edibus.fragments.DiaryFragment;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -18,7 +18,7 @@ public class ContentActivity extends RoboActionBarActivity {
     private static final String TAG = ContentActivity.class.getName();
 
     private ViewPager pager;
-    private CharSequence titles[] = {"Dashboard", "Favourites"};
+    private CharSequence titles[] = {"Dashboard", "Diary"};
     private int numberOfTabs = this.titles.length;
 
     @Override
@@ -34,7 +34,7 @@ public class ContentActivity extends RoboActionBarActivity {
                 if (position == 0) {
                     return new DashboardFragment();
                 } else{
-                    return new FavouritesFragment();
+                    return new DiaryFragment();
                 }
             }
         };

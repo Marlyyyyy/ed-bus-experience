@@ -47,7 +47,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.greenrobot.event.EventBus;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
@@ -57,8 +56,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     private StopTypeEnum stopTypeEnum;
 
-    private EventBus eventBus = EventBus.getDefault();
-
     private Resources resources;
 
     private final Activity context = this;
@@ -66,8 +63,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
     private Service selectedService;
 
     private Marker latestClickedMarker;
-
-    private Marker userMarker;
 
     private HashMap<Marker, Stop> markerStopHashMap = new HashMap<>();
 

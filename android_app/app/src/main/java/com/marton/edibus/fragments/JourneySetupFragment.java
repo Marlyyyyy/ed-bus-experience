@@ -80,9 +80,6 @@ public class JourneySetupFragment extends RoboFragment{
 
         this.fragmentManager = getFragmentManager();
 
-        // Register as a subscriber
-        this.eventBus.register(this);
-
         // Create Service selector dialog
         this.serviceDialog = new ServiceDialogFragment();
 
@@ -156,7 +153,18 @@ public class JourneySetupFragment extends RoboFragment{
     public void onResume(){
         super.onResume();
 
+        // Register as a subscriber
+        this.eventBus.register(this);
+
         this.refreshUserInterface();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        // Register as a subscriber
+        this.eventBus.unregister(this);
     }
 
     private void launchStopChooserActivity(StopTypeEnum stop){

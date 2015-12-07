@@ -1,5 +1,5 @@
 from busfeedback.models.update import Update
-from busfeedback.models.service import Service
+from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.stop import Stop
 import requests
 from busfeedback.constants import *
@@ -56,11 +56,6 @@ def update_services_and_stops():
     update_table_date("service", service_date)
     update_table_date("stop", stop_date)
 
-    # Create a dictionary of key: stop_id, value: service names
-    stop_services_dictionary = {}
-    for stop in stops:
-        stop_services_dictionary[stop["stop_id"]] = set(stop["services"])
-
     existing_stops = Stop.objects.all()
     existing_services = Service.objects.all()
 
@@ -113,18 +108,33 @@ def update_services_and_stops():
     saved_stops = list(Stop.objects.all())
     saved_services = list(Service.objects.all())
 
-    saved_services_dictionary = {}
-    for service in saved_services:
-        saved_services_dictionary[service.name] = service
-
-    # Add services to stops
+    saved_stops_dictionary = {}
     for stop in saved_stops:
-        service_names_to_add = stop_services_dictionary.get(stop.stop_id)
-        if service_names_to_add:
-            services_to_add = []
-            for service_name in service_names_to_add:
-                services_to_add.append(saved_services_dictionary[service_name])
-            stop.services.add(*services_to_add)
+        saved_stops_dictionary[stop.stop_id] = stop
+
+    # Create a dictionary of key: service name, value: [(direction, stop_id's in order)] list
+    ordered_stops_per_service_id = {}
+    for service in services:
+        service_name = service["name"]
+        ordered_stops_per_service_id[service_name] = []
+        direction = 0
+        for route in service["routes"]:
+            ordered_stops_per_service_id[service_name].append((str(direction), route["stops"]))
+            direction += 1
+
+    # Add stops to services
+    for service in saved_services:
+        direction_stop_id_tuples = ordered_stops_per_service_id[service.name]
+        for direction_stop_id_tuple in direction_stop_id_tuples:
+            direction = direction_stop_id_tuple[0]
+            stop_ids = direction_stop_id_tuple[1]
+            order = 0
+            for stop_id in stop_ids:
+                stop = saved_stops_dictionary[stop_id]
+
+                # Create the association
+                ServiceStop.objects.create(service=service, stop=stop, direction=int(direction), order=order)
+                order += 1
 
 
 # Gets the last updated time of services, and the list of service objects

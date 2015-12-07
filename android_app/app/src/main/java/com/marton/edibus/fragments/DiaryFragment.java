@@ -11,7 +11,7 @@ import com.marton.edibus.R;
 import roboguice.fragment.RoboFragment;
 
 
-public class FavouritesFragment extends RoboFragment {
+public class DiaryFragment extends RoboFragment {
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -20,7 +20,7 @@ public class FavouritesFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favourites,container,false);
+        View view = inflater.inflate(R.layout.fragment_diary,container,false);
 
         return view;
     }

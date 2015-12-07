@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:alpha="0.5"
+            android:src="@drawable/favourites_fragment_header"
+            android:scaleType="centerCrop" />
+
+        <TableLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="120dp"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            tools:context="com.marton.edibus.activities.ContentActivity">
+
+        </TableLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

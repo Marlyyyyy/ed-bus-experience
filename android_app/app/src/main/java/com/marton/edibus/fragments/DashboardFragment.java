@@ -18,15 +18,12 @@ import com.marton.edibus.activities.JourneyActivity;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.StatisticsManager;
 
-import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 public class DashboardFragment extends RoboFragment {
 
     private static final String TAG = DashboardFragment.class.getName();
-
-    private EventBus eventBus = EventBus.getDefault();
 
     @Inject
     private JourneyManager journeyManager;
@@ -36,12 +33,6 @@ public class DashboardFragment extends RoboFragment {
 
     @InjectView(R.id.journeys)
     private TextView journeysTextView;
-
-    @InjectView(R.id.total_waiting_time)
-    private TextView totalWaitingTimeTextView;
-
-    @InjectView(R.id.total_travelling_time)
-    private TextView totalTravellingTimeTextView;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -91,7 +82,7 @@ public class DashboardFragment extends RoboFragment {
         int totalTravellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
 
         this.journeysTextView.setText(String.valueOf(journeys));
-        this.totalWaitingTimeTextView.setText(String.valueOf(totalWaitingTime));
-        this.totalTravellingTimeTextView.setText(String.valueOf(totalTravellingTime));
+//        this.totalWaitingTimeTextView.setText(String.valueOf(totalWaitingTime));
+//        this.totalTravellingTimeTextView.setText(String.valueOf(totalTravellingTime));
     }
 }

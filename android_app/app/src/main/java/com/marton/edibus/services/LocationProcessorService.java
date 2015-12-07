@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.google.inject.Inject;
 import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.events.LocationUpdatedEvent;
+import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.models.Trip;
@@ -37,6 +38,8 @@ public class LocationProcessorService extends RoboService {
 
     private long latestUpdateTime;
 
+    private TimerUpdatedEvent timerUpdatedEvent;
+
     private Timer timer;
 
     private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.WAITING;
@@ -48,6 +51,7 @@ public class LocationProcessorService extends RoboService {
     public LocationProcessorService() {
         this.eventBus.register(this);
         this.trackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
+        this.timerUpdatedEvent = new TimerUpdatedEvent();
     }
 
     @Override
@@ -69,6 +73,10 @@ public class LocationProcessorService extends RoboService {
                         travellingSeconds++;
                         break;
                 }
+
+                timerUpdatedEvent.setWaitingSeconds(waitingSeconds);
+                timerUpdatedEvent.setTravellingSeconds(travellingSeconds);
+                eventBus.post(timerUpdatedEvent);
             }
         }, 0, 1000);
     }

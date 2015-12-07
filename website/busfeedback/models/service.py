@@ -18,7 +18,8 @@ class ServiceManager(BulkUpdateManager):
 class Service(models.Model):
 
     # Many to many relationship with Stop
-    stops = models.ManyToManyField(Stop, related_name='services')
+    stops = models.ManyToManyField(Stop, related_name='services', through='ServiceStop')
+
     name = models.CharField(max_length=5, blank=False, unique=True)
     type = models.CharField(max_length=40, blank=False)
     description = models.CharField(max_length=100, blank=False)
@@ -31,3 +32,15 @@ class Service(models.Model):
     class Meta:
         db_table = 'tbl_busfeedback_service'
         ordering = ('name',)
+
+
+class ServiceStop(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
+    # Either 0 or 1
+    direction = models.IntegerField()
+    order = models.IntegerField()
+
+    class Meta:
+        db_table = 'tbl_busfeedback_service_stop'
+        ordering = ('order',)

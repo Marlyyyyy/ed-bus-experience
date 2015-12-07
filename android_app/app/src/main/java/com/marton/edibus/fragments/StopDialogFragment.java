@@ -17,13 +17,10 @@ import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
 
-import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboDialogFragment;
 
 
 public class StopDialogFragment extends RoboDialogFragment {
-
-    private EventBus eventBus = EventBus.getDefault();
 
     @Inject
     private JourneyManager journeyManager;

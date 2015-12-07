@@ -25,6 +25,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.TripActionEnum;
+import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Stop;
@@ -121,8 +122,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
 
-        // Register as a subscriber
-        this.eventBus.register(this);
         this.stopMarkers = new ArrayList<>();
 
         // Initialise event objects
@@ -286,6 +285,22 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+
+        // Register as a subscriber
+        this.eventBus.register(this);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        // Register as a subscriber
+        this.eventBus.unregister(this);
+    }
+
+    @Override
     public void onDestroy(){
         this.getActivity().stopService(this.locationProviderService);
         this.getActivity().stopService(this.locationProcessorService);
@@ -295,6 +310,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        this.googleMap.setMyLocationEnabled(true);
         //this.googleMap.setOnMapClickListener(this);
         this.refreshMap();
     }
@@ -454,6 +470,11 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
                 break;
         }
+    }
+
+    public void onEventMainThread(TimerUpdatedEvent timerUpdatedEventr){
+        this.waitingDurationTextView.setText(String.valueOf(timerUpdatedEventr.getWaitingSeconds()));
+        this.travellingDuration.setText(String.valueOf(timerUpdatedEventr.getTravellingSeconds()));
     }
 
     @Override

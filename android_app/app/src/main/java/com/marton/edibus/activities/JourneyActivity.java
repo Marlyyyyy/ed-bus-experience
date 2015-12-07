@@ -45,9 +45,6 @@ public class JourneyActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_journey);
 
-        // Register as a subscriber
-        this.eventBus.register(this);
-
         // Create The Toolbar and setting it as the Toolbar for the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -120,5 +117,21 @@ public class JourneyActivity extends RoboActionBarActivity {
             case FEEDBACK_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        // Register as a subscriber
+        this.eventBus.register(this);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        // Register as a subscriber
+        this.eventBus.unregister(this);
     }
 }

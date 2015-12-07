@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.marton.edibus.R;
-import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.TripActionFiredEvent;
 

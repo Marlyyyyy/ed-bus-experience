@@ -1,6 +1,6 @@
 from django.test import Client
 from django.test import TestCase
-from busfeedback.models.service import Service
+from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.stop import Stop
 from busfeedback.models.journey import Journey
 from django.contrib.auth.models import User
@@ -36,7 +36,7 @@ class BusViewTestCase(TestCase):
         Stop.objects.bulk_create(new_stops)
 
         service = Service.objects.create(name="3", type="day", description="Clovenstone - Mayfield")
-        service.stops.add(closest_stop)
+        ServiceStop.objects.create(service=service, stop=closest_stop, direction=0, order=0)
 
     def test_get_services_for_stop(self):
         stop = Stop.objects.get(stop_id=95624797)
