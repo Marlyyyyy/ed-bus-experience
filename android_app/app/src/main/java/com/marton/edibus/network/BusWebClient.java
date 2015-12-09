@@ -32,7 +32,7 @@ public class BusWebClient {
 
     private static final String TAG = BusWebClient.class.getName();
 
-    private static final String BASE_URL_BUS = "http://172.20.135.167:8000/bus";
+    private static final String BASE_URL_BUS = "http://192.168.56.1:8000/bus";
 
     @Inject
     private WebClient webClient;
@@ -92,6 +92,39 @@ public class BusWebClient {
                 List<Service> serviceList = Arrays.asList(serviceArray);
                 callback.onSuccess(serviceList);
 
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                callback.onFailure(statusCode, errorResponse.toString());
+            }
+        });
+    }
+
+    public void getStopsForService(int id, int startStopId, final WebCallBack<List<Stop>> callback) {
+
+        RequestParams parameters = new RequestParams();
+        parameters.put("service_id", id);
+        parameters.put("start_stop_id", startStopId);
+
+        String url = "/api/stops_for_service/";
+        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                Gson gson = new Gson();
+                Stop[] stopArray = new Stop[0];
+                try {
+                    JSONArray stopJsonArray = response.getJSONArray("stops");
+                    stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Was unable to get the array of stops from Json");
+                }
+                List<Stop> stopList = Arrays.asList(stopArray);
+                callback.onSuccess(stopList);
             }
 
             @Override

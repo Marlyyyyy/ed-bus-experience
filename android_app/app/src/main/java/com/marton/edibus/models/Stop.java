@@ -32,6 +32,8 @@ public class Stop {
     // Extra attributes
     private double distance;
 
+    private boolean unavailable;
+
     public double getLongitude() {
         return longitude;
     }

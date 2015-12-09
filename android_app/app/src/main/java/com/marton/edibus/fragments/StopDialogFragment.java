@@ -2,6 +2,7 @@ package com.marton.edibus.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
+import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
@@ -26,7 +28,6 @@ public class StopDialogFragment extends RoboDialogFragment {
     private JourneyManager journeyManager;
 
     private StopTypeEnum stopTypeEnum;
-    private boolean serviceSelected;
 
     private Stop stop;
 
@@ -39,8 +40,8 @@ public class StopDialogFragment extends RoboDialogFragment {
         // Read the type of the stop that the user is about to choose
         Bundle bundle = this.getArguments();
         this.stopTypeEnum = (StopTypeEnum) bundle.get("STOP_TYPE");
-        this.serviceSelected = (boolean) bundle.get("SERVICE_SELECTED");
 
+        // TODO: display service names too
 
         TextView stopNameTextView = (TextView) view.findViewById(R.id.stop_name);
         TextView stopDistanceTextView = (TextView) view.findViewById(R.id.stop_distance);
@@ -76,9 +77,16 @@ public class StopDialogFragment extends RoboDialogFragment {
         switch (this.stopTypeEnum){
             case START:
                 trip.setStartStop(stop);
+                // TODO: figure out when to make service NULL
+                if (trip.getService() != null){
+                    // Start end stop selector activity
+                    Activity currentActivity = getActivity();
+                    Intent intent = new Intent(currentActivity, StopSetupActivity.class);
+                    intent.putExtra("STOP", StopTypeEnum.END);
+                    this.startActivity(intent);
 
-                if (this.serviceSelected){
-
+                    // Close down the activity
+                    currentActivity.finish();
                 }else{
                     // Close down the activity
                     Activity currentActivity = getActivity();

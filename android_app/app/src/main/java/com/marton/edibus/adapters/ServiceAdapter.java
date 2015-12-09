@@ -68,7 +68,7 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
         this.service = null;
         this.service = (Service) this.services.get(position);
 
-        nameTextView.setText(String.valueOf(this.service.getId()));
+        nameTextView.setText(this.service.getName());
         descriptionTextView.setText(String.valueOf(this.service.getDescription()));
 
         return view;

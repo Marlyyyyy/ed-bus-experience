@@ -24,6 +24,7 @@ import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
+import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -111,7 +112,11 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                serviceDialog.show(fragmentManager, "Service Dialog Fragment");
+                if (journeyManager.getTrip().getStartStop() != null){
+                    serviceDialog.show(fragmentManager, "Service Dialog Fragment");
+                }else{
+                    SnackbarManager.showSnackbar(v, "Please select a start stop first!");
+                }
             }
         });
 
@@ -119,7 +124,11 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                launchStopChooserActivity(StopTypeEnum.END);
+                if (journeyManager.getTrip().getService() != null){
+                    launchStopChooserActivity(StopTypeEnum.END);
+                }else{
+                    SnackbarManager.showSnackbar(v, "Please select a service first!");
+                }
             }
         });
 

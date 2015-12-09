@@ -22,6 +22,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -52,7 +54,7 @@ import roboguice.inject.InjectView;
 
 public class StopSetupActivity extends RoboActionBarActivity implements OnMapReadyCallback {
 
-    private static final String TAG = StopSetupActivity.class.getName();
+    private static final double CLOSEST_STOPS_RADIUS = 0.2;
 
     private StopTypeEnum stopTypeEnum;
 
@@ -64,7 +66,11 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     private Marker latestClickedMarker;
 
-    private HashMap<Marker, Stop> markerStopHashMap = new HashMap<>();
+    private HashMap<Marker, Stop> stopMarkersHashMap;
+
+    private Marker clickedPointMarker;
+
+    private Circle clickedPointCircle;
 
     private StopDialogFragment stopDialog;
 
@@ -96,6 +102,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         this.resources = getResources();
         this.fragmentManager = getSupportFragmentManager();
         this.selectedService = null;
+        this.stopMarkersHashMap =  new HashMap<>();
 
         // Read the data passed in for the activity
         Bundle extras = getIntent().getExtras();
@@ -198,13 +205,41 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
     public void onMapReady(final GoogleMap googleMap) {
 
         this.googleMap = googleMap;
+        this.googleMap.setMyLocationEnabled(true);
 
         // Handle clicks on the map
         this.googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                WebCallBack stopCallback = createStopCallback(latLng.latitude, latLng.longitude);
-                busWebService.getStopsWithinRadius(latLng.latitude, latLng.longitude, 0.5, stopCallback);
+
+                // Remove previously clicked point marker
+                if (clickedPointMarker != null){
+                    clickedPointMarker.remove();
+                }
+
+                if (clickedPointCircle != null){
+                    clickedPointCircle.remove();
+                }
+
+                // Add currently clicked point marker
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(latLng.latitude, latLng.longitude))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                        .anchor((float) 0.5, (float) 0.5);
+
+                CircleOptions circleOptions = new CircleOptions()
+                        .center(new LatLng(latLng.latitude, latLng.longitude))
+                        .radius(CLOSEST_STOPS_RADIUS * 1000)
+                        .fillColor(R.color.map_circle)
+                        .strokeWidth(0)
+                        .zIndex(-1f);
+
+                clickedPointCircle = googleMap.addCircle(circleOptions);
+                clickedPointMarker = googleMap.addMarker(markerOptions);
+
+                // Add new stops to the map
+                WebCallBack stopCallback = createStopCallback(latLng.latitude, latLng.longitude, false);
+                busWebService.getStopsWithinRadius(latLng.latitude, latLng.longitude, CLOSEST_STOPS_RADIUS, stopCallback);
             }
         });
 
@@ -213,60 +248,70 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                // Change the look of the icons
-                if(latestClickedMarker != null){
-                    latestClickedMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker));
-                }
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_logo_clicked));
-                latestClickedMarker = marker;
+                if (marker == clickedPointMarker){
 
-                // Launch custom dialog fragment
-                journeyManager.setReviewStop(markerStopHashMap.get(marker));
-                stopDialog.show(fragmentManager, "Stop Dialog Fragment");
+                }else if(stopMarkersHashMap.containsKey(marker)){
+
+                    // Change the look of the icons
+                    if(latestClickedMarker != null){
+                        latestClickedMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker));
+                    }
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_logo_clicked));
+                    latestClickedMarker = marker;
+
+                    // Launch custom dialog fragment
+                    journeyManager.setReviewStop(stopMarkersHashMap.get(marker));
+                    stopDialog.show(fragmentManager, "Stop Dialog Fragment");
+                }
 
                 return true;
             }
         });
 
-        // TODO: get actual coordinates
-        final double latitude = 55.928042085586306;
-        final double longitude = -3.1669341400265694;
+//        Location userLocation = this.googleMap.getMyLocation();
+//        final double userLatitude = userLocation.getLatitude();
+//        final double userLongitude = userLocation.getLongitude();
 
-        WebCallBack stopCallback = this.createStopCallback(latitude, longitude);
+        final double userLatitude = 55.928042085586306;
+        final double userLongitude = -3.1669341400265694;
+
+        WebCallBack stopCallback = this.createStopCallback(userLatitude, userLongitude, true);
 
         switch (this.stopTypeEnum){
             case START:
-                this.busWebService.getStopsWithinRadius(latitude, longitude, 0.5, stopCallback);
+                this.busWebService.getStopsWithinRadius(userLatitude, userLongitude, CLOSEST_STOPS_RADIUS, stopCallback);
                 break;
             case END:
-                this.busWebService.getStopsForService(this.journeyManager.getTrip().getServiceId(), stopCallback);
+                Trip trip = this.journeyManager.getTrip();
+                this.busWebService.getStopsForService(trip.getServiceId(), trip.getStartStopId(), stopCallback);
                 break;
         }
     }
 
     private WebCallBack<List<Stop>> createStopCallback(){
         // TODO: get actual coordinates
-        final double latitude = 55.928042085586306;
-        final double longitude = -3.1669341400265694;
+        final double userLatitude = 55.928042085586306;
+        final double userLongitude = -3.1669341400265694;
 
-        return this.createStopCallback(latitude, longitude);
+        return this.createStopCallback(userLatitude, userLongitude, true);
     }
-    private WebCallBack<List<Stop>> createStopCallback(final double latitude, final double longitude){
 
-        WebCallBack stopsCallback = new WebCallBack<List<Stop>>(){
+    private WebCallBack<List<Stop>> createStopCallback(final double userLatitude, final double userLongitude, final boolean zoom){
+
+        return new WebCallBack<List<Stop>>(){
 
             @Override
             public void onSuccess(List<Stop> stops) {
 
                 Iterator iterator;
 
-                // Set the distance for each stop
+                // Calculate the distance between the user and the bus stop
                 for (int i=0; i<stops.size(); i++){
                     Stop stop = stops.get(i);
-                    stop.setDistance(GpsCalculator.getDistanceBetweenPoints(latitude, longitude, stop.getLatitude(), stop.getLongitude()));
+                    stop.setDistance(GpsCalculator.getDistanceBetweenPoints(userLatitude, userLongitude, stop.getLatitude(), stop.getLongitude()));
                 }
 
-                List<Marker> markers = new ArrayList<>();
+                List<Marker> stopMarkers = new ArrayList<>();
                   for (int i = 0; i< stops.size(); i++){
                     Stop stop = stops.get(i);
                     MarkerOptions markerOptions = new MarkerOptions()
@@ -276,10 +321,10 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                             .anchor((float) 0.5, (float) 0.5)
                             .rotation(stop.getOrientation());
                     Marker marker = googleMap.addMarker(markerOptions);
-                    markers.add(marker);
+                    stopMarkers.add(marker);
 
                     // Make sure each stop is present only once within the hash-map
-                    iterator = markerStopHashMap.entrySet().iterator();
+                    iterator = stopMarkersHashMap.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry pair = (Map.Entry)iterator.next();
                         Stop existingStop = (Stop) pair.getValue();
@@ -290,23 +335,23 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                         }
                     }
                     latestClickedMarker = null;
-                    markerStopHashMap.put(marker, stop);
+                    stopMarkersHashMap.put(marker, stop);
                 }
 
                 // Change the camera position of the map
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker marker : markers) {
-                    builder.include(marker.getPosition());
-                }
+                if (zoom){
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (Marker marker : stopMarkers) {
+                        builder.include(marker.getPosition());
+                    }
 
-                // Padding from edges of the map in pixels
-                int padding = 100;
-                LatLngBounds bounds = builder.build();
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                googleMap.moveCamera(cameraUpdate);
+                    // Padding from edges of the map in pixels
+                    int padding = 100;
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                    googleMap.moveCamera(cameraUpdate);
+                }
             }
         };
-
-        return stopsCallback;
     }
 }

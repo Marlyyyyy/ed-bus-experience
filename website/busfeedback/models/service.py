@@ -35,8 +35,8 @@ class Service(models.Model):
 
 
 class ServiceStop(models.Model):
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, related_name='service_stop',  on_delete=models.CASCADE)
+    stop = models.ForeignKey(Stop, related_name='service_stop', on_delete=models.CASCADE)
     # Either 0 or 1
     direction = models.IntegerField()
     order = models.IntegerField()

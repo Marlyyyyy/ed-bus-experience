@@ -175,16 +175,28 @@ public class Trip {
 
     public void setStartStop(Stop startStop) {
         this.startStop = startStop;
-        this.startStopId = startStop.getId();
+        if (startStop == null){
+            this.startStopId = 0;
+        }else{
+            this.startStopId = startStop.getId();
+        }
     }
 
     public void setEndStop(Stop endStop) {
         this.endStop = endStop;
-        this.endStopId = endStop.getId();
+        if (endStop == null){
+            this.endStopId = 0;
+        }else{
+            this.endStopId = endStop.getId();
+        }
     }
 
     public void setService(Service service) {
         this.service = service;
-        this.serviceId = service.getId();
+        if (service == null){
+            this.serviceId = 0;
+        }else{
+            this.serviceId = service.getId();
+        }
     }
 }

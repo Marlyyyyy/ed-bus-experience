@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from busfeedback.models.stop import Stop
 from busfeedback.serializers.service_serializer import ServiceSerializer
+from busfeedback.serializers.servicestop_serializer import ServiceStopSerializer
 
 
 class StopSerializer(serializers.ModelSerializer):

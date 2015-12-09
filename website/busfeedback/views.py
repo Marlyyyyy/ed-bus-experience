@@ -1,7 +1,7 @@
 from django.http.response import Http404, HttpResponse, HttpResponseBadRequest
 import json
 from busfeedback.utilities.bus_updater import update_services_and_stops, delete_services_stops
-from busfeedback.models.service import Service
+from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop
 from rest_framework.views import APIView
@@ -56,9 +56,20 @@ class StopsForServiceView(APIView):
 
     def get(self, request):
         service_id = int(request.GET.get("service_id", ""))
+        start_stop_id = request.GET.get("start_stop_id", "")
         # TODO: Handle exception
-        service = Service.objects.get(id=service_id)
-        stops = list(service.stops.all())
+
+        # If there's a start_stop, then filter end_stops based on start_stop and service
+        if start_stop_id != "":
+            start_service_stop = ServiceStop.objects.get(service_id=service_id, stop_id=start_stop_id)
+            stops = Stop.objects.filter(
+                service_stop__service_id=service_id,
+                service_stop__direction=start_service_stop.direction,
+                service_stop__order__gte=start_service_stop.order
+            )
+        else:
+            stops = Stop.objects.filter(service_stop__service_id=service_id)
+
         stop_serializer = StopSerializer(stops, many=True)
         json_stops = JSONRenderer().render({"stops": stop_serializer.data})
 
