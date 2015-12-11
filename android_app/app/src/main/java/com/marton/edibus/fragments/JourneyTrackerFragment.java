@@ -322,9 +322,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
         this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
         this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
-        this.waitingDurationTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime()));
-        this.travellingDuration.setText(this.dateFormat.format(trackerStateUpdatedEvent.getTravellingTime()));
-        this.elapsedTimeTextView.setText(this.dateFormat.format(trackerStateUpdatedEvent.getWaitingTime() + trackerStateUpdatedEvent.getTravellingTime()));
         this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
         this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed() * 3.6) + "km/h");
 
@@ -466,15 +463,15 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         switch (tripActionFiredEvent.getTripActionEnum()){
             case NEW_TRIP:
                 this.refreshButtons();
-                this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
                 break;
         }
     }
 
-    public void onEventMainThread(TimerUpdatedEvent timerUpdatedEventr){
-        this.waitingDurationTextView.setText(String.valueOf(timerUpdatedEventr.getWaitingSeconds()));
-        this.travellingDuration.setText(String.valueOf(timerUpdatedEventr.getTravellingSeconds()));
+    public void onEventMainThread(TimerUpdatedEvent timerUpdatedEvent){
+        this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
+        this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
+        this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
     }
 
     @Override

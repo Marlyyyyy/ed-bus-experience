@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
+<LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/journey_root"
     android:padding="20dp">
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip"/>
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/journey_setup_row_min_height"
@@ -21,71 +20,62 @@
         android:clickable="true"
         android:orientation="horizontal"
         android:gravity="center"
+        android:focusable="true"
         android:background="@drawable/row_blue_bg">
 
         <TextView
             android:text="Seat"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:gravity="left"
             android:textStyle="bold"
-            android:width="0px"
-            android:layout_weight="7"/>
+            android:layout_weight="1"/>
 
         <Switch
-            android:layout_width="wrap_content"
+            android:id="@+id/seat_switch"
+            android:checked="true"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:switchMinWidth="@dimen/switch_min_width"
-            android:width="0px"
-            android:layout_weight="7"
-            android:showText="true"
-            android:textOn="Yes"
-            android:textOff="No"/>
+            android:layout_weight="1"/>
 
-    </TableRow>
+    </LinearLayout>
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip" />
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/journey_setup_row_min_height"
         android:paddingLeft="@dimen/journey_setup_row_side_padding"
         android:paddingRight="@dimen/journey_setup_row_side_padding"
-        android:clickable="true"
+        android:clickable="false"
         android:orientation="horizontal"
         android:gravity="center">
 
         <TextView
             android:text="Rating"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:width="0px"
-            android:layout_weight="7"/>
+            android:layout_weight="1"/>
 
         <RatingBar
+            android:id="@+id/rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:width="0px"
-            android:layout_weight="7"
-            style="?android:attr/ratingBarStyleSmall"/>
+            android:numStars="5"
+            android:stepSize="0.5"/>
 
-    </TableRow>
-
+    </LinearLayout>
 
 
     <View android:background="#66000000"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"
-        android:layout_centerVertical ="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="1dip"/>
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/journey_setup_row_min_height"
@@ -98,28 +88,51 @@
 
         <TextView
             android:text="Did the driver greet?"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:width="0px"
-            android:layout_weight="7"/>
+            android:layout_weight="1"/>
 
         <Switch
-            android:layout_width="wrap_content"
+            android:id="@+id/greet_switch"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:switchMinWidth="@dimen/switch_min_width"
-            android:width="0px"
-            android:layout_weight="7"
-            android:showText="true"
-            android:textOn="Yes"
-            android:textOff="No"/>
-    </TableRow>
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <View android:background="#66000000"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+        <EditText android:id="@+id/people_waiting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Number of people waiting at the stop" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+        <EditText android:id="@+id/people_boarding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Number of people boarding the bus" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
+        android:text="Save feedback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back to tracking"
-        android:id="@+id/journey_feedback_complete"
-        android:layout_column="0" />
+        android:id="@+id/journey_feedback_complete"/>
 
-</TableLayout>
+</LinearLayout>

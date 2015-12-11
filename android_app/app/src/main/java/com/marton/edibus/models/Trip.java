@@ -23,7 +23,7 @@ public class Trip {
      */
     public Trip(int id, Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
             Service service, int waitDuration, int travelDuration, boolean seat, float rating,
-            Date createdAt, Date updatedAt){
+            Date createdAt, Date updatedAt, int peopleWaiting, int peopleBoarding){
 
         this.id = id;
         this.startTime = startTime;
@@ -38,7 +38,8 @@ public class Trip {
         this.rating = rating;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-
+        this.peopleWaiting = peopleWaiting;
+        this.peopleBoarding = peopleBoarding;
     }
 
     public Trip(){}
@@ -76,6 +77,10 @@ public class Trip {
     private Date createdAt;
 
     private Date updatedAt;
+
+    private int peopleWaiting;
+
+    private int peopleBoarding;
 
     public int getId(){
         return id;
@@ -198,5 +203,21 @@ public class Trip {
         }else{
             this.serviceId = service.getId();
         }
+    }
+
+    public int getPeopleWaiting() {
+        return peopleWaiting;
+    }
+
+    public void setPeopleWaiting(int peopleWaiting) {
+        this.peopleWaiting = peopleWaiting;
+    }
+
+    public int getPeopleBoarding() {
+        return peopleBoarding;
+    }
+
+    public void setPeopleBoarding(int peopleBoarding) {
+        this.peopleBoarding = peopleBoarding;
     }
 }

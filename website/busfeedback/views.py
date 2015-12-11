@@ -176,6 +176,15 @@ class TripView(APIView):
             journey.account = request.user
             journey.save()
 
+        # Check if optinal parameters exist
+        people_waiting = -1
+        if "people_waiting" in new_trip:
+            people_waiting = new_trip["people_waiting"]
+
+        people_boarding = -1
+        if "people_boarding" in new_trip:
+            people_boarding = new_trip["people_boarding"]
+
         # Create a new trip for a journey
         with transaction.atomic():
             journey.trips.create(
@@ -187,7 +196,9 @@ class TripView(APIView):
                 wait_duration=new_trip["wait_duration"],
                 travel_duration=new_trip["travel_duration"],
                 seat=new_trip["seat"],
-                rating=new_trip["rating"]
+                rating=new_trip["rating"],
+                people_waiting=people_waiting,
+                people_boarding=people_boarding
             )
 
         response_data = json.dumps({"journey_id": journey.id})

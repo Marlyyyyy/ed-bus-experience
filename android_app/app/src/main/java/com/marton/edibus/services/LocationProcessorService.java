@@ -74,8 +74,8 @@ public class LocationProcessorService extends RoboService {
                         break;
                 }
 
-                timerUpdatedEvent.setWaitingSeconds(waitingSeconds);
-                timerUpdatedEvent.setTravellingSeconds(travellingSeconds);
+                timerUpdatedEvent.setWaitingMilliseconds(waitingSeconds * 1000);
+                timerUpdatedEvent.setTravellingMilliseconds(travellingSeconds * 1000);
                 eventBus.post(timerUpdatedEvent);
             }
         }, 0, 1000);
@@ -109,7 +109,7 @@ public class LocationProcessorService extends RoboService {
             case RUNNING:
                 this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
                 this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
-                this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds*1000);
+                this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds * 1000);
 
                 // Update the waiting times on the trip
                 Trip trip = this.journeyManager.getTrip();

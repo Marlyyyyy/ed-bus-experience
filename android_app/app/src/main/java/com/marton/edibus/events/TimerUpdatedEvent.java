@@ -3,23 +3,23 @@ package com.marton.edibus.events;
 public class TimerUpdatedEvent {
     public TimerUpdatedEvent(){};
 
-    public int getWaitingSeconds() {
-        return waitingSeconds;
+    public int getWaitingMilliseconds() {
+        return waitingMilliseconds;
     }
 
-    public void setWaitingSeconds(int waitingSeconds) {
-        this.waitingSeconds = waitingSeconds;
+    public void setWaitingMilliseconds(int waitingMilliseconds) {
+        this.waitingMilliseconds = waitingMilliseconds;
     }
 
-    public int getTravellingSeconds() {
-        return travellingSeconds;
+    public int getTravellingMilliseconds() {
+        return travellingMilliseconds;
     }
 
-    public void setTravellingSeconds(int travellingSeconds) {
-        this.travellingSeconds = travellingSeconds;
+    public void setTravellingMilliseconds(int travellingMilliseconds) {
+        this.travellingMilliseconds = travellingMilliseconds;
     }
 
-    private int waitingSeconds;
+    private int waitingMilliseconds;
 
-    private int travellingSeconds;
+    private int travellingMilliseconds;
 }
