@@ -1,75 +1,119 @@
 package com.marton.edibus.activities;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.adapters.ViewPagerAdapter;
-import com.marton.edibus.fragments.LoginFragment;
-import com.marton.edibus.fragments.SignupFragment;
-import com.marton.edibus.widgets.SlidingTabLayout;
+import com.marton.edibus.WebCallBack;
+import com.marton.edibus.network.UserWebClient;
+import com.marton.edibus.network.WebClient;
+import com.marton.edibus.utilities.AuthenticationManager;
 
+
+import org.json.JSONObject;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.InjectView;
 
 public class AuthenticationActivity extends RoboActionBarActivity {
 
-    private static final String TAG = AuthenticationActivity.class.getName();
+    @InjectView(R.id.create_account)
+    Button createAccountButton;
 
-    Toolbar toolbar;
-    ViewPager pager;
-    ViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence titles[] = {"Login","Sign Up"};
-    int numberOfTabs = 2;
+    @InjectView(R.id.welcome_text)
+    TextView welcomeTextView;
+
+    @InjectView(R.id.thank_you_text)
+    TextView thankYouTextView;
+
+    @Inject
+    UserWebClient userWebClient;
+
+    @Inject
+    WebClient webClient;
+
+    @Inject
+    AuthenticationManager authenticationManager;
+
+    private SecureRandom random = new SecureRandom();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        // Create The Toolbar and setting it as the Toolbar for the activity
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(), titles, numberOfTabs){
+        // Animate the welcome page
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(2000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public Fragment getItem(int position){
+            public void onAnimationStart(Animation animation) {
 
-                if(position == 0)
-                {
-                    return new LoginFragment();
-                }
-                else
-                {
-                    return new SignupFragment();
-                }
             }
-        };
 
-        // Assign ViewPager View and set the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
-        // Assign the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        // To make the Tabs Fixed set this true. This makes the tabs Space Evenly in Available width
-        tabs.setDistributeEvenly(true);
-
-        // Set Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
+            public void onAnimationEnd(Animation animation) {
+                welcomeTextView.setAlpha(1.0f);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
+        welcomeTextView.startAnimation(animation);
 
-        // Set the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        this.createAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createUserAccount();
+            }
+        });
+    }
+
+    // Sets up a temporary user account, and authenticates the user
+    private void createUserAccount(){
+
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Creating guest account...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        final String username = generateUniqueString();
+        final String password = generateUniqueString();
+
+        this.userWebClient.register(username, password, new WebCallBack<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject data) {
+                authenticationManager.authenticate(username, password, new WebCallBack() {
+                    @Override
+                    public void onSuccess(Object data) {
+
+                        // Prepare the web client with the authentication token
+                        webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
+                        Intent intent = new Intent(AuthenticationActivity.this, ContentActivity.class);
+                        startActivity(intent);
+
+                        progressDialog.dismiss();
+                        // No need to keep this activity any more.
+                        finish();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -98,5 +142,10 @@ public class AuthenticationActivity extends RoboActionBarActivity {
     public void onBackPressed() {
         // Disable going back to the MainActivity
         moveTaskToBack(true);
+    }
+
+    // Generates a unique string suitable for temporary user-names or passwords
+    public String generateUniqueString() {
+        return new BigInteger(130, random).toString(32);
     }
 }

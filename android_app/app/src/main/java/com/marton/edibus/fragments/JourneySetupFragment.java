@@ -20,11 +20,9 @@ import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.JourneyUpdatedEvent;
-import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.TripActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
@@ -115,7 +113,7 @@ public class JourneySetupFragment extends RoboFragment{
                 if (journeyManager.getTrip().getStartStop() != null){
                     serviceDialog.show(fragmentManager, "Service Dialog Fragment");
                 }else{
-                    SnackbarManager.showSnackbar(v, "Please select a start stop first!");
+                    SnackbarManager.showError(v, "Please select a start stop first!");
                 }
             }
         });
@@ -127,7 +125,7 @@ public class JourneySetupFragment extends RoboFragment{
                 if (journeyManager.getTrip().getService() != null){
                     launchStopChooserActivity(StopTypeEnum.END);
                 }else{
-                    SnackbarManager.showSnackbar(v, "Please select a service first!");
+                    SnackbarManager.showError(v, "Please select a service first!");
                 }
             }
         });
@@ -150,7 +148,7 @@ public class JourneySetupFragment extends RoboFragment{
                     tripActionFiredEvent.setTripActionEnum(TripActionEnum.SETUP_COMPLETED);
                     eventBus.post(tripActionFiredEvent);
                 } else {
-                    SnackbarManager.showSnackbar(rootView, "Setup is incomplete.");
+                    SnackbarManager.showError(rootView, "Setup is incomplete.");
                 }
             }
         });

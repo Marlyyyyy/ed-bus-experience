@@ -21,30 +21,6 @@ public class UserWebClient {
     @Inject
     private WebClient webClient;
 
-    public void login(String username, String password, final WebCallBack callback) {
-
-        RequestParams parameters = new RequestParams();
-        parameters.put("username", username);
-        parameters.put("password", password);
-
-        String url = getAbsoluteUrl("/api/login/");
-        this.webClient.post(url, parameters, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
-
-                int statuscode = statusCode;
-            }
-        });
-    }
-
     public void get_token(String username, String password, final WebCallBack<JSONObject> callback) {
 
         RequestParams parameters = new RequestParams();
@@ -69,28 +45,6 @@ public class UserWebClient {
         });
     }
 
-    public void test_token(String token, final WebCallBack<JSONObject> callback) {
-
-        RequestParams parameters = new RequestParams();
-
-        String url = getAbsoluteUrl("/api/authenticated/");
-        webClient.post(url, parameters, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
-
-                int statuscode = statusCode;
-            }
-        });
-    }
-
     public void register(String username, String password, final WebCallBack<JSONObject> callback) {
 
         RequestParams parameters = new RequestParams();
@@ -110,7 +64,7 @@ public class UserWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
-                int statuscode = statusCode;
+                callback.onFailure(statusCode, errorResponse.toString());
             }
         });
     }

@@ -18,7 +18,7 @@ public class SnackbarManager {
         snackbar.show();
     }
 
-    public static void showSnackbar(View view, String message) {
+    public static void showError(View view, String message) {
 
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         View snackbarView = snackbar.getView();

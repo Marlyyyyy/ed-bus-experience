@@ -10,6 +10,7 @@
     <color name="aluminum">#999999</color>
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
+    <color name="light_grey">#f0f0f0</color>
     <color name="white">#FFFFFF</color>
 
     <color name="ColorPrimary">#4d90fe</color>
@@ -26,6 +27,6 @@
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
 
-    <color name="snackbar_success">#9b2aaa00</color>
-    <color name="snackbar_error">#95c9000e</color>
+    <color name="snackbar_success">#50aa51</color>
+    <color name="snackbar_error">#8a3f3b</color>
 </resources>

@@ -66,6 +66,7 @@ public class LoginFragment extends RoboFragment {
         final ProgressDialog progressDialog = new ProgressDialog(this.getActivity(), R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
 

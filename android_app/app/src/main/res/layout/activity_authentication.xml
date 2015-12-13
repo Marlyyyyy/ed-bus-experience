@@ -4,26 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AuthenticationActivity">
+    tools:context=".AuthenticationActivity"
+    android:background="@color/ColorPrimary">
 
-    <include
-        android:id="@+id/tool_bar"
-        layout="@layout/tool_bar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
-
-    <com.marton.edibus.widgets.SlidingTabLayout
-        android:id="@+id/tabs"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="2dp"
-        android:background="@color/ColorPrimary"/>
+        android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_weight="1">
-    </android.support.v4.view.ViewPager>
+        <TextView
+            android:id="@+id/welcome_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome."
+            android:textColor="@color/white"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/thank_you_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thank you for taking part in our research project."
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_account"
+        style="@style/AppTheme.Dark"
+        android:layout_gravity="center"
+        android:text="Create Account"/>
 
 </LinearLayout>

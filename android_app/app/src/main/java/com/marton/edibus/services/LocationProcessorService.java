@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.marton.edibus.enums.CurrentActivityEnum;
+import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.models.Stop;
@@ -42,7 +43,7 @@ public class LocationProcessorService extends RoboService {
 
     private Timer timer;
 
-    private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.WAITING;
+    private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.PREPARING;
 
     private int waitingSeconds = 0;
 
@@ -63,6 +64,10 @@ public class LocationProcessorService extends RoboService {
 
             @Override
             public void run() {
+
+                if (!journeyManager.getJourneyState().equals(JourneyStateEnum.RUNNING)){
+                    return;
+                }
 
                 switch(currentActivityEnum){
                     case WAITING:
@@ -89,6 +94,7 @@ public class LocationProcessorService extends RoboService {
 
     public void onEvent(LocationUpdatedEvent locationUpdatedEvent){
 
+        // Whenever we receive a location update, call the process method
         this.processLocationUpdate(locationUpdatedEvent.getLatitude(), locationUpdatedEvent.getLongitude());
     }
 
@@ -160,7 +166,10 @@ public class LocationProcessorService extends RoboService {
         if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
             this.currentActivityEnum = CurrentActivityEnum.WAITING;
         }else{
-            this.currentActivityEnum = CurrentActivityEnum.TRAVELLING;
+            // If the user leaves the bus stop after waiting, then the travelling starts
+            if (this.currentActivityEnum.equals(CurrentActivityEnum.WAITING)){
+                this.currentActivityEnum = CurrentActivityEnum.TRAVELLING;
+            }
         }
 
         this.trackerStateUpdatedEvent.setCurrentActivityEnum(this.currentActivityEnum);

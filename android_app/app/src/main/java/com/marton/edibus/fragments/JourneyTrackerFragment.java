@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
+import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.TripActionEnum;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
@@ -204,7 +205,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     getActivity().startService(locationProcessorService);
 
                 } else {
-                    SnackbarManager.showSnackbar(getView(), "Trip needs to be set up first!");
+                    SnackbarManager.showError(getView(), "Trip needs to be set up first!");
                 }
             }
         });
@@ -265,7 +266,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
                     @Override
                     public void onFailure(int statusCode, String message){
-                        SnackbarManager.showSnackbar(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
+                        SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
 
                         progressDialog.dismiss();
                     }
@@ -376,7 +377,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             case UPLOADED:
                 break;
             default:
-                SnackbarManager.showSnackbar(getView(), "Journey is in an undefined state!");
+                SnackbarManager.showError(getView(), "Journey is in an undefined state!");
                 break;
         }
     }
@@ -447,10 +448,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             // Automatically upload trip and/or fire events
             if (this.journeyManager.getAutomaticUpload())
             {
-                SnackbarManager.showSnackbar(getView(), "Uploading the trip...");
+                SnackbarManager.showError(getView(), "Uploading the trip...");
             }else
             {
-                SnackbarManager.showSnackbar(getView(), "Please upload the trip...");
+                SnackbarManager.showError(getView(), "Please upload the trip...");
             }
         }
 
@@ -469,13 +470,15 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     }
 
     public void onEventMainThread(TimerUpdatedEvent timerUpdatedEvent){
-        this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
-        this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
-        this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
+        if (this.journeyManager.getJourneyState().equals(JourneyStateEnum.RUNNING)){
+            this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
+            this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
+            this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
+        }
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        SnackbarManager.showSnackbar(getView(), "Clicked the map!");
+        SnackbarManager.showError(getView(), "Clicked the map!");
     }
 }
