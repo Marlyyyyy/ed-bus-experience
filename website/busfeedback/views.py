@@ -228,7 +228,7 @@ class ServiceView(APIView):
     authentication_classes = (JSONWebTokenAuthentication, )
 
     def get(self, request):
-        services = Service.objects.all().order_by('name')
+        services = Service.objects.all().order_by('id')
         service_serializer = ServiceSerializer(services, many=True)
         json_services = JSONRenderer().render({"services": service_serializer.data})
 

@@ -29,8 +29,6 @@ public class MainActivity extends RoboActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.authenticationManager.deAuthenticate();
-
         Thread welcomeThread = new Thread() {
 
             @Override

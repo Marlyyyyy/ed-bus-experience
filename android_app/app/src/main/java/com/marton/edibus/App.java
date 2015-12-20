@@ -1,10 +1,9 @@
 package com.marton.edibus;
 
-import android.app.Application;
 import android.content.Context;
 
 
-public class App extends Application{
+public class App extends com.orm.SugarApp{
 
     private static Context context;
 

@@ -174,15 +174,14 @@ public class JourneySetupFragment extends RoboFragment{
         this.eventBus.unregister(this);
     }
 
+    // Starts a new activity responsible for the stop selection
     private void launchStopChooserActivity(StopTypeEnum stop){
-        Log.d(TAG, "Choosing new start stop");
-
         Intent intent = new Intent(getActivity(), StopSetupActivity.class);
         intent.putExtra("STOP", stop);
         this.startActivity(intent);
     }
 
-    // Takes care of refreshing the display of the current journey configuration
+    // Refreshes the display of the current journey configuration
     private void refreshUserInterface(){
         Stop currentStartStop = this.journeyManager.getTrip().getStartStop();
         if (currentStartStop != null){

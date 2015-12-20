@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.marton.edibus.R;
@@ -62,14 +62,15 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
         }
 
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
+        TextView typeTextView = (TextView) view.findViewById(R.id.type);
         TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
 
-
-        this.service = null;
         this.service = (Service) this.services.get(position);
 
+        // Set texts and change styles accordingly
         nameTextView.setText(this.service.getName());
-        descriptionTextView.setText(String.valueOf(this.service.getDescription()));
+        typeTextView.setText(this.service.getType());
+        descriptionTextView.setText(this.service.getDescription());
 
         return view;
     }

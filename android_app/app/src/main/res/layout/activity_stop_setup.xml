@@ -38,18 +38,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <ImageView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:src="@drawable/bus_icon"/>
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@color/ColorPrimary">
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/sliding_up_panel_header_text"
                 android:layout_height="match_parent"
-                android:gravity="center|top"
+                android:layout_width="match_parent"
                 android:text="Services"
+                android:gravity="center"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -60,7 +58,6 @@
             android:layout_height="match_parent"
             android:listSelector="@android:color/transparent"
             android:choiceMode="singleChoice" />
-
 
     </LinearLayout>
 

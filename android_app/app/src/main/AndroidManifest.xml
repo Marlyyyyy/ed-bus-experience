@@ -67,6 +67,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/maps_api_key"/>
+
+        <!-- Database configuration -->
+        <meta-data android:name="DATABASE" android:value="edi_bus_mobile_db.db" />
+        <meta-data android:name="VERSION" android:value="2" />
+        <meta-data android:name="QUERY_LOG" android:value="true" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.marton.edibus.models" />
     </application>
 
 </manifest>
