@@ -28,16 +28,16 @@ public class ServiceDialogFragment extends RoboDialogFragment {
     private EventBus eventBus = EventBus.getDefault();
 
     @Inject
-    BusWebClient busWebService;
+    private BusWebClient busWebService;
 
     @Inject
-    JourneyManager journeyManager;
+    private JourneyManager journeyManager;
 
-    ListView serviceListView;
+    private ListView serviceListView;
 
-    ArrayList<Service> availableServices;
+    private ArrayList<Service> availableServices;
 
-    ServiceAdapter serviceAdapter;
+    private ServiceAdapter serviceAdapter;
 
     @Override
     public void onCreate(Bundle bundle){

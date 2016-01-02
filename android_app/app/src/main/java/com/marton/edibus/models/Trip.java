@@ -142,7 +142,7 @@ public class Trip {
         return serviceId;
     }
 
-    public boolean isSeat() {
+    public boolean getSeat() {
         return seat;
     }
 

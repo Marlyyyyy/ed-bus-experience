@@ -11,6 +11,8 @@ public class StatisticsManager {
 
     public static final String TOTAL_TRAVELLING_TIME_KEY = "TOTAL_TRAVELLING_TIME";
 
+    public static final String TOTAL_TRAVELLING_DISTANCE_KEY = "TOTAL_TRAVELLING_DISTANCE";
+
     public static int readJourneysFromSharedPreferences(){
         String journeysString = SharedPreferencesManager.readString(App.getAppContext(), JOURNEYS_KEY);
         int journeys;
@@ -48,5 +50,18 @@ public class StatisticsManager {
         }
 
         return totalTravellingTime;
+    }
+
+    public static int readTotalTravellingDistanceFromSharedPreferences(){
+        String totalTravellingDistanceString = SharedPreferencesManager.readString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY);
+        int totalTravellingDistance;
+        if (totalTravellingDistanceString == null){
+            totalTravellingDistance = 0;
+            SharedPreferencesManager.writeString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(totalTravellingDistance));
+        }else{
+            totalTravellingDistance = Integer.valueOf(totalTravellingDistanceString);
+        }
+
+        return totalTravellingDistance;
     }
 }

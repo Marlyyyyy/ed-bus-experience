@@ -4,9 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.marton.edibus.fragments.LoginFragment;
-import com.marton.edibus.fragments.SignupFragment;
-
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 

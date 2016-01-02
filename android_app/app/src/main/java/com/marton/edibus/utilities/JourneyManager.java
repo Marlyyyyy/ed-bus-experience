@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.marton.edibus.App;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.JourneyStateEnum;
+import com.marton.edibus.models.Log;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.network.BusWebClient;
@@ -141,13 +142,18 @@ public class JourneyManager {
             this.busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, callback);
         }
 
-        // Store user statistics
-
+        // Store general user statistics locally
         totalWaitingTime += this.trip.getWaitDuration();
         totalTravellingTime += this.trip.getTravelDuration();
 
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.JOURNEYS_KEY, String.valueOf(journeys));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_WAITING_TIME_KEY, String.valueOf(totalWaitingTime));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_TIME_KEY, String.valueOf(totalTravellingTime));
+        // TODO: Implement distance as well
+        // SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(this.trip.));
+
+        // Store diary log locally
+        Log log = new Log(trip);
+        log.save();
     }
 }

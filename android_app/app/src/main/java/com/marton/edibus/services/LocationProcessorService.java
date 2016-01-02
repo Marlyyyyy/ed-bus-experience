@@ -181,6 +181,7 @@ public class LocationProcessorService extends RoboService {
         this.latestUpdateTime = currentUpdateTime;
 
         // If the user has arrived at their destination
+        // TODO: upload journey automatically
         if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
             this.journeyManager.finishTrip();
         }

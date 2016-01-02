@@ -4,96 +4,153 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:alpha="0.5"
-            android:src="@drawable/content_activity_header"
-            android:scaleType="centerCrop"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:alpha="0.5"
+        android:src="@drawable/content_activity_header"
+        android:scaleType="centerCrop"/>
 
-        <TableLayout
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="70dp"
-            android:layout_marginTop="20dp"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            tools:context="com.marton.edibus.activities.ContentActivity">
+    <TextView
+        android:text="STATISTICS"
+        android:textColor="@color/monsoon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:gravity="left"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/profile_statistics_row_min_height"
-                android:clickable="true"
-                android:orientation="horizontal"
+    <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="5dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        tools:context="com.marton.edibus.activities.ContentActivity">
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:text="5"
+                android:id="@+id/journeys"
+                android:textColor="@color/white"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp">
+                android:layout_gravity="center"
+                android:background="@drawable/circle"
+                android:textSize="50sp"/>
+
+            <TextView
+                android:text="Journeys"
+                android:textColor="@color/monsoon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:text="5"
-                    android:id="@+id/journeys"
-                    android:textColor="@color/ColorPrimaryDark"
+                    android:text="Distance"
+                    android:textColor="@color/monsoon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:textStyle="bold"
-                    android:textSize="30sp"
-                    android:width="0px"
-                    android:layout_weight="1"/>
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:text="Total Time"
+                    android:textColor="@color/monsoon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:text="Average Speed"
+                    android:textColor="@color/monsoon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
                     android:text="120 km"
                     android:id="@+id/total_distance"
-                    android:textColor="@color/ColorPrimaryDark"
+                    android:textColor="@color/ColorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:width="0px"
-                    android:layout_weight="1"/>
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/profile_statistics_row_min_height"
-                android:clickable="true"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp">
+                    android:textSize="16sp"/>
 
                 <TextView
-                    android:text="Journeys"
-                    android:textColor="@color/oil"
+                    android:text="1020:35"
+                    android:id="@+id/total_time"
+                    android:textColor="@color/ColorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textStyle="bold"
-                    android:width="0px"
-                    android:layout_weight="7"/>
+                    android:textSize="16sp"/>
 
                 <TextView
-                    android:text="Travelled"
-                    android:textColor="@color/oil"
+                    android:text="35.3 km/h"
+                    android:id="@+id/average_speed"
+                    android:textColor="@color/ColorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textStyle="bold"
-                    android:width="0px"
-                    android:layout_weight="7"/>
+                    android:textSize="16sp"/>
 
-            </TableRow>
+            </LinearLayout>
 
-        </TableLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/start_new_journey"
         android:text="Start New Journey"
         android:width="400dp"
         style="@style/AppTheme.Dark"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
