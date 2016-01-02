@@ -32,7 +32,7 @@ public class BusWebClient {
 
     private static final String TAG = BusWebClient.class.getName();
 
-    private static final String BASE_URL_BUS = "http://192.168.56.1:8000/bus";
+    private static final String BASE_URL_BUS = "http://192.168.1.21:8000/bus";
 
     @Inject
     private WebClient webClient;
@@ -68,7 +68,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -98,7 +98,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -131,7 +131,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -164,7 +164,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -199,7 +199,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -234,7 +234,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -275,7 +275,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -308,7 +308,7 @@ public class BusWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 // TODO: error response should be contained within the JsonObject
-                // callback.onFailure(statusCode, errorResponse.toString());
+                // callback.onFailure(statusCode, errorResponse);
             }
         });
 

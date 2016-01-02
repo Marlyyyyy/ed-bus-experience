@@ -36,6 +36,8 @@ import com.marton.edibus.services.LocationProviderService;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.SnackbarManager;
 
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -265,7 +267,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String message){
+                    public void onFailure(int statusCode, JSONObject response){
                         SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
 
                         progressDialog.dismiss();

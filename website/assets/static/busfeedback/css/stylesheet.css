@@ -1,0 +1,93 @@
+body{
+    overflow-y: scroll !important;
+}
+
+a{
+    color: white !important;
+}
+
+a:focus{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+/* Navigation bar */
+
+.custom-navbar{
+    background: #1E4558;
+    height: 46px;
+    min-height: 46px;
+    padding: 0;
+    top: 0;
+    left: 0;
+    min-width: 800px;
+}
+
+.custom-navbar ul{
+    display: inline-block;
+}
+
+.custom-navbar li{
+    height: 46px;
+    width: 70px;
+    text-align: center;
+    list-style: none;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.custom-navbar li:hover{
+    border-bottom: 4px solid rgb(255, 105, 0);
+}
+
+.custom-navbar li a{
+    display: block;
+    height: 46px;
+    line-height: 46px;
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-weight: bold;
+}
+
+.active{
+    border-bottom: 4px solid rgb(255, 105, 0);
+}
+
+/* Modals */
+.form-row{
+    margin-bottom: 12px;
+}
+
+.form-control{
+    padding: 3px 12px !important;
+}
+
+.form-buttons-div{
+    text-align: right;
+}
+
+.no-posts-here {
+  text-align: center;
+}
+
+.post {}
+
+.post .post__meta {
+  font-weight: bold;
+  text-align: right;
+  padding-bottom: 19px;
+}
+
+.post .post__meta a:hover {
+  text-decoration: none;
+}
+
+.btn-add-new-post {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}

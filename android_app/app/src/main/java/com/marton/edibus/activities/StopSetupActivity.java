@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -158,11 +159,16 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         args.putBoolean("SERVICE_SELECTED", this.previewService != null);
         this.stopDialog.setArguments(args);
 
+        // Disable service selection if the user is selecting an end stop
+        if(this.stopTypeEnum.equals(StopTypeEnum.END)){
+            this.slidingUpPanelLayout.setEnabled(false);
+        }
+
         // Configure what should happen when there's interaction with the sliding-up-panel
         this.slidingUpPanelLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View view, float v) {
-                slidingUpPanelHeaderTextView.setTextColor(ContextCompat.getColor(StopSetupActivity.this, R.color.white));
+                    slidingUpPanelHeaderTextView.setTextColor(ContextCompat.getColor(StopSetupActivity.this, R.color.white));
             }
 
             @Override
@@ -206,6 +212,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     break;
                 case END:
                     activityTitleTextView.setText("End Stop");
+                    slidingUpPanelHeaderTextView.setText("Service: " + journeyManager.getTrip().getService().getName());
                     break;
             }
         }
@@ -271,6 +278,10 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
             @Override
             public void onMapClick(LatLng latLng) {
 
+                if (stopTypeEnum.equals(StopTypeEnum.END)){
+                    return;
+                }
+
                 // Remove previously clicked point marker
                 if (clickedPointMarker != null){
                     clickedPointMarker.remove();
@@ -283,17 +294,16 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 // Add currently clicked point marker
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(latLng.latitude, latLng.longitude))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
                         .anchor((float) 0.5, (float) 0.5);
 
-                CircleOptions circleOptions = new CircleOptions()
+                /*CircleOptions circleOptions = new CircleOptions()
                         .center(new LatLng(latLng.latitude, latLng.longitude))
                         .radius(CLOSEST_STOPS_RADIUS * 1000)
                         .fillColor(R.color.map_circle)
                         .strokeWidth(0)
                         .zIndex(-1f);
 
-                clickedPointCircle = googleMap.addCircle(circleOptions);
+                clickedPointCircle = googleMap.addCircle(circleOptions);*/
                 clickedPointMarker = googleMap.addMarker(markerOptions);
 
                 // Append new stops to the map
@@ -306,11 +316,9 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                         attachDistancesToStops(stops);
 
                         // Create the stop marker and add it to the list of stop-markers
-                        List<Marker> stopMarkers = new ArrayList<>();
                         for (int i = 0; i< stops.size(); i++){
                             Stop stop = stops.get(i);
                             Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
-                            stopMarkers.add(marker);
 
                             // Make sure each stop is present only once within the hash-map
                             addToHashMapIfValueNotExists(stopMarkersHashMap, marker, stop);
@@ -318,7 +326,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                         }
 
                         // Change the camera position of the map
-                        moveCamera(100, stopMarkers);
+                        moveCamera(100, new ArrayList<>(stopMarkersHashMap.keySet()));
                     }
                 };
 
@@ -335,11 +343,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
                 }else if(stopMarkersHashMap.containsKey(marker)){
 
-                    // Change the look of the icons
-                    if(latestClickedBusMarker != null){
-                        latestClickedBusMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker));
-                    }
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_logo_clicked));
                     latestClickedBusMarker = marker;
 
                     // Launch custom dialog fragment

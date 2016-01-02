@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -190,18 +191,34 @@ public class JourneySetupFragment extends RoboFragment{
             this.journeyStartStopTextView.setText("None");
         }
 
-        Stop currentEndStop = this.journeyManager.getTrip().getEndStop();
-        if (currentEndStop != null){
-            this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
-        }else{
-            this.journeyEndStopTextView.setText("None");
-        }
-
         Service currentService = this.journeyManager.getTrip().getService();
         if (currentService != null){
             this.journeyServiceTextView.setText(String.valueOf(currentService.getName()));
+            if (currentStartStop != null){
+                this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
+            }
         }else{
             this.journeyServiceTextView.setText("None");
+            this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
+        }
+
+        Stop currentEndStop = this.journeyManager.getTrip().getEndStop();
+        if (currentEndStop != null){
+            this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
+            if (currentService != null){
+                this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
+            }
+        }else{
+            this.journeyEndStopTextView.setText("None");
+            this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
+        }
+
+        if (this.journeyManager.tripSetupComplete()){
+            this.continueButton.setEnabled(true);
+            this.continueButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimary));
+        }else{
+            this.continueButton.setEnabled(false);
+            this.continueButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
         }
     }
 

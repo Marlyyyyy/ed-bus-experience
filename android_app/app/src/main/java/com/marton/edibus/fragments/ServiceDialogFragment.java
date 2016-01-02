@@ -6,20 +6,19 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.WebCallBack;
+import com.marton.edibus.adapters.ServiceAdapter;
 import com.marton.edibus.events.JourneyUpdatedEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.network.BusWebClient;
 import com.marton.edibus.utilities.JourneyManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboDialogFragment;
@@ -38,52 +37,52 @@ public class ServiceDialogFragment extends RoboDialogFragment {
 
     ArrayList<Service> availableServices;
 
-    List<String> availableServicesNames;
+    ServiceAdapter serviceAdapter;
 
-    ArrayAdapter<String> serviceAdapter;
+    @Override
+    public void onCreate(Bundle bundle){
+        super.onCreate(bundle);
+
+        this.availableServices = new ArrayList<>();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_service, container, false);
 
-        this.serviceListView = (ListView) view.findViewById(R.id.service_list);
-
-        getDialog().setTitle("Select a service");
-
-        this.availableServicesNames = new ArrayList<>();
-
-        this.serviceAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, this.availableServicesNames);
-        this.serviceListView.setAdapter(this.serviceAdapter);
-        this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                // Select new service and fire update event
-                journeyManager.getTrip().setService(availableServices.get(position));
-                eventBus.post(new JourneyUpdatedEvent());
-                getDialog().cancel();
-            }
-        });
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return view;
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ArrayList<Service> services = this.journeyManager.getTrip().getStartStop().getServices();
+        if (services != null){
+            this.availableServices = services;
+            this.serviceListView = (ListView) view.findViewById(R.id.service_list);
+            this.serviceAdapter = new ServiceAdapter(getActivity(), availableServices, getResources());
+            this.serviceAdapter.setSmallServiceItem(true);
+            this.serviceListView.setAdapter(this.serviceAdapter);
+            this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    // Select new service and fire update event
+                    journeyManager.getTrip().setService(availableServices.get(position));
+                    eventBus.post(new JourneyUpdatedEvent());
+                    getDialog().cancel();
+                }
+            });
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
-        WebCallBack<List<Service>> webCallBack = new WebCallBack<List<Service>>() {
-            @Override
-            public void onSuccess(List<Service> services) {
-                for (int i=0; i<services.size(); i++){
-                    availableServices = new ArrayList<>(services);
-                    serviceAdapter.add(String.valueOf(availableServices.get(i).getName()));
-                }
-            }
-        };
-
-        this.busWebService.getServicesForStop(this.journeyManager.getTrip().getStartStopId(), webCallBack);
     }
 
     @Override

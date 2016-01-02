@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,9 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
     private Activity activity;
     private ArrayList services;
     private LayoutInflater inflater = null;
-    public Resources resources;
-    Service service = null;
+    private Resources resources;
+    private Service service = null;
+    private boolean smallServiceItem = false;
 
     public ServiceAdapter(Activity activity, ArrayList services, Resources resources) {
 
@@ -32,8 +32,7 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
         this.services = services;
         this.resources = resources;
 
-        this.inflater = (LayoutInflater)activity.
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {
@@ -55,21 +54,26 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = convertView;
+        this.service = (Service) this.services.get(position);
 
-        if( convertView == null ){
-            view = this.inflater.inflate(R.layout.item_service, null);
+        View view = convertView;
+        if(convertView == null){
+            if (this.smallServiceItem){
+                view = this.inflater.inflate(R.layout.item_service_small, null);
+            }else{
+                view = this.inflater.inflate(R.layout.item_service_large, null);
+
+                // This view only exists in the large layout
+                TextView typeTextView = (TextView) view.findViewById(R.id.type);
+                typeTextView.setText(this.service.getType());
+            }
         }
 
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
-        TextView typeTextView = (TextView) view.findViewById(R.id.type);
         TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
-
-        this.service = (Service) this.services.get(position);
 
         // Set texts and change styles accordingly
         nameTextView.setText(this.service.getName());
-        typeTextView.setText(this.service.getType());
         descriptionTextView.setText(this.service.getDescription());
 
         return view;
@@ -81,8 +85,11 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
     }
 
     @Override
-    public boolean isEnabled(int position)
-    {
+    public boolean isEnabled(int position) {
         return true;
+    }
+
+    public void setSmallServiceItem(boolean smallServiceItem) {
+        this.smallServiceItem = smallServiceItem;
     }
 }

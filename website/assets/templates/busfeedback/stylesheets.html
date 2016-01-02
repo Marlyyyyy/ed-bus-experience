@@ -1,0 +1,14 @@
+{% load compress %}
+{% load staticfiles %}
+
+{% compress css %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dependencies/bootstrap/dist/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'dependencies/snackbarjs/src/snackbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'dependencies/ngDialog/css/ngDialog.css' %}" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'busfeedback/css/custom-modal-theme.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'busfeedback/css/stylesheet.css' %}" />
+
+{% endcompress %}
+

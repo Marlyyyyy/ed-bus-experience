@@ -1,5 +1,5 @@
 {
-  "name": "portfolio",
+  "name": "edi_bus",
   "version": "0.0.0",
   "license": "MIT",
   "directory": "assets/static",
@@ -11,7 +11,6 @@
     "tests"
   ],
   "dependencies": {
-    "App States": "bower.json#~0.6.9",
     "angular": "~1.4.0",
     "angular-cookies": "~1.4.0",
     "angular-route": "~1.4.0",
@@ -23,5 +22,12 @@
     "ngDialog": "~0.5.1",
     "snackbarjs": null,
     "underscore": "~1.7.0"
-  }
+  },
+  "homepage": "https://github.com/Marlyyyyy/edi-bus-feedback",
+  "authors": [
+    "Marlyyyyy <mlt.residence@gmail.com>"
+  ],
+  "description": "edi_bus dependencies",
+  "main": "donno",
+  "moduleType": []
 }

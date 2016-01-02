@@ -6,6 +6,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
+
 @Singleton
 public class WebClient {
 
@@ -16,7 +18,7 @@ public class WebClient {
     }
 
     public void get(String url, RequestParams requestParameters, AsyncHttpResponseHandler responseHandler){
-        this.client.get(url, requestParameters, responseHandler);
+            this.client.get(url, requestParameters, responseHandler);
     }
 
     public void post(String url, RequestParams requestParameters, AsyncHttpResponseHandler responseHandler){

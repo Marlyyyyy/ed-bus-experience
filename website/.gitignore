@@ -6,5 +6,5 @@ htmlcov/
 *.jpg
 *.png
 *.gif
-assets/static/bower_components/*
+assets/static/dependencies/*
 assets/static/compressed/*

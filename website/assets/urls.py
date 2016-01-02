@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from busfeedback.views import get_data, remove_data
+from busfeedback.views import get_data, remove_data, IndexView
 
 urlpatterns = patterns(
     '',
@@ -9,7 +9,8 @@ urlpatterns = patterns(
     url(r'^remove/$', remove_data),
     url(r'^bus/', include('busfeedback.urls')),
     url(r'^auth/', include('authentication.urls')),
-    url(r'^admin/', include(admin.site.urls))
+    url(r'^admin/', include(admin.site.urls)),
+    url('^.*$', IndexView.as_view(), name='index')
 )
 
 # Silk Profiler

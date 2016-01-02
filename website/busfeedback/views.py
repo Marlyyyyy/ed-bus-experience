@@ -17,6 +17,7 @@ import dateutil.parser
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 import math
+from django.template import loader
 
 
 @csrf_exempt
@@ -233,6 +234,15 @@ class ServiceView(APIView):
         json_services = JSONRenderer().render({"services": service_serializer.data})
 
         return HttpResponse(json_services, content_type='application/json')
+
+
+class IndexView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def get(self, request):
+        template = loader.get_template('busfeedback/index.html')
+
+        return HttpResponse(template.render())
 
 
 def get_closest_stops(latitude, longitude, radius_km=50.0, number_of_stops=3):

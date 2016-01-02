@@ -16,7 +16,7 @@ public class UserWebClient {
 
     private static final String TAG = UserWebClient.class.getName();
 
-    private static final String BASE_URL_AUTHENTICATION = "http://192.168.56.1:8000/auth";
+    private static final String BASE_URL_AUTHENTICATION = "http://192.168.1.21:8000/auth";
 
     @Inject
     private WebClient webClient;
@@ -40,7 +40,7 @@ public class UserWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -64,7 +64,7 @@ public class UserWebClient {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
-                callback.onFailure(statusCode, errorResponse.toString());
+                callback.onFailure(statusCode, errorResponse);
             }
         });
     }

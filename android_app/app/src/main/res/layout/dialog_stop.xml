@@ -2,14 +2,16 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:gravity="center"
+    android:layout_gravity="center"
     android:padding="30dp"
     style="@style/AppTheme">
 
     <LinearLayout
-        android:layout_height="wrap_content"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="left"
@@ -19,6 +21,7 @@
             android:id="@+id/stop_title"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@color/ColorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bus Stop Title" />
@@ -26,60 +29,85 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_height="wrap_content"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:gravity="left"
         android:minHeight="@dimen/stop_dialog_row_min_height">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Distance:"/>
+            android:textColor="@color/oil"
+            android:text="Distance from you: "/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Same Stop Distance"
+            android:textColor="@color/oil"
+            android:text="150 m"
             android:id="@+id/stop_distance" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/services_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="0px"
+        android:layout_weight="6"
+        android:orientation="vertical"
+        android:background="@drawable/layout_border">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Services"
+            android:gravity="left"
+            android:padding="5dp"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:background="@color/ColorPrimary"/>
 
         <ListView
             android:id="@+id/service_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxHeight="50dp"
             android:listSelector="@android:color/transparent"
-            android:choiceMode="singleChoice" />
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/white"
+            android:dividerHeight="1sp"/>
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_height="wrap_content"
+        android:layout_height="0px"
+        android:layout_weight="2"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:gravity="bottom|center"
         android:minHeight="@dimen/stop_dialog_row_min_height">
 
         <Button
             android:text="Cancel"
             style="@style/AppTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@color/base"
             android:id="@+id/cancel"/>
 
         <Button
             android:text="Select"
             style="@style/AppTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@color/ColorPrimary"
             android:id="@+id/select"/>
 
     </LinearLayout>

@@ -5,11 +5,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,7 +26,9 @@ import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
+import com.marton.edibus.utilities.SnackbarManager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import roboguice.fragment.RoboDialogFragment;
@@ -49,7 +55,15 @@ public class StopDialogFragment extends RoboDialogFragment {
     @InjectView(R.id.service_list_view)
     private ListView servicesListView;
 
+    @InjectView(R.id.services_layout)
+    private LinearLayout servicesLayout;
+
+    @InjectView(R.id.service_list_view)
+    private ListView serviceListView;
+
     private StopTypeEnum stopTypeEnum;
+
+    private DecimalFormat decimalFormat;
 
     private Stop stop;
 
@@ -57,6 +71,14 @@ public class StopDialogFragment extends RoboDialogFragment {
     private ArrayList<Service> services;
 
     private ServiceAdapter serviceAdapter;
+
+    @Override
+    public void onCreate(Bundle bundle){
+        super.onCreate(bundle);
+
+        // Set up text view formats
+        this.decimalFormat = new DecimalFormat(".##");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,7 +100,7 @@ public class StopDialogFragment extends RoboDialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         this.stopTitleTextView.setText(String.valueOf(this.stop.getName()));
-        this.stopDistanceTextView.setText(String.valueOf(this.stop.getDistance()));
+        this.stopDistanceTextView.setText(String.valueOf(this.decimalFormat.format(this.stop.getDistance())) + " m");
         this.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,17 +114,34 @@ public class StopDialogFragment extends RoboDialogFragment {
             }
         });
 
-        // Initialise the list of services
-        if (this.stop.getServices() != null){
+        // Initialise the list of services when selecting a start stop
+        if (this.stop.getServices() != null && this.stopTypeEnum.equals(StopTypeEnum.START)){
             services = new ArrayList<>(this.stop.getServices());
             serviceAdapter = new ServiceAdapter(getActivity(), services, getResources());
+            serviceAdapter.setSmallServiceItem(true);
             servicesListView.setAdapter(serviceAdapter);
+
+            // Make the ListView items selectable
+            this.serviceListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+            this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Service service = services.get(position);
+                    journeyManager.getTrip().setService(service);
+                    SnackbarManager.showSucess(view, String.valueOf(service.getName()));
+                }
+            });
+        }else{
+            this.servicesLayout.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
+        Window window = getDialog().getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        window.setGravity(Gravity.CENTER);
     }
 
     @Override

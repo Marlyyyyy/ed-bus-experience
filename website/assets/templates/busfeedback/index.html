@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html ng-app="runnerapp" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <base href="/runnerapp/" />
+
+    {% include 'busfeedback/stylesheets.html' %}
+</head>
+<body>
+
+    <navbar></navbar>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 ng-view"></div>
+        </div>
+    </div>
+
+{% include 'busfeedback/javascripts.html' %}
+</body>
+</html>

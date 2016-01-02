@@ -1,0 +1,29 @@
+<div class="profile" ng-show="vm.profile">
+    <div class="jumbotron profile__header">
+        <h1 class="profile__username">{{ vm.profile.username }}</h1>
+        <p class="profile__tagline">{{ vm.profile.tagline }}</p>
+    </div>
+
+    <div ng-show="vm.logs && vm.logs.length">
+
+        <div class="row">
+            <div class="col-md-1">Location</div>
+            <div class="col-md-1">Date</div>
+            <div class="col-md-1">Description</div>
+            <div class="col-md-1">Distance</div>
+            <div class="col-md-1">Duration</div>
+            <div class="col-md-1">Pace</div>
+        </div>
+
+        <div class="row" ng-repeat="log in vm.logs">
+            <div class="col-md-1">{{ log.location }}</div>
+            <div class="col-md-1">{{ log.date }}</div>
+            <div class="col-md-1">{{ log.description }}</div>
+            <div class="col-md-1">{{ log.distance }}</div>
+            <div class="col-md-1">{{ log.duration }}</div>
+            <div class="col-md-1">{{ log.pace }}</div>
+        </div>
+
+    </div>
+
+</div>
