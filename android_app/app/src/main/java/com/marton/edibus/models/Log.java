@@ -21,7 +21,13 @@ public class Log extends SugarRecord {
 
     private int travelDuration;
 
+    private double distance;
+
+    private double averageSpeed;
+
     private boolean seat;
+
+    private boolean greet;
 
     private float rating;
 
@@ -33,8 +39,8 @@ public class Log extends SugarRecord {
     }
 
     public Log(Date startTime, Date endTime, String startStopName, String endStopName,
-               String serviceName, int waitDuration, int travelDuration, boolean seat,
-               float rating, int peopleWaiting, int peopleBoarding){
+               String serviceName, int waitDuration, int travelDuration, double distance, double averageSpeed,
+               boolean seat, boolean greet, float rating, int peopleWaiting, int peopleBoarding){
 
         this.startTime = startTime;
         this.endTime = endTime;
@@ -43,7 +49,10 @@ public class Log extends SugarRecord {
         this.serviceName = serviceName;
         this.waitDuration = waitDuration;
         this.travelDuration = travelDuration;
+        this.distance = distance;
+        this.averageSpeed = averageSpeed;
         this.seat = seat;
+        this.greet = greet;
         this.rating = rating;
         this.peopleWaiting = peopleWaiting;
         this.peopleBoarding = peopleBoarding;
@@ -57,7 +66,10 @@ public class Log extends SugarRecord {
         this.serviceName = trip.getService().getName();
         this.waitDuration = trip.getWaitDuration();
         this.travelDuration = trip.getTravelDuration();
+        this.distance = trip.getDistance();
+        this.averageSpeed = 1000 * this.distance / (this.waitDuration + this.travelDuration);
         this.seat = trip.getSeat();
+        this.greet = trip.getGreet();
         this.rating = trip.getRating();
         this.peopleWaiting = trip.getPeopleWaiting();
         this.peopleBoarding = trip.getPeopleBoarding();
@@ -149,5 +161,29 @@ public class Log extends SugarRecord {
 
     public void setPeopleBoarding(int peopleBoarding) {
         this.peopleBoarding = peopleBoarding;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public double getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public void setAverageSpeed(double averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
+    public boolean isGreet() {
+        return greet;
+    }
+
+    public void setGreet(boolean greet) {
+        this.greet = greet;
     }
 }

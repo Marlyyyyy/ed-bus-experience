@@ -26,7 +26,6 @@ import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
-import com.marton.edibus.utilities.SnackbarManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -128,7 +127,6 @@ public class StopDialogFragment extends RoboDialogFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Service service = services.get(position);
                     journeyManager.getTrip().setService(service);
-                    SnackbarManager.showSucess(view, String.valueOf(service.getName()));
                 }
             });
         }else{

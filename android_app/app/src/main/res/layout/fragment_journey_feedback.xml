@@ -7,43 +7,6 @@
     android:id="@+id/journey_root"
     android:padding="20dp">
 
-    <View android:background="#66000000"
-        android:layout_width = "fill_parent"
-        android:layout_height="1dip"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/journey_setup_row_min_height"
-        android:paddingLeft="@dimen/journey_setup_row_side_padding"
-        android:paddingRight="@dimen/journey_setup_row_side_padding"
-        android:clickable="true"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:focusable="true"
-        android:background="@drawable/row_blue_bg">
-
-        <TextView
-            android:text="Seat"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_weight="1"/>
-
-        <Switch
-            android:id="@+id/seat_switch"
-            android:checked="true"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:switchMinWidth="@dimen/switch_min_width"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-    <View android:background="#66000000"
-        android:layout_width = "fill_parent"
-        android:layout_height="1dip" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,13 +16,6 @@
         android:clickable="false"
         android:orientation="horizontal"
         android:gravity="center">
-
-        <TextView
-            android:text="Rating"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_weight="1"/>
 
         <RatingBar
             android:id="@+id/rating_bar"
@@ -71,13 +27,53 @@
     </LinearLayout>
 
 
-    <View android:background="#66000000"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seat_switch_layout"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:focusable="true"
+        android:background="@drawable/row_blue_bg">
+
+        <TextView
+            android:text="Did you have a seat?"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight="2.2"/>
+
+        <TextView
+            android:text="Yes"
+            android:id="@+id/seat_switch_text"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/oil"
+            android:layout_weight="0.5"/>
+
+        <Switch
+            android:id="@+id/seat_switch"
+            android:checked="true"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="@dimen/switch_min_width"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <View android:background="#fff"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"/>
+        android:layout_height="5dip" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/greet_switch_layout"
         android:minHeight="@dimen/journey_setup_row_min_height"
         android:paddingLeft="@dimen/journey_setup_row_side_padding"
         android:paddingRight="@dimen/journey_setup_row_side_padding"
@@ -91,47 +87,102 @@
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:layout_weight="1"/>
+            android:layout_weight="2.2"/>
+
+        <TextView
+            android:text="Yes"
+            android:id="@+id/greet_switch_text"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:textColor="@color/oil"
+            android:textStyle="bold"
+            android:layout_weight="0.5"/>
 
         <Switch
             android:id="@+id/greet_switch"
+            android:checked="true"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:switchMinWidth="@dimen/switch_min_width"
             android:layout_weight="1"/>
     </LinearLayout>
 
-    <View android:background="#66000000"
+    <View android:background="#fff"
         android:layout_width = "fill_parent"
-        android:layout_height="1dip"/>
+        android:layout_height="5dip" />
 
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
-        <EditText android:id="@+id/people_waiting"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/row_blue_bg">
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="Number of people waiting at the stop" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColorHint="@color/ColorPrimaryText"
+            >
+            <EditText android:id="@+id/people_waiting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:hint="Number of people waiting at the stop?"
+                />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    </LinearLayout>
+
+    <View android:background="#fff"
+        android:layout_width = "fill_parent"
+        android:layout_height="5dip" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
-        <EditText android:id="@+id/people_boarding"
+        android:minHeight="@dimen/journey_setup_row_min_height"
+        android:paddingLeft="@dimen/journey_setup_row_side_padding"
+        android:paddingRight="@dimen/journey_setup_row_side_padding"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/row_blue_bg">
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="Number of people boarding the bus" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColorHint="@color/ColorPrimaryText">
+            <EditText android:id="@+id/people_boarding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:hint="Number of people boarding the bus?" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <View android:background="#fff"
+        android:layout_width = "fill_parent"
+        android:layout_height="5dip" />
 
     <Button
         android:text="Save feedback"
-        android:layout_width="wrap_content"
+        style="@style/AppTheme"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/journey_feedback_complete"/>
 

@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
@@ -37,8 +39,20 @@ public class JourneyFeedbackFragment extends RoboFragment {
     @InjectView(R.id.seat_switch)
     Switch seatSwitch;
 
+    @InjectView(R.id.seat_switch_layout)
+    LinearLayout seatSwitchLayout;
+
+    @InjectView(R.id.seat_switch_text)
+    TextView seatSwitchTextView;
+
     @InjectView(R.id.greet_switch)
     Switch greetSwitch;
+
+    @InjectView(R.id.greet_switch_layout)
+    LinearLayout greetSwitchLayout;
+
+    @InjectView(R.id.greet_switch_text)
+    TextView greetSwitchTextView;
 
     @InjectView(R.id.people_waiting)
     EditText peopleWaitingEditText;
@@ -108,7 +122,16 @@ public class JourneyFeedbackFragment extends RoboFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                journeyManager.getTrip().setSeat(isChecked);
+                switchSeat(isChecked);
+            }
+        });
+
+        this.seatSwitchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean previousState = seatSwitch.isChecked();
+                seatSwitch.setChecked(!previousState);
+                switchSeat(!previousState);
             }
         });
 
@@ -116,8 +139,39 @@ public class JourneyFeedbackFragment extends RoboFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                // TODO
+                switchGreet(isChecked);
             }
         });
+
+        this.greetSwitchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean previousState = greetSwitch.isChecked();
+                greetSwitch.setChecked(!previousState);
+                switchGreet(!previousState);
+            }
+        });
+    }
+
+    private void switchSeat(boolean isChecked){
+
+        this.journeyManager.getTrip().setSeat(isChecked);
+
+        if (isChecked){
+            this.seatSwitchTextView.setText("Yes");
+        }else{
+            this.seatSwitchTextView.setText("No");
+        }
+    }
+
+    private void switchGreet(boolean isChecked){
+
+        this.journeyManager.getTrip().setGreet(isChecked);
+
+        if (isChecked){
+            this.greetSwitchTextView.setText("Yes");
+        }else{
+            this.greetSwitchTextView.setText("No");
+        }
     }
 }

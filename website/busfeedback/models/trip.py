@@ -23,8 +23,10 @@ class Trip(models.Model):
     travel_duration = models.IntegerField()
     seat = models.BooleanField()
     rating = models.FloatField()
+    distance = models.FloatField()
     people_waiting = models.IntegerField(default=-1)
     people_boarding = models.IntegerField(default=-1)
+    greet = models.BooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

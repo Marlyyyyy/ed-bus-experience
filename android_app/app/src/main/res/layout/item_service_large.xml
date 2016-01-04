@@ -9,8 +9,8 @@
         android:text="3"
         android:id="@+id/name"
         android:background="@color/ColorPrimary"
-        android:layout_height="50dp"
-        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:layout_width="60dp"
         android:textSize="20sp"
         android:gravity="center"
         android:textColor="@color/white"/>
@@ -18,27 +18,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp">
 
         <TextView
             android:text="Description"
             android:id="@+id/description"
-            android:layout_height="25dp"
-            android:layout_marginLeft="20dp"
+            android:layout_height="35dp"
             android:layout_width="wrap_content"
             android:textSize="12sp"
             android:textColor="@color/oil"
-            android:gravity="center"/>
+            android:gravity="start|center_vertical"/>
 
         <TextView
             android:text="Type"
             android:id="@+id/type"
             android:layout_height="25dp"
-            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textColor="@color/oil"
-            android:gravity="center"/>
+            android:gravity="start|center_vertical"/>
 
     </LinearLayout>
 

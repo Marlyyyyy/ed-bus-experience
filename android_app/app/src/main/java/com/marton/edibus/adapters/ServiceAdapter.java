@@ -4,11 +4,12 @@ package com.marton.edibus.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.marton.edibus.R;
@@ -19,18 +20,15 @@ import java.util.ArrayList;
 
 public class ServiceAdapter extends BaseAdapter implements View.OnClickListener {
 
-    private Activity activity;
     private ArrayList services;
     private LayoutInflater inflater = null;
-    private Resources resources;
     private Service service = null;
     private boolean smallServiceItem = false;
+    private LinearLayout latestClickedView;
 
     public ServiceAdapter(Activity activity, ArrayList services, Resources resources) {
 
-        this.activity = activity;
         this.services = services;
-        this.resources = resources;
 
         this.inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -81,7 +79,6 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        Log.v("CustomAdapter", "=====Row button clicked=====");
     }
 
     @Override

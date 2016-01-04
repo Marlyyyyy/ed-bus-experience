@@ -121,10 +121,10 @@ public class LocationProcessorService extends RoboService {
                 Trip trip = this.journeyManager.getTrip();
                 trip.setWaitDuration(this.waitingSeconds * 1000);
                 trip.setTravelDuration(this.travellingSeconds * 1000);
-                this.journeyManager.setTrip(trip);
 
                 // Calculate travelled distance in metres
                 double pastDistanceDelta = 0.0;
+                double pastDistance = 0.0;
                 if (this.previousTrackerStateUpdatedEvent != null){
                     double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
                     pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
@@ -132,10 +132,13 @@ public class LocationProcessorService extends RoboService {
                             this.trackerStateUpdatedEvent.getLongitude(),
                             this.previousTrackerStateUpdatedEvent.getLatitude(),
                             this.previousTrackerStateUpdatedEvent.getLongitude());
-                    this.trackerStateUpdatedEvent.setDistanceFromStart(previousDistanceFromStart + pastDistanceDelta);
+                    pastDistance = previousDistanceFromStart + pastDistanceDelta;
+                    this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
                 }else{
                     this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
                 }
+
+                trip.setDistance(pastDistance);
 
                 // Calculate the current speed in metre per second
                 if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){

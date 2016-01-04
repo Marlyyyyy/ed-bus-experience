@@ -15,9 +15,10 @@
 
     <color name="ColorPrimary">#4d90fe</color>
     <color name="ColorPrimaryBackground">#007dba</color>
-    <color name="ColorPrimaryLight">#b94d90fe</color>
+    <color name="ColorPrimaryLight">#814d90fe</color>
     <color name="ColorPrimaryDark">#bb004b69</color>
     <color name="ColorPrimaryUnavailable">#cfcfcf</color>
+    <color name="ColorPrimaryText">#485871</color>
     <color name="tabsScrollColor">#005ca2</color>
 
     # Maps

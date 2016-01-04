@@ -73,7 +73,7 @@
             android:id="@+id/service_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:listSelector="@android:color/transparent"
+            android:listSelector="@drawable/listitem_background"
             android:choiceMode="singleChoice"
             android:divider="@android:color/white"
             android:dividerHeight="1sp"/>

@@ -149,8 +149,7 @@ public class JourneyManager {
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.JOURNEYS_KEY, String.valueOf(journeys));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_WAITING_TIME_KEY, String.valueOf(totalWaitingTime));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_TIME_KEY, String.valueOf(totalTravellingTime));
-        // TODO: Implement distance as well
-        // SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(this.trip.));
+        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(this.trip.getDistance()));
 
         // Store diary log locally
         Log log = new Log(trip);

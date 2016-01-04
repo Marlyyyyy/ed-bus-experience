@@ -7,6 +7,14 @@
     android:padding="20dp"
     android:orientation="vertical">
 
+    <TextView
+        android:text="Start Stop"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:textColor="@color/monsoon"/>
+
     <LinearLayout
         android:id="@+id/choose_start_stop"
         android:layout_width="match_parent"
@@ -20,15 +28,6 @@
         android:focusable="true"
         android:background="@drawable/row_blue_bg">
 
-        <TextView
-            android:text="Start Stop"
-            android:textStyle="bold"
-            android:layout_height="0px"
-            android:textSize="12sp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:textColor="@color/oil"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
@@ -36,19 +35,18 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="0px"
-                android:layout_weight="1"
-                android:layout_gravity="center" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <TextView
                 android:text="None"
                 android:id="@+id/journey_start_stop"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_width="0px"
                 android:layout_weight="6"
                 android:layout_gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/ColorPrimaryText"
                 android:gravity="center"
                 android:textSize="24sp" />
 
@@ -61,17 +59,19 @@
 
         </LinearLayout>
 
-        <TextView
-            android:text=""
-            android:layout_height="0px"
-            android:layout_width="match_parent"
-            android:layout_weight="1"/>
-
     </LinearLayout>
 
     <View android:background="@color/transparent"
     android:layout_width = "fill_parent"
     android:layout_height="@dimen/journey_setup_row_divider_height" />
+
+    <TextView
+        android:text="Service"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:textColor="@color/monsoon"/>
 
     <LinearLayout
         android:id="@+id/choose_service"
@@ -86,15 +86,6 @@
         android:focusable="true"
         android:background="@drawable/row_blue_bg">
 
-        <TextView
-            android:text="Service"
-            android:textStyle="bold"
-            android:layout_height="0px"
-            android:textSize="12sp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:textColor="@color/oil"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
@@ -102,17 +93,16 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="0px"
-                android:layout_weight="1"
-                android:layout_gravity="center" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <TextView
                 android:text="None"
                 android:id="@+id/journey_service"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_width="0px"
-                android:textColor="@color/white"
+                android:textColor="@color/ColorPrimaryText"
                 android:layout_weight="6"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -127,17 +117,19 @@
 
         </LinearLayout>
 
-        <TextView
-            android:text=""
-            android:layout_height="0px"
-            android:layout_width="match_parent"
-            android:layout_weight="1"/>
-
     </LinearLayout>
 
     <View android:background="@color/transparent"
         android:layout_width = "fill_parent"
         android:layout_height="@dimen/journey_setup_row_divider_height" />
+
+    <TextView
+        android:text="End Stop"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:textColor="@color/monsoon"/>
 
     <LinearLayout
         android:id="@+id/choose_end_stop"
@@ -152,15 +144,6 @@
         android:focusable="true"
         android:background="@drawable/row_blue_bg">
 
-        <TextView
-            android:text="End Stop"
-            android:textStyle="bold"
-            android:layout_height="0px"
-            android:textSize="12sp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:textColor="@color/oil"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
@@ -168,18 +151,17 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="0px"
-                android:layout_weight="1"
-                android:layout_gravity="center" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <TextView
                 android:text="None"
                 android:id="@+id/journey_end_stop"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_width="0px"
                 android:layout_weight="6"
-                android:textColor="@color/white"
+                android:textColor="@color/ColorPrimaryText"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="24sp" />
@@ -192,12 +174,6 @@
                 android:layout_height="20dp"/>
 
         </LinearLayout>
-
-        <TextView
-            android:text=""
-            android:layout_height="0px"
-            android:layout_width="match_parent"
-            android:layout_weight="1"/>
 
     </LinearLayout>
 

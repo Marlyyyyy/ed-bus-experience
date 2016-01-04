@@ -7,7 +7,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
 
-        fields = ('id', 'start_time', 'end_time', 'wait_duration', 'travel_duration', 'seat', 'rating', 'created_at', 'updated_at')
+        fields = ('id', 'start_time', 'end_time', 'wait_duration', 'travel_duration', 'distance', 'seat', 'greet', 'rating', 'created_at', 'updated_at')
         read_only_fields = ('id')
 
     def get_validation_exclusions(self, *args, **kwargs):

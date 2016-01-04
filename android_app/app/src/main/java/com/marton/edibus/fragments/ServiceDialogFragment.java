@@ -3,11 +3,13 @@ package com.marton.edibus.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.inject.Inject;
@@ -37,8 +39,6 @@ public class ServiceDialogFragment extends RoboDialogFragment {
 
     private ArrayList<Service> availableServices;
 
-    private ServiceAdapter serviceAdapter;
-
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -64,9 +64,8 @@ public class ServiceDialogFragment extends RoboDialogFragment {
         if (services != null){
             this.availableServices = services;
             this.serviceListView = (ListView) view.findViewById(R.id.service_list);
-            this.serviceAdapter = new ServiceAdapter(getActivity(), availableServices, getResources());
-            this.serviceAdapter.setSmallServiceItem(true);
-            this.serviceListView.setAdapter(this.serviceAdapter);
+            ServiceAdapter serviceAdapter = new ServiceAdapter(getActivity(), availableServices, getResources());
+            this.serviceListView.setAdapter(serviceAdapter);
             this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -83,6 +82,10 @@ public class ServiceDialogFragment extends RoboDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        Window window = getDialog().getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        window.setGravity(Gravity.CENTER);
     }
 
     @Override

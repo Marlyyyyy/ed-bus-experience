@@ -5,25 +5,9 @@ import java.util.Date;
 
 public class Trip {
 
-    /**
-     * Description
-     * @param id
-     * @param startTime
-     * @param endTime
-     * @param journey
-     * @param startStop
-     * @param endStop
-     * @param service
-     * @param waitDuration
-     * @param travelDuration
-     * @param seat
-     * @param rating
-     * @param createdAt
-     * @param updatedAt
-     */
     public Trip(int id, Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
-            Service service, int waitDuration, int travelDuration, boolean seat, float rating,
-            Date createdAt, Date updatedAt, int peopleWaiting, int peopleBoarding){
+            Service service, int waitDuration, int travelDuration, double distance, boolean seat, float rating,
+            boolean greet, Date createdAt, Date updatedAt, int peopleWaiting, int peopleBoarding){
 
         this.id = id;
         this.startTime = startTime;
@@ -34,7 +18,9 @@ public class Trip {
         this.service = service;
         this.waitDuration = waitDuration;
         this.travelDuration = travelDuration;
+        this.distance = distance;
         this.seat = seat;
+        this.greet = greet;
         this.rating = rating;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -66,11 +52,18 @@ public class Trip {
 
     private int serviceId;
 
+    // Milliseconds
     private int waitDuration;
 
+    // Milliseconds
     private int travelDuration;
 
+    // Metres
+    private double distance;
+
     private boolean seat;
+
+    private boolean greet;
 
     private float rating;
 
@@ -174,8 +167,24 @@ public class Trip {
         this.seat = seat;
     }
 
+    public boolean getGreet() {
+        return greet;
+    }
+
+    public void setGreet(boolean greet) {
+        this.greet = greet;
+    }
+
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public void setStartStop(Stop startStop) {

@@ -15,8 +15,14 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.JourneyActivity;
+import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
 import com.marton.edibus.utilities.StatisticsManager;
+
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
@@ -34,9 +40,26 @@ public class DashboardFragment extends RoboFragment {
     @InjectView(R.id.journeys)
     private TextView journeysTextView;
 
+    @InjectView(R.id.total_distance)
+    private TextView totalDistanceTextView;
+
+    @InjectView(R.id.total_time)
+    private TextView totalTimeTextView;
+
+    @InjectView(R.id.average_speed)
+    private TextView averageSpeedTextView;
+
+    private DecimalFormat decimalFormat;
+
+    private DateFormat dateFormat;
+
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        // Set up text view formats
+        this.decimalFormat = new DecimalFormat(".##");
+        this.dateFormat = new SimpleDateFormat("mm:ss", Locale.UK);
     }
 
     @Override
@@ -78,11 +101,13 @@ public class DashboardFragment extends RoboFragment {
 
         // Fill in statistics
         int journeys = StatisticsManager.readJourneysFromSharedPreferences();
-        int totalWaitingTime = StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
-        int totalTravellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
+        double distance = StatisticsManager.readTotalTravellingDistanceFromSharedPreferences();
+        int totalTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences() + StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
+        double averageSpeed = 1000 * distance / (totalTime);
 
         this.journeysTextView.setText(String.valueOf(journeys));
-//        this.totalWaitingTimeTextView.setText(String.valueOf(totalWaitingTime));
-//        this.totalTravellingTimeTextView.setText(String.valueOf(totalTravellingTime));
+        this.totalDistanceTextView.setText(String.valueOf(this.decimalFormat.format(distance)));
+        this.totalTimeTextView.setText(String.valueOf(this.dateFormat.format(totalTime)));
+        this.averageSpeedTextView.setText(String.valueOf(this.decimalFormat.format(averageSpeed)));
     }
 }

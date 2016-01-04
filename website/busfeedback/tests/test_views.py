@@ -81,6 +81,8 @@ class BusViewTestCase(TestCase):
             'service_id': service_id,
             'wait_duration': 60000,
             'travel_duration': 800000,
+            'distance':1000.2,
+            'greet':True,
             'seat': True,
             'rating': 4.5
         }
@@ -153,7 +155,7 @@ class BusViewTestCase(TestCase):
 
         current_time = datetime.now()
         trip = {'start_time': current_time, 'end_time': current_time, 'start_stop_id': 0, 'end_stop_id': end_stop_id,
-                'service_id': service_id, 'wait_duration': 60000, 'travel_duration': 800000, 'seat': True, 'rating': 4.5}
+                'service_id': service_id, 'wait_duration': 60000, 'travel_duration': 800000, 'distance':1000.2, 'seat': True, 'rating': 4.5}
 
         # Bad Start Stop
         trip_json = json.dumps(trip, cls=DjangoJSONEncoder)
@@ -193,6 +195,8 @@ class BusViewTestCase(TestCase):
             'service_id': service_id,
             'wait_duration': 60000,
             'travel_duration': 800000,
+            'distance':1000.2,
+            'greet':True,
             'seat': True,
             'rating': 4.5
         }

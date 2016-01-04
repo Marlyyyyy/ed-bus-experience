@@ -108,6 +108,8 @@ public class DiaryFragment extends RoboFragment {
             dateTextView.setText(this.dateFormat.format(this.log.getStartTime()));
             serviceNameTextView.setText(this.log.getServiceName());
             durationTextView.setText(this.durationFormat.format(this.log.getTravelDuration() + this.log.getWaitDuration()));
+            distanceTextView.setText(String.valueOf(this.log.getDistance()));
+            averageSpeedTextView.setText(String.valueOf(this.log.getAverageSpeed()));
 
             return view;
         }

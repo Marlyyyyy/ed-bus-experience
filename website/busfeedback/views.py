@@ -196,7 +196,9 @@ class TripView(APIView):
                 service=service,
                 wait_duration=new_trip["wait_duration"],
                 travel_duration=new_trip["travel_duration"],
+                distance=new_trip["distance"],
                 seat=new_trip["seat"],
+                greet=new_trip["greet"],
                 rating=new_trip["rating"],
                 people_waiting=people_waiting,
                 people_boarding=people_boarding

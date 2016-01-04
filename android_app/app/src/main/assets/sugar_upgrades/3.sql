@@ -1,0 +1,1 @@
+alter table LOG add AVERAGE_SPEED DOUBLE;

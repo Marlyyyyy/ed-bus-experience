@@ -13,6 +13,8 @@ public class WebClient {
 
     private AsyncHttpClient client;
 
+    public static final String BASE_URL = "http://192.168.1.21:8000/";
+
     public WebClient(){
         this.client = new AsyncHttpClient();
     }

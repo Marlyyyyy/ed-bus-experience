@@ -52,14 +52,14 @@ public class StatisticsManager {
         return totalTravellingTime;
     }
 
-    public static int readTotalTravellingDistanceFromSharedPreferences(){
+    public static double readTotalTravellingDistanceFromSharedPreferences(){
         String totalTravellingDistanceString = SharedPreferencesManager.readString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY);
-        int totalTravellingDistance;
+        double totalTravellingDistance;
         if (totalTravellingDistanceString == null){
             totalTravellingDistance = 0;
             SharedPreferencesManager.writeString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(totalTravellingDistance));
         }else{
-            totalTravellingDistance = Integer.valueOf(totalTravellingDistanceString);
+            totalTravellingDistance = Double.valueOf(totalTravellingDistanceString);
         }
 
         return totalTravellingDistance;
