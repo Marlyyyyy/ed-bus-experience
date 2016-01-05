@@ -2,21 +2,14 @@
 <nav class="custom-navbar" role="navigation">
     <div class="container-fluid">
 
-
         <div>
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#not-google-plus-nav">
-            <span class="sr-only">Toggle Navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="home">Edi Bus</a>
-        </div> <!-- ./navbar-header -->
+            <a class="navbar-brand" href="home">Edi Bus </a>
+        </div>
 
         <div id="not-google-plus-nav">
 
             <ul>
-                <li ng-show="vm.isAuthenticated" ng-class="{ 'active': vm.isActive('/diary')}"><a href="">Diary</a></li>
+                <li ng-show="vm.isAuthenticated" ng-class="{ 'active': vm.isActive('/dashboard')}"><a href="dashboard">Dashboard</a></li>
             </ul>
 
             <ul class="pull-right">

@@ -21,7 +21,8 @@
     "material-design-lite": null,
     "ngDialog": "~0.5.1",
     "snackbarjs": null,
-    "underscore": "~1.7.0"
+    "underscore": "~1.7.0",
+    "angular-material": null
   },
   "homepage": "https://github.com/Marlyyyyy/edi-bus-feedback",
   "authors": [

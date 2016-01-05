@@ -34,6 +34,10 @@
           controllerAs: 'vm',
           templateUrl: '/static/busfeedback/js/app/components/profiles/settings.html',
             activeTab: 'settings'
+        }).when('/dashboard', {
+          controller: 'DashboardController',
+          controllerAs: 'vm',
+          templateUrl: '/static/busfeedback/js/app/components/dashboard/dashboard.html'
         }).otherwise('/');
     }
 })();

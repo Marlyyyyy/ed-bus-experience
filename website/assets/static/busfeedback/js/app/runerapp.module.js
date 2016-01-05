@@ -12,7 +12,8 @@ angular
             'runnerapp.navbar',
             'runnerapp.home',
             'runnerapp.snackbar',
-            'runnerapp.profiles'
+            'runnerapp.profiles',
+            'busfeedback.dashboard'
     ]);
 
     angular
