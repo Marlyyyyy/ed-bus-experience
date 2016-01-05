@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboDialogFragment;
+import roboguice.inject.InjectView;
 
 public class ServiceDialogFragment extends RoboDialogFragment {
 
@@ -34,6 +36,9 @@ public class ServiceDialogFragment extends RoboDialogFragment {
 
     @Inject
     private JourneyManager journeyManager;
+
+    @InjectView(R.id.cancel)
+    private Button cancelButton;
 
     private ListView serviceListView;
 
@@ -60,7 +65,7 @@ public class ServiceDialogFragment extends RoboDialogFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ArrayList<Service> services = this.journeyManager.getTrip().getStartStop().getServices();
+        ArrayList<Service> services = this.journeyManager.getRide().getStartStop().getServices();
         if (services != null){
             this.availableServices = services;
             this.serviceListView = (ListView) view.findViewById(R.id.service_list);
@@ -71,12 +76,19 @@ public class ServiceDialogFragment extends RoboDialogFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                     // Select new service and fire update event
-                    journeyManager.getTrip().setService(availableServices.get(position));
+                    journeyManager.getRide().setService(availableServices.get(position));
                     eventBus.post(new JourneyUpdatedEvent());
                     getDialog().cancel();
                 }
             });
         }
+
+        this.cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDialog().dismiss();
+            }
+        });
     }
 
     @Override

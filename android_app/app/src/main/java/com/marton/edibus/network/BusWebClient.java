@@ -8,14 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.models.Journey;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.Trip;
+import com.marton.edibus.models.Ride;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -239,11 +238,11 @@ public class BusWebClient {
         });
     }
 
-    public void uploadNewTrip(Trip trip, final WebCallBack<Integer> callback) {
-        uploadNewTrip(0, trip, callback);
+    public void uploadNewTrip(Ride ride, final WebCallBack<Integer> callback) {
+        uploadNewTrip(0, ride, callback);
     }
 
-    public void uploadNewTrip(final int journeyId, Trip trip, final WebCallBack<Integer> callback) {
+    public void uploadNewTrip(final int journeyId, Ride ride, final WebCallBack<Integer> callback) {
 
         RequestParams parameters = new RequestParams();
         if (journeyId != 0){
@@ -253,10 +252,10 @@ public class BusWebClient {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        String tripJson = gson.toJson(trip);
-        parameters.put("trip", tripJson);
+        String tripJson = gson.toJson(ride);
+        parameters.put("ride", tripJson);
 
-        String url = "/api/trip/";
+        String url = "/api/ride/";
         this.webClient.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override

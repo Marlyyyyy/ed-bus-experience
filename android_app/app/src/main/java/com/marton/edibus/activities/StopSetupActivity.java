@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,7 +24,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -38,7 +36,7 @@ import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.fragments.StopDialogFragment;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.Trip;
+import com.marton.edibus.models.Ride;
 import com.marton.edibus.network.BusWebClient;
 import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
@@ -212,14 +210,14 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     break;
                 case END:
                     activityTitleTextView.setText("End Stop");
-                    slidingUpPanelHeaderTextView.setText("Service: " + journeyManager.getTrip().getService().getName());
+                    slidingUpPanelHeaderTextView.setText("Service: " + journeyManager.getRide().getService().getName());
                     break;
             }
         }
     }
 
     private void selectService(Service service){
-        this.journeyManager.getTrip().setService(service);
+        this.journeyManager.getRide().setService(service);
         this.previewService = service;
 
         this.slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
@@ -249,7 +247,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
             }
         };
 
-        this.busWebService.getStopsForService(this.journeyManager.getTrip().getServiceId(), stopCallback);
+        this.busWebService.getStopsForService(this.journeyManager.getRide().getServiceId(), stopCallback);
     }
 
     @Override
@@ -391,8 +389,8 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 this.busWebService.getStopsWithinRadius(userLatitude, userLongitude, CLOSEST_STOPS_RADIUS, stopCallback);
                 break;
             case END:
-                Trip trip = this.journeyManager.getTrip();
-                this.busWebService.getStopsForService(trip.getServiceId(), trip.getStartStopId(), stopCallback);
+                Ride ride = this.journeyManager.getRide();
+                this.busWebService.getStopsForService(ride.getServiceId(), ride.getStartStopId(), stopCallback);
                 break;
         }
     }

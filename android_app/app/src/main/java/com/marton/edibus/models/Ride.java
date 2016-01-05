@@ -3,11 +3,11 @@ package com.marton.edibus.models;
 
 import java.util.Date;
 
-public class Trip {
+public class Ride {
 
-    public Trip(int id, Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
-            Service service, int waitDuration, int travelDuration, double distance, boolean seat, float rating,
-            boolean greet, Date createdAt, Date updatedAt, int peopleWaiting, int peopleBoarding){
+    public Ride(int id, Date startTime, Date endTime, Journey journey, Stop startStop, Stop endStop,
+                Service service, int waitDuration, int travelDuration, double distance, boolean seat, float rating,
+                boolean greet, Date createdAt, Date updatedAt, int peopleWaiting, int peopleBoarding){
 
         this.id = id;
         this.startTime = startTime;
@@ -28,7 +28,7 @@ public class Trip {
         this.peopleBoarding = peopleBoarding;
     }
 
-    public Trip(){}
+    public Ride(){}
 
     private int id;
 

@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.enums.TripActionEnum;
-import com.marton.edibus.events.TripActionFiredEvent;
+import com.marton.edibus.enums.RideActionEnum;
+import com.marton.edibus.events.RideActionFiredEvent;
 import com.marton.edibus.utilities.JourneyManager;
 
 import de.greenrobot.event.EventBus;
@@ -28,7 +28,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    private TripActionFiredEvent tripActionFiredEvent;
+    private RideActionFiredEvent rideActionFiredEvent;
 
     @InjectView(R.id.journey_feedback_complete)
     Button feedbackCompleteButton;
@@ -67,7 +67,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        this.tripActionFiredEvent = new TripActionFiredEvent();
+        this.rideActionFiredEvent = new RideActionFiredEvent();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
                 if (!peopleWaitingText.equals("")){
                     peopleWaiting = Integer.valueOf(peopleWaitingText);
                 }
-                journeyManager.getTrip().setPeopleWaiting(peopleWaiting);
+                journeyManager.getRide().setPeopleWaiting(peopleWaiting);
 
                 // Read input for people boarding
                 int peopleBoarding = -1;
@@ -101,11 +101,11 @@ public class JourneyFeedbackFragment extends RoboFragment {
                 if (!peopleBoradingText.equals("")){
                     peopleBoarding = Integer.valueOf(peopleBoradingText);
                 }
-                journeyManager.getTrip().setPeopleBoarding(peopleBoarding);
+                journeyManager.getRide().setPeopleBoarding(peopleBoarding);
 
                 // Jump back to the Tracker page
-                tripActionFiredEvent.setTripActionEnum(TripActionEnum.FEEDBACK_COMPLETED);
-                eventBus.post(tripActionFiredEvent);
+                rideActionFiredEvent.setRideActionEnum(RideActionEnum.FEEDBACK_COMPLETED);
+                eventBus.post(rideActionFiredEvent);
             }
         });
 
@@ -114,7 +114,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 
-                journeyManager.getTrip().setRating(rating);
+                journeyManager.getRide().setRating(rating);
             }
         });
 
@@ -155,7 +155,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
 
     private void switchSeat(boolean isChecked){
 
-        this.journeyManager.getTrip().setSeat(isChecked);
+        this.journeyManager.getRide().setSeat(isChecked);
 
         if (isChecked){
             this.seatSwitchTextView.setText("Yes");
@@ -166,7 +166,7 @@ public class JourneyFeedbackFragment extends RoboFragment {
 
     private void switchGreet(boolean isChecked){
 
-        this.journeyManager.getTrip().setGreet(isChecked);
+        this.journeyManager.getRide().setGreet(isChecked);
 
         if (isChecked){
             this.greetSwitchTextView.setText("Yes");

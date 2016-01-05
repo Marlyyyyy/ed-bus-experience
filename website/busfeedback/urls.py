@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from busfeedback.views import ClosestStops, TripView, get_diary_for_user,\
+from busfeedback.views import ClosestStops, RideView, get_diary_for_user,\
     StopsForServiceView, ServiceView, ServicesForStopView, StopsWithinRadius
 
 
@@ -9,7 +9,7 @@ urlpatterns = patterns(
     url(r'^api/closest_stops/$', ClosestStops.as_view(), name='closest_stops'),
     url(r'^api/stops_within_radius/$', StopsWithinRadius.as_view(), name='stops_within_radius'),
     url(r'^api/stops_for_service/$', StopsForServiceView.as_view(), name='stops_for_service'),
-    url(r'^api/trip/$', TripView.as_view(), name='upload_new_trip'),
+    url(r'^api/ride/$', RideView.as_view(), name='upload_new_ride'),
     url(r'^api/get_diary_for_user/$', get_diary_for_user, name='get_diary_for_user'),
     url(r'^api/service/$', ServiceView.as_view(), name='all_services'),
 )

@@ -5,11 +5,13 @@ from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop
 from rest_framework.views import APIView
-from rest_framework import viewsets, status, permissions
+from rest_framework import permissions
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from busfeedback.serializers.service_serializer import ServiceSerializer
 from busfeedback.serializers.stop_serializer import StopSerializer
 from busfeedback.serializers.journey_serializer import JourneySerializer
+import requests
+from busfeedback.constants import API_SERVICES, API_HEADER
 from rest_framework.renderers import JSONRenderer
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -24,7 +26,8 @@ from django.template import loader
 def get_data(request):
     update_services_and_stops()
 
-    return HttpResponse("{'data': 'Done'}", content_type='application/json')
+    # services_json = requests.get(API_SERVICES, headers=API_HEADER)
+    return HttpResponse("lol", content_type='application/json')
 
 
 @csrf_exempt
@@ -124,41 +127,41 @@ class StopsWithinRadius(APIView):
         return HttpResponse(json_stops, content_type='application/json')
 
 
-class TripView(APIView):
+class RideView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
     authentication_classes = (JSONWebTokenAuthentication, )
 
     def post(self, request):
         journey_id = request.POST.get("journey_id", None)
-        new_trip = request.POST.get("trip", None)
+        new_ride = request.POST.get("ride", None)
 
-        if not new_trip:
-            error_message = "No trip was provided as part of request parameters."
+        if not new_ride:
+            error_message = "No ride was provided as part of request parameters."
             return HttpResponseBadRequest(error_message, content_type='application/json')
 
-        new_trip = json.loads(new_trip)
+        new_ride = json.loads(new_ride)
 
         # Check if Start Stop exists
-        start_stop = Stop.objects.get_or_none(id=new_trip["start_stop_id"])
+        start_stop = Stop.objects.get_or_none(id=new_ride["start_stop_id"])
         if not start_stop:
-            error_message = "No existing stop could be found with ID {}".format(new_trip["start_stop_id"])
+            error_message = "No existing stop could be found with ID {}".format(new_ride["start_stop_id"])
             return HttpResponseBadRequest(error_message, content_type='application/json')
 
         # Check if End Stop exists
-        end_stop = Stop.objects.get_or_none(id=new_trip["end_stop_id"])
+        end_stop = Stop.objects.get_or_none(id=new_ride["end_stop_id"])
         if not end_stop:
-            error_message = "No existing stop could be found with ID {}".format(new_trip["end_stop_id"])
+            error_message = "No existing stop could be found with ID {}".format(new_ride["end_stop_id"])
             return HttpResponseBadRequest(error_message, content_type='application/json')
 
         # Check if Service exists
-        service = Service.objects.get_or_none(id=new_trip["service_id"])
+        service = Service.objects.get_or_none(id=new_ride["service_id"])
         if not service:
-            error_message = "No existing service could be found with ID {}".format(new_trip["service_id"])
+            error_message = "No existing service could be found with ID {}".format(new_ride["service_id"])
             return HttpResponseBadRequest(error_message, content_type='application/json')
 
-        start_time = timezone.make_aware(dateutil.parser.parse(new_trip["start_time"]), timezone.get_current_timezone())
-        end_time = timezone.make_aware(dateutil.parser.parse(new_trip["end_time"]), timezone.get_current_timezone())
+        start_time = timezone.make_aware(dateutil.parser.parse(new_ride["start_time"]), timezone.get_current_timezone())
+        end_time = timezone.make_aware(dateutil.parser.parse(new_ride["end_time"]), timezone.get_current_timezone())
 
         # Get existing or create a new journey
         if journey_id:
@@ -179,27 +182,27 @@ class TripView(APIView):
 
         # Check if optinal parameters exist
         people_waiting = -1
-        if "people_waiting" in new_trip:
-            people_waiting = new_trip["people_waiting"]
+        if "people_waiting" in new_ride:
+            people_waiting = new_ride["people_waiting"]
 
         people_boarding = -1
-        if "people_boarding" in new_trip:
-            people_boarding = new_trip["people_boarding"]
+        if "people_boarding" in new_ride:
+            people_boarding = new_ride["people_boarding"]
 
-        # Create a new trip for a journey
+        # Create a new ride for a journey
         with transaction.atomic():
-            journey.trips.create(
+            journey.rides.create(
                 start_time=start_time,
                 end_time=end_time,
                 start_stop=start_stop,
                 end_stop=end_stop,
                 service=service,
-                wait_duration=new_trip["wait_duration"],
-                travel_duration=new_trip["travel_duration"],
-                distance=new_trip["distance"],
-                seat=new_trip["seat"],
-                greet=new_trip["greet"],
-                rating=new_trip["rating"],
+                wait_duration=new_ride["wait_duration"],
+                travel_duration=new_ride["travel_duration"],
+                distance=new_ride["distance"],
+                seat=new_ride["seat"],
+                greet=new_ride["greet"],
+                rating=new_ride["rating"],
                 people_waiting=people_waiting,
                 people_boarding=people_boarding
             )
@@ -214,7 +217,7 @@ def get_diary_for_user(request):
     username = request.GET.get("username", "")
 
     try:
-        journeys = Journey.objects.filter(account__username=username).prefetch_related('trips')
+        journeys = Journey.objects.filter(account__username=username).prefetch_related('rides')
     except ObjectDoesNotExist:
         error_message = "User with username '{}' could not be found.".format(username)
         return HttpResponseBadRequest(error_message, content_type='application/json')

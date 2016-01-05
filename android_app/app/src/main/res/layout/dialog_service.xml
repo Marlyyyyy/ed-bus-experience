@@ -52,17 +52,6 @@
             android:background="@color/base"
             android:id="@+id/cancel"/>
 
-        <Button
-            android:text="Select"
-            style="@style/AppTheme"
-            android:layout_width="0px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:background="@color/ColorPrimary"
-            android:id="@+id/select"/>
-
     </LinearLayout>
 
 

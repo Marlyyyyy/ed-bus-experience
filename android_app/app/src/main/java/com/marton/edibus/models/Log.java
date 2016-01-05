@@ -58,21 +58,21 @@ public class Log extends SugarRecord {
         this.peopleBoarding = peopleBoarding;
     }
 
-    public Log(Trip trip){
-        this.startTime = trip.getStartTime();
-        this.endTime = trip.getEndTime();
-        this.startStopName = trip.getStartStop().getName();
-        this.endStopName = trip.getEndStop().getName();
-        this.serviceName = trip.getService().getName();
-        this.waitDuration = trip.getWaitDuration();
-        this.travelDuration = trip.getTravelDuration();
-        this.distance = trip.getDistance();
+    public Log(Ride ride){
+        this.startTime = ride.getStartTime();
+        this.endTime = ride.getEndTime();
+        this.startStopName = ride.getStartStop().getName();
+        this.endStopName = ride.getEndStop().getName();
+        this.serviceName = ride.getService().getName();
+        this.waitDuration = ride.getWaitDuration();
+        this.travelDuration = ride.getTravelDuration();
+        this.distance = ride.getDistance();
         this.averageSpeed = 1000 * this.distance / (this.waitDuration + this.travelDuration);
-        this.seat = trip.getSeat();
-        this.greet = trip.getGreet();
-        this.rating = trip.getRating();
-        this.peopleWaiting = trip.getPeopleWaiting();
-        this.peopleBoarding = trip.getPeopleBoarding();
+        this.seat = ride.getSeat();
+        this.greet = ride.getGreet();
+        this.rating = ride.getRating();
+        this.peopleWaiting = ride.getPeopleWaiting();
+        this.peopleBoarding = ride.getPeopleBoarding();
     }
 
     public Date getStartTime() {

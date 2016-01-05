@@ -11,7 +11,7 @@ import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
-import com.marton.edibus.models.Trip;
+import com.marton.edibus.models.Ride;
 import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
 
@@ -106,7 +106,7 @@ public class LocationProcessorService extends RoboService {
         this.trackerStateUpdatedEvent.setLongitude(longitude);
 
         // Calculate the remaining distance
-        Stop endStop = this.journeyManager.getTrip().getEndStop();
+        Stop endStop = this.journeyManager.getRide().getEndStop();
         double remainingDistance = GpsCalculator.getDistanceBetweenPoints(
                 latitude, longitude, endStop.getLatitude(), endStop.getLongitude()
         );
@@ -117,10 +117,10 @@ public class LocationProcessorService extends RoboService {
                 this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
                 this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds * 1000);
 
-                // Update the waiting times on the trip
-                Trip trip = this.journeyManager.getTrip();
-                trip.setWaitDuration(this.waitingSeconds * 1000);
-                trip.setTravelDuration(this.travellingSeconds * 1000);
+                // Update the waiting times on the ride
+                Ride ride = this.journeyManager.getRide();
+                ride.setWaitDuration(this.waitingSeconds * 1000);
+                ride.setTravelDuration(this.travellingSeconds * 1000);
 
                 // Calculate travelled distance in metres
                 double pastDistanceDelta = 0.0;
@@ -138,7 +138,7 @@ public class LocationProcessorService extends RoboService {
                     this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
                 }
 
-                trip.setDistance(pastDistance);
+                ride.setDistance(pastDistance);
 
                 // Calculate the current speed in metre per second
                 if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
@@ -161,7 +161,7 @@ public class LocationProcessorService extends RoboService {
         }
 
         // Check if the user has left their start-stop
-        Stop startStop = this.journeyManager.getTrip().getStartStop();
+        Stop startStop = this.journeyManager.getRide().getStartStop();
         double passedDistance = GpsCalculator.getDistanceBetweenPoints(
                 latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
         );

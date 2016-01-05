@@ -22,9 +22,9 @@ import com.marton.edibus.R;
 import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.adapters.ServiceAdapter;
 import com.marton.edibus.enums.StopTypeEnum;
+import com.marton.edibus.models.Ride;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.Trip;
 import com.marton.edibus.utilities.JourneyManager;
 
 import java.text.DecimalFormat;
@@ -126,7 +126,7 @@ public class StopDialogFragment extends RoboDialogFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Service service = services.get(position);
-                    journeyManager.getTrip().setService(service);
+                    journeyManager.getRide().setService(service);
                 }
             });
         }else{
@@ -149,12 +149,12 @@ public class StopDialogFragment extends RoboDialogFragment {
     }
 
     private void selectStop(Stop stop){
-        Trip trip = this.journeyManager.getTrip();
+        Ride ride = this.journeyManager.getRide();
         switch (this.stopTypeEnum){
             case START:
-                trip.setStartStop(stop);
+                ride.setStartStop(stop);
                 // TODO: figure out when to make service NULL
-                if (trip.getService() != null){
+                if (ride.getService() != null){
                     // Start end stop selector activity
                     Activity currentActivity = getActivity();
                     Intent intent = new Intent(currentActivity, StopSetupActivity.class);
@@ -170,13 +170,13 @@ public class StopDialogFragment extends RoboDialogFragment {
                 }
                 break;
             case END:
-                trip.setEndStop(stop);
+                ride.setEndStop(stop);
 
                 // Close down the activity
                 Activity currentActivity = getActivity();
                 currentActivity.finish();
                 break;
         }
-        this.journeyManager.setTrip(trip);
+        this.journeyManager.setRide(ride);
     }
 }

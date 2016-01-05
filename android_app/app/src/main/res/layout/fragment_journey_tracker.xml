@@ -101,11 +101,8 @@
 
             <TextView
                 android:text="Travelling duration"
-                android:textColor="@color/jumbo"
-                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_width="0px"
-                android:textSize="@dimen/tracker_fragment_very_small_text"
                 android:layout_weight="1"/>
         </TableRow>
 
@@ -260,72 +257,66 @@
 
         </TableRow>
 
-        <TableRow
-            android:minHeight="@dimen/tracker_fragment_small_row_min_height"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/start_journey"
                 android:text="Start"
-                android:width="400dp"
-                style="@style/AppTheme.Dark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                />
+                style="@style/AppTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/pause_journey"
                 android:text="Stop"
-                android:width="400dp"
                 style="@style/btnStyleOrange"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
             <Button
                 android:id="@+id/finish_journey"
                 android:text="End"
-                android:width="200dp"
                 style="@style/btnStyleOrange"
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
             <Button
                 android:id="@+id/continue_journey"
                 android:text="Continue"
-                android:width="200dp"
                 style="@style/btnStyleGreen"
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
             <Button
                 android:id="@+id/delete_journey"
                 android:text="Delete Journey"
-                android:width="200dp"
                 style="@style/btnStyleOrange"
-                android:layout_width="wrap_content"
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
             <Button
                 android:id="@+id/upload_journey"
                 android:text="Upload"
-                android:width="200dp"
-                style="@style/AppTheme.Dark"
-                android:layout_width="wrap_content"
+                style="@style/btnStyleBlue"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
-        </TableRow>
+        </LinearLayout>
 
     </TableLayout>
 

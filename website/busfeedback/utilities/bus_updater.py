@@ -48,6 +48,7 @@ def delete_services_stops():
 # Fills up both services and stops with up-to-date data
 @transaction.atomic
 def update_services_and_stops():
+    #  TODO : Instead of updating, just delete the old ones!
 
     # (Datetime of last update, List of objects) tuples
     service_date, services = get_external_list_of_services()
@@ -121,6 +122,10 @@ def update_services_and_stops():
         for route in service["routes"]:
             ordered_stops_per_service_id[service_name].append((str(direction), route["stops"]))
             direction += 1
+
+            # Ad-hoc fix, because there's no need for a third direction
+            if direction > 1:
+                break
 
     # Add stops to services
     for service in saved_services:

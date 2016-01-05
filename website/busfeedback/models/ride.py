@@ -4,13 +4,13 @@ from busfeedback.models.stop import Stop
 from busfeedback.models.service import Service
 
 
-class Trip(models.Model):
+class Ride(models.Model):
 
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
     # Many to one relationship with Journey
-    journey = models.ForeignKey(Journey, related_name='trips')
+    journey = models.ForeignKey(Journey, related_name='rides')
 
     # Many to one relationships with Stop
     start_stop = models.ForeignKey(Stop, related_name='+')
@@ -35,5 +35,5 @@ class Trip(models.Model):
         return '{0}'.format(self.id)
 
     class Meta:
-        db_table = 'tbl_busfeedback_trip'
+        db_table = 'tbl_busfeedback_ride'
         ordering = ('start_time',)

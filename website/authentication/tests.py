@@ -16,7 +16,7 @@ class AuthenticationViewTestCase(TestCase):
     def test_create_account(self):
         response_content = json.loads(self.response.content.decode('utf-8'))
         self.assertEqual("Heffalumps", response_content["username"], "Response should contain the username.")
-        self.assertEqual("Woozles", response_content["password"], "Response should contain the password.")
+        self.assertGreater(len(response_content["token"]), 0, "Response should contain the token.")
 
         latest_account = User.objects.latest('date_joined')
         self.assertEqual("Heffalumps", latest_account.username, "The username must be present in the database.")

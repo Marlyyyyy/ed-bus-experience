@@ -1,11 +1,4 @@
-/**
- * Created by Marci on 01/09/2015.
- */
 
-/**
-* Posts
-* @namespace runnerapp.navbar.directives
-*/
 (function () {
     'use strict';
 
@@ -13,16 +6,9 @@
         .module('runnerapp.navbar.directives')
         .directive('navbar', navbar);
 
-    /**
-    * @namespace Posts
-    */
     function navbar() {
-        /**
-        * @name directive
-        * @desc The directive to be returned
-        * @memberOf runnerapp.navbar.directives.navbar
-        */
-        var directive = {
+
+        return {
             controller: 'NavbarController',
             controllerAs: 'vm',
             restrict: 'E',
@@ -31,7 +17,5 @@
             },
             templateUrl: '/static/busfeedback/js/app/components/navbar/navbar.html'
         };
-
-        return directive;
     }
 })();

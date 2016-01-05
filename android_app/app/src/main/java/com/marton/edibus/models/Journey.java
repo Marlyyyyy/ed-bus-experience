@@ -6,11 +6,11 @@ import java.util.Date;
 
 public class Journey {
 
-    public Journey(Date startTime, Date endTime, Date createdAt, ArrayList<Trip> trips){
+    public Journey(Date startTime, Date endTime, Date createdAt, ArrayList<Ride> rides){
         this.startTime = startTime;
         this.endTime = endTime;
         this.createdAt = createdAt;
-        this.trips = trips;
+        this.rides = rides;
     }
 
     public Journey(){}
@@ -21,7 +21,7 @@ public class Journey {
 
     private Date createdAt;
 
-    private ArrayList<Trip> trips;
+    private ArrayList<Ride> rides;
 
     public Date getStartTime() {
         return startTime;
@@ -35,7 +35,7 @@ public class Journey {
         return createdAt;
     }
 
-    public ArrayList<Trip> getTrips() {
-        return trips;
+    public ArrayList<Ride> getRides() {
+        return rides;
     }
 }

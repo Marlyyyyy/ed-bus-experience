@@ -13,17 +13,17 @@
         .module('runnerapp.home.controllers')
         .controller('IndexController', IndexController);
 
-    IndexController.$inject = ['$scope', 'Authentication', 'Logs', 'Snackbar', 'ngDialog'];
+    IndexController.$inject = ['$scope', 'Authentication', 'Snackbar'];
 
     /**
     * @namespace IndexController
     */
-    function IndexController($scope, Authentication, Snackbar, ngDialog) {
+    function IndexController($scope, Authentication, Snackbar) {
         var vm = this;
 
         vm.isAuthenticated = Authentication.isAuthenticated();
         vm.logs = [];
-        vm.displayingUser = Authentication.getAuthenticatedAccount().username;
+        vm.username = Authentication.getAuthenticatedAccount();
 
         vm.newPost = newPost;
 
@@ -31,11 +31,6 @@
 
         function newPost(){
 
-            ngDialog.open({
-                template: '/static/runnerapp/js/app/components/logs/new-log.html',
-                className: 'custom-modal-theme',
-                controller: 'NewLogController as vm'
-            });
         }
 
         /**

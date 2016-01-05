@@ -2,7 +2,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-
+from rest_framework_jwt.settings import api_settings
 
 from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponse
@@ -31,10 +31,20 @@ class AccountViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
+            # Manually generate a token for the new user
+            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
-            User.objects.create_user(**serializer.validated_data)
+            user = User.objects.create_user(**serializer.validated_data)
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
 
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+            response_dictionary = {
+                'token': token,
+                'username': user.username
+            }
+
+            return Response(response_dictionary, status=status.HTTP_201_CREATED)
 
         return Response({
             'status': 'Bad request',
@@ -43,27 +53,42 @@ class AccountViewSet(viewsets.ModelViewSet):
 
 
 class LoginView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
     def post(self, request, format=None):
         data = request.data
 
         username = data.get('username', None)
         password = data.get('password', None)
 
-        account = authenticate(username=username, password=password)
+        try:
+            user = User.objects.get(username=username)
+            if user.check_password(password):
+                if user.is_active:
 
-        if account is not None:
-            if account.is_active:
-                login(request, account)
+                    # Manually generate a token for the new user
+                    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+                    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+                    payload = jwt_payload_handler(user)
+                    token = jwt_encode_handler(payload)
 
-                serialized = AccountSerializer(account)
+                    return Response({
+                        'token': token,
+                        'username': user.username
+                    })
+                else:
+                    return Response({
+                        'status': 'Unauthorized',
+                        'message': 'This account has been disabled.'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
 
-                return Response(serialized.data)
             else:
                 return Response({
                     'status': 'Unauthorized',
-                    'message': 'This account has been disabled.'
+                    'message': 'Username/password combination invalid.'
                 }, status=status.HTTP_401_UNAUTHORIZED)
-        else:
+
+        except User.DoesNotExist:
             return Response({
                 'status': 'Unauthorized',
                 'message': 'Username/password combination invalid.'
@@ -80,12 +105,10 @@ class LogoutView(APIView):
 
 
 class RestrictedView(APIView):
-    permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (JSONWebTokenAuthentication, )
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (JSONWebTokenAuthentication,)
 
     def post(self, request):
-
         # If the user can access this view, that means the user is authenticated
         response_data = json.dumps({"authenticated": True})
         return HttpResponse(response_data, content_type='application/json')
-

@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
 import com.marton.edibus.enums.JourneyTabEnum;
-import com.marton.edibus.events.TripActionFiredEvent;
+import com.marton.edibus.events.RideActionFiredEvent;
 import com.marton.edibus.fragments.JourneyFeedbackFragment;
 import com.marton.edibus.fragments.JourneySetupFragment;
 import com.marton.edibus.fragments.JourneyTrackerFragment;
@@ -102,9 +102,9 @@ public class JourneyActivity extends RoboActionBarActivity {
     }
 
     // Manages the flow of the journey
-    public void onEventMainThread(TripActionFiredEvent tripActionFiredEvent){
+    public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
 
-        switch(tripActionFiredEvent.getTripActionEnum()){
+        switch(rideActionFiredEvent.getRideActionEnum()){
             case NEW_TRIP:
                 this.pager.setCurrentItem(JourneyTabEnum.SETUP.ordinal());
                 break;

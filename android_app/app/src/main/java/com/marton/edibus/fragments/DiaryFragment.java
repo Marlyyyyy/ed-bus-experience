@@ -49,10 +49,17 @@ public class DiaryFragment extends RoboFragment {
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
 
-        this.logs = new ArrayList<>(Log.listAll(Log.class));
-
         this.logAdapter = new LogAdapter(getActivity(), this.logs, getResources());
         this.logsListView.setAdapter(this.logAdapter);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        this.logs.clear();
+        this.logs.addAll(Log.listAll(Log.class));
+        this.logAdapter.notifyDataSetChanged();
     }
 
     private static class LogAdapter extends BaseAdapter implements View.OnClickListener {

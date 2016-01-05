@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,9 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
-import com.marton.edibus.enums.TripActionEnum;
+import com.marton.edibus.enums.RideActionEnum;
 import com.marton.edibus.events.JourneyUpdatedEvent;
-import com.marton.edibus.events.TripActionFiredEvent;
+import com.marton.edibus.events.RideActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.utilities.JourneyManager;
@@ -40,7 +39,7 @@ public class JourneySetupFragment extends RoboFragment{
 
     ServiceDialogFragment serviceDialog;
 
-    TripActionFiredEvent tripActionFiredEvent;
+    RideActionFiredEvent rideActionFiredEvent;
 
     @Inject
     JourneyManager journeyManager;
@@ -84,7 +83,7 @@ public class JourneySetupFragment extends RoboFragment{
         this.serviceDialog = new ServiceDialogFragment();
 
         // Initialise event objects
-        this.tripActionFiredEvent = new TripActionFiredEvent();
+        this.rideActionFiredEvent = new RideActionFiredEvent();
     }
 
     @Override
@@ -111,7 +110,7 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                if (journeyManager.getTrip().getStartStop() != null){
+                if (journeyManager.getRide().getStartStop() != null){
                     serviceDialog.show(fragmentManager, "Service Dialog Fragment");
                 }else{
                     SnackbarManager.showError(v, "Please select a start stop first!");
@@ -123,7 +122,7 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                if (journeyManager.getTrip().getService() != null){
+                if (journeyManager.getRide().getService() != null){
                     launchStopChooserActivity(StopTypeEnum.END);
                 }else{
                     SnackbarManager.showError(v, "Please select a service first!");
@@ -146,8 +145,8 @@ public class JourneySetupFragment extends RoboFragment{
             @Override
             public void onClick(View v) {
                 if (journeyManager.tripSetupComplete()) {
-                    tripActionFiredEvent.setTripActionEnum(TripActionEnum.SETUP_COMPLETED);
-                    eventBus.post(tripActionFiredEvent);
+                    rideActionFiredEvent.setRideActionEnum(RideActionEnum.SETUP_COMPLETED);
+                    eventBus.post(rideActionFiredEvent);
                 } else {
                     SnackbarManager.showError(rootView, "Setup is incomplete.");
                 }
@@ -177,6 +176,7 @@ public class JourneySetupFragment extends RoboFragment{
 
     // Starts a new activity responsible for the stop selection
     private void launchStopChooserActivity(StopTypeEnum stop){
+
         Intent intent = new Intent(getActivity(), StopSetupActivity.class);
         intent.putExtra("STOP", stop);
         this.startActivity(intent);
@@ -184,14 +184,15 @@ public class JourneySetupFragment extends RoboFragment{
 
     // Refreshes the display of the current journey configuration
     private void refreshUserInterface(){
-        Stop currentStartStop = this.journeyManager.getTrip().getStartStop();
+
+        Stop currentStartStop = this.journeyManager.getRide().getStartStop();
         if (currentStartStop != null){
             this.journeyStartStopTextView.setText(String.valueOf(currentStartStop.getName()));
         }else{
             this.journeyStartStopTextView.setText("None");
         }
 
-        Service currentService = this.journeyManager.getTrip().getService();
+        Service currentService = this.journeyManager.getRide().getService();
         if (currentService != null){
             this.journeyServiceTextView.setText(String.valueOf(currentService.getName()));
             if (currentStartStop != null){
@@ -202,12 +203,12 @@ public class JourneySetupFragment extends RoboFragment{
             this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
         }
 
-        Stop currentEndStop = this.journeyManager.getTrip().getEndStop();
-        if (currentEndStop != null){
+        Stop currentEndStop = this.journeyManager.getRide().getEndStop();
+        if (currentEndStop != null) {
             this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
-            if (currentService != null){
-                this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
-            }
+            this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
+        }else if (currentService != null){
+            this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
         }else{
             this.journeyEndStopTextView.setText("None");
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
@@ -226,8 +227,8 @@ public class JourneySetupFragment extends RoboFragment{
         this.refreshUserInterface();
     }
 
-    public void onEventMainThread(TripActionFiredEvent tripActionFiredEvent){
-        switch (tripActionFiredEvent.getTripActionEnum()){
+    public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
+        switch (rideActionFiredEvent.getRideActionEnum()){
             case NEW_TRIP:
                 this.refreshUserInterface();
                 break;

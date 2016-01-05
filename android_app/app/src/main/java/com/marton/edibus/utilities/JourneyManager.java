@@ -7,7 +7,7 @@ import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.models.Log;
 import com.marton.edibus.models.Stop;
-import com.marton.edibus.models.Trip;
+import com.marton.edibus.models.Ride;
 import com.marton.edibus.network.BusWebClient;
 
 import java.util.Date;
@@ -22,8 +22,8 @@ public class JourneyManager {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    // The current trip of the user
-    private Trip trip;
+    // The current ride of the user
+    private Ride ride;
 
     // The stop that is currently under review by the user
     private Stop reviewStop;
@@ -39,7 +39,7 @@ public class JourneyManager {
     // The flag indicating whether the journey has been started
     private boolean started;
 
-    // The flag indicating whether the trip should be uploaded automatically
+    // The flag indicating whether the ride should be uploaded automatically
     private boolean automaticUpload;
 
     public JourneyManager(){
@@ -48,7 +48,7 @@ public class JourneyManager {
 
     // Set the defaults for the Journey
     public void setDefaults(){
-        this.trip = new Trip();
+        this.ride = new Ride();
         this.reviewStop = null;
         this.journeyState = JourneyStateEnum.SETUP_INCOMPLETE;
         this.paused = true;
@@ -61,12 +61,12 @@ public class JourneyManager {
         return journeyState;
     }
 
-    public Trip getTrip() {
-        return trip;
+    public Ride getRide() {
+        return ride;
     }
 
-    public void setTrip(Trip trip) {
-        this.trip = trip;
+    public void setRide(Ride ride) {
+        this.ride = ride;
     }
 
     public Stop getReviewStop() {
@@ -112,19 +112,19 @@ public class JourneyManager {
         this.paused = false;
         this.started = true;
 
-        this.trip.setStartTime(new Date());
+        this.ride.setStartTime(new Date());
     }
 
     public void finishTrip(){
         this.journeyState = JourneyStateEnum.FINISHED;
         this.finished = true;
 
-        this.trip.setEndTime(new Date());
+        this.ride.setEndTime(new Date());
     }
 
-    // Returns a flag indicating if a trip has been set up
+    // Returns a flag indicating if a ride has been set up
     public boolean tripSetupComplete(){
-        return this.trip.getStartStopId() != 0 && this.trip.getEndStopId() != 0 && this.trip.getServiceId() != 0;
+        return this.ride.getStartStopId() != 0 && this.ride.getEndStopId() != 0 && this.ride.getServiceId() != 0;
     }
 
     public void saveTrip(WebCallBack<Integer> callback){
@@ -135,24 +135,24 @@ public class JourneyManager {
         int totalTravellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
 
         // Upload as a new journey, or as an existing one
-        if (this.trip.getJourneyId() == 0){
-            this.busWebService.uploadNewTrip(this.trip, callback);
+        if (this.ride.getJourneyId() == 0){
+            this.busWebService.uploadNewTrip(this.ride, callback);
             journeys++;
         }else{
-            this.busWebService.uploadNewTrip(this.trip.getJourneyId(), this.trip, callback);
+            this.busWebService.uploadNewTrip(this.ride.getJourneyId(), this.ride, callback);
         }
 
         // Store general user statistics locally
-        totalWaitingTime += this.trip.getWaitDuration();
-        totalTravellingTime += this.trip.getTravelDuration();
+        totalWaitingTime += this.ride.getWaitDuration();
+        totalTravellingTime += this.ride.getTravelDuration();
 
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.JOURNEYS_KEY, String.valueOf(journeys));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_WAITING_TIME_KEY, String.valueOf(totalWaitingTime));
         SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_TIME_KEY, String.valueOf(totalTravellingTime));
-        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(this.trip.getDistance()));
+        SharedPreferencesManager.writeString(App.getAppContext(), StatisticsManager.TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(this.ride.getDistance()));
 
         // Store diary log locally
-        Log log = new Log(trip);
+        Log log = new Log(ride);
         log.save();
     }
 }
