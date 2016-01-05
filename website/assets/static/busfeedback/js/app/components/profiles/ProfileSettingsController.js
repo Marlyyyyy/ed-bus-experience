@@ -1,11 +1,4 @@
-/**
- * Created by Marci on 28/08/2015.
- */
 
-/**
-* ProfileSettingsController
-* @namespace runnerapp.profiles.controllers
-*/
 (function () {
     'use strict';
 
@@ -17,9 +10,6 @@
         '$location', '$routeParams', 'Authentication', 'Profile', 'Snackbar'
     ];
 
-    /**
-    * @namespace ProfileSettingsController
-    */
     function ProfileSettingsController($location, $routeParams, Authentication, Profile, Snackbar) {
         var vm = this;
 
@@ -28,12 +18,6 @@
 
         activate();
 
-
-        /**
-        * @name activate
-        * @desc Actions to be performed when this controller is instantiated.
-        * @memberOf runnerapp.profiles.controllers.ProfileSettingsController
-        */
         function activate() {
             var authenticatedAccount = Authentication.getAuthenticatedAccount();
 
@@ -43,41 +27,21 @@
                 Snackbar.error('You are not authorized to view this page.');
             }
 
-            var username = authenticatedAccount.username;
+            Profile.get(authenticatedAccount).then(profileSuccessFn, profileErrorFn);
 
-            Profile.get(username).then(profileSuccessFn, profileErrorFn);
-
-            /**
-            * @name profileSuccessFn
-            * @desc Update `profile` for view
-            */
             function profileSuccessFn(data, status, headers, config) {
                 vm.profile = data.data;
             }
 
-            /**
-            * @name profileErrorFn
-            * @desc Redirect to index
-            */
             function profileErrorFn(data, status, headers, config) {
                 $location.url('/');
                 Snackbar.error('That user does not exist.');
             }
         }
 
-
-        /**
-        * @name destroy
-        * @desc Destroy this user's profile
-        * @memberOf runnerapp.profiles.controllers.ProfileSettingsController
-        */
         function destroy() {
-            Profile.destroy(vm.profile.username).then(profileSuccessFn, profileErrorFn);
+            Profile.destroy(vm.profile).then(profileSuccessFn, profileErrorFn);
 
-            /**
-            * @name profileSuccessFn
-            * @desc Redirect to index and display success snackbar
-            */
             function profileSuccessFn(data, status, headers, config) {
                 Authentication.unauthenticate();
                 window.location = '/';
@@ -85,22 +49,13 @@
                 Snackbar.show('Your account has been deleted.');
             }
 
-
-            /**
-            * @name profileErrorFn
-            * @desc Display error snackbar
-            */
             function profileErrorFn(data, status, headers, config) {
+                console.log(data);
+                console.log(headers);
                 Snackbar.error(data.error);
             }
         }
 
-
-        /**
-        * @name update
-        * @desc Update this user's profile
-        * @memberOf runnerapp.profiles.controllers.ProfileSettingsController
-        */
         function update() {
 
             if (vm.profile.password === "" ){
@@ -109,19 +64,10 @@
 
             Profile.update(vm.profile).then(profileSuccessFn, profileErrorFn);
 
-            /**
-            * @name profileSuccessFn
-            * @desc Show success snackbar
-            */
             function profileSuccessFn(data, status, headers, config) {
                 Snackbar.show('Your profile has been updated.');
             }
 
-
-            /**
-            * @name profileErrorFn
-            * @desc Show error snackbar
-            */
             function profileErrorFn(data, status, headers, config) {
                 Snackbar.error(data.error);
             }

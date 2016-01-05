@@ -17,7 +17,7 @@ a:hover{
 /* Navigation bar */
 
 .custom-navbar{
-    background: #1E4558;
+    background: #4d90fe;
     height: 46px;
     min-height: 46px;
     padding: 0;
@@ -40,7 +40,11 @@ a:hover{
 }
 
 .custom-navbar li:hover{
-    border-bottom: 4px solid rgb(255, 105, 0);
+    border-bottom: 4px solid rgb(0, 75, 105);
+}
+
+.active{
+    border-bottom: 4px solid rgb(0, 75, 105);
 }
 
 .custom-navbar li a{
@@ -51,10 +55,6 @@ a:hover{
     margin: 0;
     color: white;
     font-weight: bold;
-}
-
-.active{
-    border-bottom: 4px solid rgb(255, 105, 0);
 }
 
 /* Modals */

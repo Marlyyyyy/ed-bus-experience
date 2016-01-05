@@ -1,7 +1,3 @@
-/**
- * Created by Marci on 25/08/2015.
- */
-
 
 (function () {
     'use strict';
@@ -12,10 +8,6 @@
 
     config.$inject = ['$routeProvider'];
 
-    /**
-    * @name config
-    * @desc Define valid application routes
-    */
     function config($routeProvider) {
         $routeProvider.when('/register', {
             controller: 'RegisterController',
