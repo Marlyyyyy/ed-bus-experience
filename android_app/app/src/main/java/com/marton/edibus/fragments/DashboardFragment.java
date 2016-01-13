@@ -57,7 +57,7 @@ public class DashboardFragment extends RoboFragment {
 
         // Set up text view formats
         this.decimalFormat = new DecimalFormat(".##");
-        this.dateFormat = new SimpleDateFormat("mm:ss", Locale.UK);
+        this.dateFormat = new SimpleDateFormat("m", Locale.UK);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class DashboardFragment extends RoboFragment {
         double averageSpeed = 1000 * distance / (totalTime);
 
         this.journeysTextView.setText(String.valueOf(journeys));
-        this.totalDistanceTextView.setText(String.valueOf(this.decimalFormat.format(distance)));
-        this.totalTimeTextView.setText(String.valueOf(this.dateFormat.format(totalTime)));
-        this.averageSpeedTextView.setText(String.valueOf(this.decimalFormat.format(averageSpeed)));
+        this.totalDistanceTextView.setText(String.valueOf(this.decimalFormat.format(distance)) + " m");
+        this.totalTimeTextView.setText(String.valueOf(this.dateFormat.format(totalTime)) + " minutes");
+        this.averageSpeedTextView.setText(String.valueOf(this.decimalFormat.format(averageSpeed)) + " km/h");
     }
 }

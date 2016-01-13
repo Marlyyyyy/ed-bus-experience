@@ -22,7 +22,9 @@
     "ngDialog": "~0.5.1",
     "snackbarjs": null,
     "underscore": "~1.7.0",
-    "angular-material": null
+    "angular-material": null,
+    "angular-chart.js":null,
+    "Chart.js":null
   },
   "homepage": "https://github.com/Marlyyyyy/edi-bus-feedback",
   "authors": [

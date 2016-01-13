@@ -41,11 +41,11 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
+
 
 public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -60,8 +60,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     private double latestUserLatitude;
 
     private double latestUserLongitude;
-
-    private ArrayList<Marker> stopMarkers;
 
     private Marker userMarker;
 
@@ -125,13 +123,11 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
 
-        this.stopMarkers = new ArrayList<>();
-
         // Initialise event objects
         this.rideActionFiredEvent = new RideActionFiredEvent();
 
         // Set up text view formats
-        this.decimalFormat = new DecimalFormat(".##");
+        this.decimalFormat = new DecimalFormat("#.##");
         this.dateFormat = new SimpleDateFormat("mm:ss");
 
         // Set up Delete Journey alert dialog
@@ -256,8 +252,8 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     public void onSuccess(Integer data) {
                         Stop previousEndStop = journeyManager.getRide().getEndStop();
                         Ride ride = new Ride();
-                        ride.setJourneyId(data);
                         ride.setStartStop(previousEndStop);
+                        ride.setJourneyId(data);
 
                         journeyManager.setDefaults();
                         journeyManager.setRide(ride);
@@ -267,7 +263,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     }
 
                     @Override
-                    public void onFailure(int statusCode, JSONObject response){
+                    public void onFailure(int statusCode, JSONObject response) {
                         SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
 
                         progressDialog.dismiss();
@@ -391,52 +387,52 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         Stop startStop = ride.getStartStop();
         Stop endStop = ride.getEndStop();
 
-        if (startStop != null && endStop != null && this.googleMap != null){
+        if (this.googleMap != null){
 
             // Clear all markers
             this.googleMap.clear();
 
-            // Add start-stop to the map
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(startStop.getLatitude(), startStop.getLongitude()))
-                    .title(startStop.getName())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
-                    .anchor((float) 0.5, (float) 0.5)
-                    .rotation(startStop.getOrientation());
+            MarkerOptions markerOptions = new MarkerOptions();
 
-            this.googleMap.addMarker(markerOptions);
+            // Add start-stop to the map
+            if(startStop != null){
+                        markerOptions.position(new LatLng(startStop.getLatitude(), startStop.getLongitude()))
+                        .title(startStop.getName())
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                        .anchor((float) 0.5, (float) 0.5)
+                        .rotation(startStop.getOrientation());
+
+                this.googleMap.addMarker(markerOptions);
+            }
 
             // Add end-stop to the map
-            markerOptions = new MarkerOptions()
-                    .position(new LatLng(endStop.getLatitude(), endStop.getLongitude()))
-                    .title(endStop.getName())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
-                    .anchor((float) 0.5, (float) 0.5)
-                    .rotation(endStop.getOrientation());
+            if (endStop != null){
+                markerOptions = new MarkerOptions()
+                        .position(new LatLng(endStop.getLatitude(), endStop.getLongitude()))
+                        .title(endStop.getName())
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                        .anchor((float) 0.5, (float) 0.5)
+                        .rotation(endStop.getOrientation());
 
-            this.googleMap.addMarker(markerOptions);
+                this.googleMap.addMarker(markerOptions);
+            }
 
             // Add user to the map
-            if (this.latestUserLatitude == 0.0){
-                this.latestUserLatitude = startStop.getLatitude();
+            if (endStop != null && startStop != null){
+                // TODO: remove this all
+                if (this.latestUserLatitude == 0.0){
+                    this.latestUserLatitude = startStop.getLatitude();
+                }
+
+                if (this.latestUserLongitude == 0.0){
+                    this.latestUserLongitude = startStop.getLongitude();
+                }
+
+                // TODO: put in separate method. Detect when user moves the map.
+
+                // Move view over the user's current position
+                this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latestUserLatitude, this.latestUserLongitude),15));
             }
-
-            if (this.latestUserLongitude == 0.0){
-                this.latestUserLongitude = startStop.getLongitude();
-            }
-
-            markerOptions = new MarkerOptions()
-                    .position(new LatLng(this.latestUserLatitude, this.latestUserLongitude))
-                    .title("You")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user_marker))
-                    .anchor((float) 0.5, (float) 0.5);
-
-            this.userMarker = this.googleMap.addMarker(markerOptions);
-
-            // TODO: put in separate method. Detect when user moves the map.
-
-            // Move view over the user's current position
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(this.userMarker.getPosition(),15));
         }
     }
 
@@ -467,6 +463,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             case NEW_TRIP:
                 this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
+                this.refreshMap();
                 break;
         }
     }

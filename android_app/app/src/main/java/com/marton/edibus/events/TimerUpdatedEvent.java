@@ -1,7 +1,8 @@
 package com.marton.edibus.events;
 
 public class TimerUpdatedEvent {
-    public TimerUpdatedEvent(){};
+
+    public TimerUpdatedEvent(){}
 
     public int getWaitingMilliseconds() {
         return waitingMilliseconds;

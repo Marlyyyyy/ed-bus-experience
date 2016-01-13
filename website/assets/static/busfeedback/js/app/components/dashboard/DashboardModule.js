@@ -10,5 +10,5 @@
     angular
         .module('busfeedback.dashboard.controllers', [
             'ngMaterial',
-            'ngAnimate']);
+            'chart.js']);
 })();

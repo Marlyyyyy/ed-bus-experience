@@ -8,15 +8,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
+import com.marton.edibus.models.Log;
 import com.marton.edibus.network.UserWebClient;
 import com.marton.edibus.network.WebClient;
 import com.marton.edibus.utilities.AuthenticationManager;
+import com.marton.edibus.utilities.StatisticsManager;
 
 
 import org.json.JSONObject;
@@ -55,25 +58,16 @@ public class AuthenticationActivity extends RoboActionBarActivity {
         setContentView(R.layout.activity_authentication);
 
         // Animate the welcome page
-        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(2000);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+        Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        this.welcomeTextView.startAnimation(animationFadeIn);
 
-            }
+        animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        animationFadeIn.setStartOffset(1000l);
+        this.thankYouTextView.startAnimation(animationFadeIn);
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                welcomeTextView.setAlpha(1.0f);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        welcomeTextView.startAnimation(animation);
+        animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        animationFadeIn.setStartOffset(2000l);
+        this.createAccountButton.startAnimation(animationFadeIn);
 
         this.createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +77,7 @@ public class AuthenticationActivity extends RoboActionBarActivity {
         });
     }
 
-    // Sets up a temporary user account, and authenticates the user
+    // Sets up a temporary user account, authenticates the user, resets local statistics
     private void createUserAccount(){
 
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
@@ -102,12 +96,17 @@ public class AuthenticationActivity extends RoboActionBarActivity {
                     @Override
                     public void onSuccess(Object data) {
 
+                        // Reset local statistics
+                        StatisticsManager.clearStatistics();
+                        Log.deleteAll(Log.class);
+
                         // Prepare the web client with the authentication token
                         webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
                         Intent intent = new Intent(AuthenticationActivity.this, ContentActivity.class);
                         startActivity(intent);
 
                         progressDialog.dismiss();
+
                         // No need to keep this activity any more.
                         finish();
                     }

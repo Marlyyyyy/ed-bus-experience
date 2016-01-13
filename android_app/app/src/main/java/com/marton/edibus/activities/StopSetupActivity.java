@@ -405,7 +405,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         // Padding from edges of the map in pixels
         LatLngBounds bounds = builder.build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.moveCamera(cameraUpdate);
+        this.googleMap.moveCamera(cameraUpdate);
     }
 
     // Calculates the distance between the user and each bus stop in the specified list. This method modifies the original object in place.

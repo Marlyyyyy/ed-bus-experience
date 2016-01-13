@@ -14,6 +14,7 @@ public class StatisticsManager {
     public static final String TOTAL_TRAVELLING_DISTANCE_KEY = "TOTAL_TRAVELLING_DISTANCE";
 
     public static int readJourneysFromSharedPreferences(){
+
         String journeysString = SharedPreferencesManager.readString(App.getAppContext(), JOURNEYS_KEY);
         int journeys;
         if (journeysString == null){
@@ -27,6 +28,7 @@ public class StatisticsManager {
     }
 
     public static int readTotalWaitingTimeFromSharedPreferences(){
+
         String totalWaitingTimeString = SharedPreferencesManager.readString(App.getAppContext(), TOTAL_WAITING_TIME_KEY);
         int totalWaitingTime;
         if (totalWaitingTimeString == null){
@@ -40,6 +42,7 @@ public class StatisticsManager {
     }
 
     public static int readTotalTravellingTimeFromSharedPreferences(){
+
         String totalTravellingTimeString = SharedPreferencesManager.readString(App.getAppContext(), TOTAL_TRAVELLING_TIME_KEY);
         int totalTravellingTime;
         if (totalTravellingTimeString == null){
@@ -53,6 +56,7 @@ public class StatisticsManager {
     }
 
     public static double readTotalTravellingDistanceFromSharedPreferences(){
+
         String totalTravellingDistanceString = SharedPreferencesManager.readString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY);
         double totalTravellingDistance;
         if (totalTravellingDistanceString == null){
@@ -63,5 +67,13 @@ public class StatisticsManager {
         }
 
         return totalTravellingDistance;
+    }
+
+    public static void clearStatistics(){
+
+        SharedPreferencesManager.writeString(App.getAppContext(), JOURNEYS_KEY, String.valueOf(0));
+        SharedPreferencesManager.writeString(App.getAppContext(), TOTAL_WAITING_TIME_KEY, String.valueOf(0));
+        SharedPreferencesManager.writeString(App.getAppContext(), TOTAL_TRAVELLING_TIME_KEY, String.valueOf(0));
+        SharedPreferencesManager.writeString(App.getAppContext(), TOTAL_TRAVELLING_DISTANCE_KEY, String.valueOf(0));
     }
 }

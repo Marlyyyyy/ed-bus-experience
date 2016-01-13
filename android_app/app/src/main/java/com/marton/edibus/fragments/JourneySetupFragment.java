@@ -193,11 +193,12 @@ public class JourneySetupFragment extends RoboFragment{
         }
 
         Service currentService = this.journeyManager.getRide().getService();
-        if (currentService != null){
+        if (currentService != null) {
             this.journeyServiceTextView.setText(String.valueOf(currentService.getName()));
-            if (currentStartStop != null){
-                this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
-            }
+            this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
+        } else if (currentStartStop != null){
+            this.journeyServiceTextView.setText("None");
+            this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
         }else{
             this.journeyServiceTextView.setText("None");
             this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
@@ -208,6 +209,7 @@ public class JourneySetupFragment extends RoboFragment{
             this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
         }else if (currentService != null){
+            this.journeyEndStopTextView.setText("None");
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
         }else{
             this.journeyEndStopTextView.setText("None");

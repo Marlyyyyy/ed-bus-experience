@@ -6,14 +6,12 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
-
 @Singleton
 public class WebClient {
 
     private AsyncHttpClient client;
 
-    public static final String BASE_URL = "http://192.168.1.21:8000/";
+    public static final String BASE_URL = "http://172.20.129.249:8000/";
 
     public WebClient(){
         this.client = new AsyncHttpClient();

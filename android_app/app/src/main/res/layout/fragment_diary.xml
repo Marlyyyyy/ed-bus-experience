@@ -37,6 +37,15 @@
             android:dividerHeight="1sp">
         </ListView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_rides_text"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textColor="@color/base"
+            android:text="You don't have any rides :("/>
+
     </LinearLayout>
 
 </LinearLayout>

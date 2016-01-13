@@ -4,12 +4,10 @@ package com.marton.edibus.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.marton.edibus.R;
@@ -24,7 +22,6 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
     private LayoutInflater inflater = null;
     private Service service = null;
     private boolean smallServiceItem = false;
-    private LinearLayout latestClickedView;
 
     public ServiceAdapter(Activity activity, ArrayList services, Resources resources) {
 
@@ -34,11 +31,6 @@ public class ServiceAdapter extends BaseAdapter implements View.OnClickListener 
     }
 
     public int getCount() {
-
-        if(this.services.size() <= 0){
-            return 1;
-        }
-
         return this.services.size();
     }
 

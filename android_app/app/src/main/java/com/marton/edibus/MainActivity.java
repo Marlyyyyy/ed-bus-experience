@@ -42,6 +42,7 @@ public class MainActivity extends RoboActivity {
 
                     // Launch the right activity depending on if the user is logged in
                     Intent intent;
+                    authenticationManager.deAuthenticate();
                     if (authenticationManager.userAuthenticated()){
                         // Prepare the web client with the authentication token
                         webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());

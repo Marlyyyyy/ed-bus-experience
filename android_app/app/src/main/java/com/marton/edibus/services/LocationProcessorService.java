@@ -86,6 +86,17 @@ public class LocationProcessorService extends RoboService {
         }, 0, 1000);
     }
 
+    @Override
+    public void onDestroy(){
+
+        // Don't forget to stop the timer
+        this.timer.cancel();
+        this.waitingSeconds = 0;
+        this.travellingSeconds = 0;
+        this.currentActivityEnum = CurrentActivityEnum.PREPARING;
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -122,39 +133,41 @@ public class LocationProcessorService extends RoboService {
                 ride.setWaitDuration(this.waitingSeconds * 1000);
                 ride.setTravelDuration(this.travellingSeconds * 1000);
 
-                // Calculate travelled distance in metres
-                double pastDistanceDelta = 0.0;
-                double pastDistance = 0.0;
-                if (this.previousTrackerStateUpdatedEvent != null){
-                    double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
-                    pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
-                            this.trackerStateUpdatedEvent.getLatitude(),
-                            this.trackerStateUpdatedEvent.getLongitude(),
-                            this.previousTrackerStateUpdatedEvent.getLatitude(),
-                            this.previousTrackerStateUpdatedEvent.getLongitude());
-                    pastDistance = previousDistanceFromStart + pastDistanceDelta;
-                    this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
-                }else{
-                    this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
-                }
-
-                ride.setDistance(pastDistance);
-
-                // Calculate the current speed in metre per second
-                if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
-                    long timeDelta = (currentUpdateTime - this.latestUpdateTime)/1000;
-                    double speed = pastDistanceDelta/timeDelta;
-                    this.trackerStateUpdatedEvent.setCurrentSpeed(speed);
-                }
-
-                // Calculate the maximum speed in metre per second
-                double currentSpeed = this.trackerStateUpdatedEvent.getCurrentSpeed();
-                if (currentSpeed > this.trackerStateUpdatedEvent.getMaximumSpeed()){
-                    this.trackerStateUpdatedEvent.setMaximumSpeed(currentSpeed);
-                }
-
-                // Calculate the average speed in metre per second
+                // Only count distances and speed if the user is travelling
                 if (this.currentActivityEnum == CurrentActivityEnum.TRAVELLING){
+
+                    // Calculate travelled distance in metres
+                    double pastDistanceDelta = 0.0;
+                    double pastDistance = 0.0;
+                    if (this.previousTrackerStateUpdatedEvent != null){
+                        double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
+                        pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
+                                this.trackerStateUpdatedEvent.getLatitude(),
+                                this.trackerStateUpdatedEvent.getLongitude(),
+                                this.previousTrackerStateUpdatedEvent.getLatitude(),
+                                this.previousTrackerStateUpdatedEvent.getLongitude());
+                        pastDistance = previousDistanceFromStart + pastDistanceDelta;
+                        this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
+                    }else{
+                        this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
+                    }
+
+                    ride.setDistance(pastDistance);
+
+                    // Calculate the current speed in metre per second
+                    if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
+                        long timeDelta = (currentUpdateTime - this.latestUpdateTime)/1000;
+                        double speed = pastDistanceDelta/timeDelta;
+                        this.trackerStateUpdatedEvent.setCurrentSpeed(speed);
+                    }
+
+                    // Calculate the maximum speed in metre per second
+                    double currentSpeed = this.trackerStateUpdatedEvent.getCurrentSpeed();
+                    if (currentSpeed > this.trackerStateUpdatedEvent.getMaximumSpeed()){
+                        this.trackerStateUpdatedEvent.setMaximumSpeed(currentSpeed);
+                    }
+
+                    // Calculate the average speed in metre per second
                     double averageSpeed = this.trackerStateUpdatedEvent.getDistanceFromStart()/(this.trackerStateUpdatedEvent.getTravellingTime()/1000);
                     this.trackerStateUpdatedEvent.setAverageSpeed(averageSpeed);
                 }
