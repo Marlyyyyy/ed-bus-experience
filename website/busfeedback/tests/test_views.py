@@ -50,16 +50,16 @@ class BusViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_content), 1, "There should be 3 stops returnd for this service")
 
-    def test_get_closest_stops(self):
+    def test_stops_within_radius(self):
         post_parameters = {
             'latitude': self.user_latitude,
             'longitude': self.user_longitude,
-            'number_of_stops': 2
+            'radius': 4
         }
-        response = self.client.get('/bus/api/closest_stops/', post_parameters, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/bus/api/stops_within_radius/', post_parameters, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(len(response_content["stops"]), 2, "Only two stops should be returned.")
+        self.assertEqual(len(response_content["stops"]), 3, "Only two stops should be returned.")
         self.assertEqual(response_content["stops"][0]["stop_id"], 95624797, "Response should contain the closest stop.")
         self.assertEqual(response_content["stops"][1]["stop_id"], 95624798, "Response should contain the second closest stop.")
 

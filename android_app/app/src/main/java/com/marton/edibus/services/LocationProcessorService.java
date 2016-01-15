@@ -193,6 +193,7 @@ public class LocationProcessorService extends RoboService {
         this.eventBus.post(this.trackerStateUpdatedEvent);
 
         // Store the current state for later
+        // TODO: null pointer
         this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
         this.latestUpdateTime = currentUpdateTime;
 

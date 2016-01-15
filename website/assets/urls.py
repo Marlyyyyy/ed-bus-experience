@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from busfeedback.views import get_data, remove_data, IndexView
+from busfeedback.views import get_data, remove_data, IndexView, custom_404
 
 urlpatterns = patterns(
     '',
@@ -10,6 +10,7 @@ urlpatterns = patterns(
     url(r'^bus/', include('busfeedback.urls')),
     url(r'^auth/', include('authentication.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'/', custom_404),
     url('^.*$', IndexView.as_view(), name='index')
 )
 

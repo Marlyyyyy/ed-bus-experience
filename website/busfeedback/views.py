@@ -1,5 +1,6 @@
 from django.http.response import Http404, HttpResponse, HttpResponseBadRequest
 import json
+from django.http import HttpResponse, HttpResponseNotFound
 from busfeedback.utilities.bus_updater import update_services_and_stops, delete_services_stops
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
@@ -10,8 +11,6 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from busfeedback.serializers.service_serializer import ServiceSerializer
 from busfeedback.serializers.stop_serializer import StopSerializer
 from busfeedback.serializers.journey_serializer import JourneySerializer
-import requests
-from busfeedback.constants import API_SERVICES, API_HEADER
 from rest_framework.renderers import JSONRenderer
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -35,6 +34,10 @@ def remove_data(request):
     delete_services_stops()
 
     return HttpResponse("Done", content_type='application/json')
+
+@csrf_exempt
+def custom_404(request):
+    return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
 class ServicesForStopView(APIView):
@@ -75,23 +78,6 @@ class StopsForServiceView(APIView):
             stops = Stop.objects.filter(service_stop__service_id=service_id)
 
         stop_serializer = StopSerializer(stops, many=True)
-        json_stops = JSONRenderer().render({"stops": stop_serializer.data})
-
-        return HttpResponse(json_stops, content_type='application/json')
-
-
-class ClosestStops(APIView):
-
-    permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (JSONWebTokenAuthentication, )
-
-    def get(self, request):
-        user_latitude = float(request.GET.get("latitude", ""))
-        user_longitude = float(request.GET.get("longitude", ""))
-        number_of_stops = int(request.GET.get("number_of_stops", ""))
-
-        closest_stops = get_closest_stops(latitude=user_latitude, longitude=user_longitude, number_of_stops=number_of_stops)
-        stop_serializer = StopSerializer(closest_stops, many=True)
         json_stops = JSONRenderer().render({"stops": stop_serializer.data})
 
         return HttpResponse(json_stops, content_type='application/json')
@@ -248,44 +234,3 @@ class IndexView(APIView):
         template = loader.get_template('busfeedback/index.html')
 
         return HttpResponse(template.render())
-
-
-def get_closest_stops(latitude, longitude, radius_km=50.0, number_of_stops=3):
-        parameters = {
-            'latitude': latitude,
-            'longitude': longitude,
-            'radius_km': radius_km,
-            'number_of_stops': number_of_stops
-        }
-
-        closest_stops = Stop.objects.raw('''
-                            SELECT id, stop_id, latitude, longitude, distance
-                            FROM (
-                                SELECT
-                                    s.id, s.stop_id, s.latitude, s.longitude,
-                                    p.radius,
-                                    p.distance_unit
-                                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
-                                             * COS(RADIANS(s.latitude))
-                                             * COS(RADIANS(p.longpoint - s.longitude))
-                                             + SIN(RADIANS(p.latpoint))
-                                             * SIN(RADIANS(s.latitude)))) AS distance
-                                FROM tbl_busfeedback_stop AS s
-                                    JOIN (   /* these are the query parameters */
-                                        SELECT  %(latitude)s  AS latpoint,  %(longitude)s AS longpoint,
-                                                %(radius_km)s AS radius,      111.045 AS distance_unit
-                                    ) AS p ON 1=1
-                                WHERE s.latitude
-                                BETWEEN p.latpoint  - (p.radius / p.distance_unit)
-                                     AND p.latpoint  + (p.radius / p.distance_unit)
-                                AND s.longitude
-                                BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                                     AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                             ) AS d
-                             WHERE distance <= radius
-                             ORDER BY distance
-                             LIMIT %(number_of_stops)s
-                             ''', parameters)
-
-        return closest_stops
-

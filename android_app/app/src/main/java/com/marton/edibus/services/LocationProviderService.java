@@ -83,4 +83,6 @@ public class LocationProviderService extends Service implements LocationListener
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
+
+
 }
