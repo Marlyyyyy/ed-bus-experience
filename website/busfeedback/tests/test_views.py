@@ -3,6 +3,7 @@ from django.test import TestCase
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.stop import Stop
 from busfeedback.models.journey import Journey
+from busfeedback.models.questionnaire import Questionnaire
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import json
@@ -216,3 +217,23 @@ class BusViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_content), 1, "There should be 1 service returned")
 
+    def test_proper_questionnaire_upload(self):
+
+        new_questionnaire = {
+            'age': 30,
+            'gender': 'Male',
+            'concession_card': False,
+            'travel_reason': 'Both'
+        }
+
+        new_questionnaire_json = json.dumps(new_questionnaire, cls=DjangoJSONEncoder)
+
+        # Upload our questionnaire
+        response = self.client.post('/bus/api/questionnaire/', {'questionnaire': new_questionnaire_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+
+        self.assertEqual(response.status_code, 200)
+
+        all_questionnaires = Questionnaire.objects.all()
+
+        self.assertEqual(len(all_questionnaires), 1, "There should only be a single questionnaire created.")
+        self.assertEqual(all_questionnaires[0].travel_reason, "Both", "The travel reason should be Both.")

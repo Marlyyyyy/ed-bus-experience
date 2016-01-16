@@ -12,6 +12,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.models.Journey;
+import com.marton.edibus.models.Questionnaire;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Ride;
@@ -168,41 +169,6 @@ public class BusWebClient {
         });
     }
 
-    public void getClosestStops(double latitude, double longitude, int numberOfStops, final WebCallBack<List<Stop>> callback) {
-
-        RequestParams parameters = new RequestParams();
-        parameters.put("latitude", latitude);
-        parameters.put("longitude", longitude);
-        parameters.put("number_of_stops", numberOfStops);
-
-        String url = "/api/closest_stops/";
-        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                Gson gson = new Gson();
-                JSONArray stopJsonArray = null;
-                try {
-                    stopJsonArray = response.getJSONArray("stops");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                // TODO: check for null
-                Stop[] stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
-                List<Stop> stopList = Arrays.asList(stopArray);
-                callback.onSuccess(stopList);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                // TODO: error response should be contained within the JsonObject
-                callback.onFailure(statusCode, errorResponse);
-            }
-        });
-    }
-
     public void getStopsWithinRadius(double latitude, double longitude, double radius, final WebCallBack<List<Stop>> callback) {
 
         RequestParams parameters = new RequestParams();
@@ -310,7 +276,34 @@ public class BusWebClient {
                 // callback.onFailure(statusCode, errorResponse);
             }
         });
+    }
 
+    public void uploadNewQuestionnaire(Questionnaire questionnaire, final WebCallBack<Boolean> callback) {
+
+        RequestParams parameters = new RequestParams();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+        String questionnaireJson = gson.toJson(questionnaire);
+        parameters.put("questionnaire", questionnaireJson);
+
+        String url = "/api/questionnaire/";
+        this.webClient.post(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                callback.onSuccess(true);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                // TODO: error response should be contained within the JsonObject
+                callback.onFailure(statusCode, errorResponse);
+            }
+        });
     }
 
     private static String getAbsoluteBusUrl(String relativeUrl) {

@@ -5,6 +5,7 @@ from busfeedback.utilities.bus_updater import update_services_and_stops, delete_
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop
+from busfeedback.models.questionnaire import Questionnaire
 from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -194,6 +195,31 @@ class RideView(APIView):
             )
 
         response_data = json.dumps({"journey_id": journey.id})
+
+        return HttpResponse(response_data, content_type='application/json')
+
+
+class QuestionnaireView(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (JSONWebTokenAuthentication, )
+
+    def post(self, request):
+        questionnaire_json = request.POST.get("questionnaire", None)
+
+        questionnaire = json.loads(questionnaire_json)
+
+        age = questionnaire["age"]
+        gender = questionnaire["gender"]
+        concession_card = questionnaire["concession_card"]
+        travel_reason = questionnaire["travel_reason"]
+
+        Questionnaire.objects.create(age=age,
+                                     gender=gender,
+                                     concession_card=concession_card,
+                                     travel_reason=travel_reason)
+
+        response_data = json.dumps({'success': True})
 
         return HttpResponse(response_data, content_type='application/json')
 

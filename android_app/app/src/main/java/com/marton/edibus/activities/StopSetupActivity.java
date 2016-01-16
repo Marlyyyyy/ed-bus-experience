@@ -25,7 +25,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -43,7 +42,6 @@ import com.marton.edibus.network.BusWebClient;
 import com.marton.edibus.utilities.CoordinateProvider;
 import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
-import com.marton.edibus.utilities.SnackbarManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;

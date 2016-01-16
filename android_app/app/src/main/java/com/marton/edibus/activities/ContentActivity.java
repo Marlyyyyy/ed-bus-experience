@@ -1,21 +1,23 @@
 package com.marton.edibus.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
 import com.marton.edibus.fragments.DashboardFragment;
 import com.marton.edibus.fragments.DiaryFragment;
+import com.marton.edibus.utilities.QuestionnaireManager;
+import com.marton.edibus.utilities.SharedPreferencesManager;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
 import roboguice.activity.RoboActionBarActivity;
 
 public class ContentActivity extends RoboActionBarActivity {
-
-    private static final String TAG = ContentActivity.class.getName();
 
     private ViewPager pager;
     private CharSequence titles[] = {"Dashboard", "Diary"};
@@ -25,6 +27,13 @@ public class ContentActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        // Display questionnaire if required
+        boolean questionnaireFilledIn = QuestionnaireManager.readQuestionnaireFilledInFromSharedPreferences();
+        if (!questionnaireFilledIn){
+            Intent intent = new Intent(ContentActivity.this, QuestionnaireActivity.class);
+            startActivity(intent);
+        }
 
         // Configure sliding pages
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), this.titles, this.numberOfTabs) {
