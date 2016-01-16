@@ -77,6 +77,7 @@ public class ServiceDialogFragment extends RoboDialogFragment {
 
                     // Select new service and fire update event
                     journeyManager.getRide().setService(availableServices.get(position));
+                    journeyManager.getRide().setEndStop(null);
                     eventBus.post(new JourneyUpdatedEvent());
                     getDialog().cancel();
                 }

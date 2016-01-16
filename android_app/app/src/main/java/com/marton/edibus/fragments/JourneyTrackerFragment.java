@@ -19,7 +19,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
@@ -41,6 +40,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
@@ -48,8 +48,6 @@ import roboguice.inject.InjectView;
 
 
 public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
-
-    private static final String TAG = JourneySetupFragment.class.getName();
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -61,9 +59,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private double latestUserLongitude;
 
-    private Marker userMarker;
-
     private GoogleMap googleMap;
+
+    private boolean cameraCenteredOnUser;
 
     private RideActionFiredEvent rideActionFiredEvent;
 
@@ -128,7 +126,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Set up text view formats
         this.decimalFormat = new DecimalFormat("#.##");
-        this.dateFormat = new SimpleDateFormat("mm:ss");
+        this.dateFormat = new SimpleDateFormat("mm:ss", Locale.UK);
 
         // Set up Delete Journey alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -139,26 +137,29 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 getActivity().finish();
             }
         });
+
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
+
         this.deleteJourneyDialog = builder.create();
 
         // Set up Continue Journey alert dialog
-        builder.setTitle("Add another trip?");
+        builder.setTitle("Add another ride?");
         builder.setPositiveButton("Yes, let's continue", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                eventBus.post(new RideActionFiredEvent(RideActionEnum.NEW_TRIP));
+                eventBus.post(new RideActionFiredEvent(RideActionEnum.NEW_RIDE));
             }
         });
+
         builder.setNegativeButton("No, I'm finished", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 journeyManager.setDefaults();
                 getActivity().finish();
-                SnackbarManager.showSucess(getView(), "Thank you for your feedback!");
             }
         });
+
         this.continueJourneyDialog = builder.create();
     }
 
@@ -195,7 +196,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     refreshButtons();
 
                     // Move on to the feedback page
-                    rideActionFiredEvent.setRideActionEnum(RideActionEnum.TRIP_STARTED);
+                    rideActionFiredEvent.setRideActionEnum(RideActionEnum.RIDE_STARTED);
                     eventBus.post(rideActionFiredEvent);
 
                     // Start the services
@@ -317,7 +318,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     // Sets all tracking related text-fields
     private void refreshDataInterface(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
-        // TODO: make them default on demand
         this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
         this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
         this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
@@ -428,16 +428,18 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     this.latestUserLongitude = startStop.getLongitude();
                 }
 
-                // TODO: put in separate method. Detect when user moves the map.
-
                 // Move view over the user's current position
-                this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latestUserLatitude, this.latestUserLongitude),15));
+                if (!this.cameraCenteredOnUser){
+                    this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latestUserLatitude, this.latestUserLongitude),15));
+                    this.cameraCenteredOnUser = true;
+                }
             }
         }
     }
 
     public void onEventMainThread(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
+        // TODO: put this in the service?
         // If we are near the end, finish the tracking
         if (trackerStateUpdatedEvent.getDistanceFromGoal() < 50){
 
@@ -459,8 +461,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     }
 
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
+
         switch (rideActionFiredEvent.getRideActionEnum()){
-            case NEW_TRIP:
+            case NEW_RIDE:
                 this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
                 this.refreshMap();
@@ -469,6 +472,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     }
 
     public void onEventMainThread(TimerUpdatedEvent timerUpdatedEvent){
+
         if (this.journeyManager.getJourneyState().equals(JourneyStateEnum.RUNNING)){
             this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
             this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
@@ -478,6 +482,5 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     @Override
     public void onMapClick(LatLng latLng) {
-        SnackbarManager.showError(getView(), "Clicked the map!");
     }
 }

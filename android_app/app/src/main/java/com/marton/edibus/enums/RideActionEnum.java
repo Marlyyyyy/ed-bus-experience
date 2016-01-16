@@ -1,9 +1,9 @@
 package com.marton.edibus.enums;
 
 public enum RideActionEnum {
-    NEW_TRIP,
+    NEW_RIDE,
     SETUP_COMPLETED,
-    TRIP_STARTED,
-    TRIP_FINISHED,
+    RIDE_STARTED,
+    RIDE_FINISHED,
     FEEDBACK_COMPLETED
 }

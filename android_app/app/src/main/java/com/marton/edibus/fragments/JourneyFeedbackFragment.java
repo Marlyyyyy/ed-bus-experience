@@ -81,6 +81,12 @@ public class JourneyFeedbackFragment extends RoboFragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Set the defaults
+        boolean currentSeatState = seatSwitch.isChecked();
+        this.journeyManager.getRide().setSeat(currentSeatState);
+        boolean currentGreetState = greetSwitch.isChecked();
+        this.journeyManager.getRide().setGreet(currentGreetState);
+
         // Edit texts are only saved when the user clicks Save
         this.feedbackCompleteButton.setOnClickListener(new View.OnClickListener() {
 

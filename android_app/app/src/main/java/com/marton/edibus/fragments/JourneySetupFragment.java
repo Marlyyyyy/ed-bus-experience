@@ -231,7 +231,7 @@ public class JourneySetupFragment extends RoboFragment{
 
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
         switch (rideActionFiredEvent.getRideActionEnum()){
-            case NEW_TRIP:
+            case NEW_RIDE:
                 this.refreshUserInterface();
                 break;
         }

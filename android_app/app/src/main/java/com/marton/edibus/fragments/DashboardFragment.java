@@ -56,7 +56,7 @@ public class DashboardFragment extends RoboFragment {
         super.onCreate(bundle);
 
         // Set up text view formats
-        this.decimalFormat = new DecimalFormat(".##");
+        this.decimalFormat = new DecimalFormat("#.##");
         this.dateFormat = new SimpleDateFormat("m", Locale.UK);
     }
 

@@ -1,6 +1,7 @@
 package com.marton.edibus.activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
 import android.support.v4.app.FragmentManager;
@@ -132,6 +133,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         this.busWebService.getAllServices(new WebCallBack<List<Service>>() {
             @Override
             public void onSuccess(List<Service> data) {
+
                 services = new ArrayList<>(data);
                 serviceAdapter = new ServiceAdapter(context, services, resources);
                 listView.setAdapter(serviceAdapter);
@@ -143,10 +145,9 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Service service = services.get(position);
                 selectService(service);
-                // listView.getChildAt(position).setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright));
-                SnackbarManager.showSucess(view, String.valueOf(service.getId()));
             }
         });
 
@@ -181,7 +182,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
             @Override
             public void onPanelAnchored(View view) {
-                //slidingUpPanelHeaderTextView.setTextColor(ContextCompat.getColor(StopSetupActivity.this, R.color.black));
             }
 
             @Override
@@ -219,8 +219,15 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
     }
 
     private void selectService(Service service){
+
         this.journeyManager.getRide().setService(service);
         this.previewService = service;
+
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(String.format("Loading service %s ...", service.getName()));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         this.slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
@@ -246,6 +253,8 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
                 // Change the camera position of the map
                 moveCamera(100, stopMarkers);
+
+                progressDialog.dismiss();
             }
         };
 
@@ -352,6 +361,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     }
                 });
 
+                // Called after obtaining a new list of stops
                 WebCallBack<List<Stop>> stopCallback = new WebCallBack<List<Stop>>(){
 
                     @Override

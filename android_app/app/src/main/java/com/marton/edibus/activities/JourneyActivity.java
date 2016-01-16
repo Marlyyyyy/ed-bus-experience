@@ -105,13 +105,13 @@ public class JourneyActivity extends RoboActionBarActivity {
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
 
         switch(rideActionFiredEvent.getRideActionEnum()){
-            case NEW_TRIP:
+            case NEW_RIDE:
                 this.pager.setCurrentItem(JourneyTabEnum.SETUP.ordinal());
                 break;
             case SETUP_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
                 break;
-            case TRIP_STARTED:
+            case RIDE_STARTED:
                 this.pager.setCurrentItem(JourneyTabEnum.FEEDBACK.ordinal());
                 break;
             case FEEDBACK_COMPLETED:

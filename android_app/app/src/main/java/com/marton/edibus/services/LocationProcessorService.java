@@ -52,6 +52,7 @@ public class LocationProcessorService extends RoboService {
     public LocationProcessorService() {
         this.eventBus.register(this);
         this.trackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
+        this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
         this.timerUpdatedEvent = new TimerUpdatedEvent();
     }
 
@@ -103,9 +104,9 @@ public class LocationProcessorService extends RoboService {
         return null;
     }
 
+    // Handles the location update event
     public void onEvent(LocationUpdatedEvent locationUpdatedEvent){
 
-        // Whenever we receive a location update, call the process method
         this.processLocationUpdate(locationUpdatedEvent.getLatitude(), locationUpdatedEvent.getLongitude());
     }
 
@@ -139,18 +140,14 @@ public class LocationProcessorService extends RoboService {
                     // Calculate travelled distance in metres
                     double pastDistanceDelta = 0.0;
                     double pastDistance = 0.0;
-                    if (this.previousTrackerStateUpdatedEvent != null){
-                        double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
-                        pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
-                                this.trackerStateUpdatedEvent.getLatitude(),
-                                this.trackerStateUpdatedEvent.getLongitude(),
-                                this.previousTrackerStateUpdatedEvent.getLatitude(),
-                                this.previousTrackerStateUpdatedEvent.getLongitude());
-                        pastDistance = previousDistanceFromStart + pastDistanceDelta;
-                        this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
-                    }else{
-                        this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
-                    }
+                    double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
+                    pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
+                            this.trackerStateUpdatedEvent.getLatitude(),
+                            this.trackerStateUpdatedEvent.getLongitude(),
+                            this.previousTrackerStateUpdatedEvent.getLatitude(),
+                            this.previousTrackerStateUpdatedEvent.getLongitude());
+                    pastDistance = previousDistanceFromStart + pastDistanceDelta;
+                    this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
 
                     ride.setDistance(pastDistance);
 
@@ -189,13 +186,13 @@ public class LocationProcessorService extends RoboService {
         }
 
         this.trackerStateUpdatedEvent.setCurrentActivityEnum(this.currentActivityEnum);
-
         this.eventBus.post(this.trackerStateUpdatedEvent);
 
         // Store the current state for later
-        // TODO: null pointer
-        this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
-        this.latestUpdateTime = currentUpdateTime;
+        if (!this.currentActivityEnum.equals(CurrentActivityEnum.PREPARING)){
+            this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
+            this.latestUpdateTime = currentUpdateTime;
+        }
 
         // If the user has arrived at their destination
         // TODO: upload journey automatically
