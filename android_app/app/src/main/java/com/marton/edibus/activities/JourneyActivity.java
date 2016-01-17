@@ -112,7 +112,7 @@ public class JourneyActivity extends RoboActionBarActivity {
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
                 break;
             case RIDE_STARTED:
-                this.pager.setCurrentItem(JourneyTabEnum.FEEDBACK.ordinal());
+                // this.pager.setCurrentItem(JourneyTabEnum.FEEDBACK.ordinal());
                 break;
             case FEEDBACK_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());

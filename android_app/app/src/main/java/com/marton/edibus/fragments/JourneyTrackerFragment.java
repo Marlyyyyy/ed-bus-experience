@@ -23,8 +23,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
+import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.RideActionEnum;
+import com.marton.edibus.events.CurrentActivityUpdatedEvent;
+import com.marton.edibus.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.RideActionFiredEvent;
@@ -73,6 +76,8 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private DateFormat dateFormat;
 
+    private CurrentActivityUpdatedEvent currentActivityUpdatedEvent;
+
     @Inject private JourneyManager journeyManager;
 
     @InjectView(R.id.current_activity)
@@ -90,17 +95,14 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     @InjectView(R.id.travelling_duration)
     TextView travellingDuration;
 
-    @InjectView(R.id.start_journey)
-    Button startJourneyButton;
+    @InjectView(R.id.start_waiting)
+    Button startWaitingButton;
 
-    @InjectView(R.id.pause_journey)
-    Button pauseJourneyButton;
+    @InjectView(R.id.board_the_bus)
+    Button boardTheBusButton;
 
-    @InjectView(R.id.continue_journey)
-    Button continueJourneyButton;
-
-    @InjectView(R.id.finish_journey)
-    Button finishJourneyButton;
+    @InjectView(R.id.finish_ride)
+    Button finishRideButton;
 
     @InjectView(R.id.delete_journey)
     Button deleteJourneyButton;
@@ -123,6 +125,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Initialise event objects
         this.rideActionFiredEvent = new RideActionFiredEvent();
+        this.currentActivityUpdatedEvent = new CurrentActivityUpdatedEvent();
 
         // Set up text view formats
         this.decimalFormat = new DecimalFormat("#.##");
@@ -149,6 +152,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         builder.setTitle("Add another ride?");
         builder.setPositiveButton("Yes, let's continue", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
                 eventBus.post(new RideActionFiredEvent(RideActionEnum.NEW_RIDE));
             }
         });
@@ -186,18 +190,22 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.refreshButtons();
 
         // Configure listeners for buttons
-        this.startJourneyButton.setOnClickListener(new View.OnClickListener() {
+        this.startWaitingButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (journeyManager.tripSetupComplete()) {
-                    journeyManager.startTrip();
+                if (journeyManager.rideSetupComplete()) {
 
+                    journeyManager.startWaiting();
                     refreshButtons();
 
                     // Move on to the feedback page
                     rideActionFiredEvent.setRideActionEnum(RideActionEnum.RIDE_STARTED);
                     eventBus.post(rideActionFiredEvent);
+
+                    // Fire update event for current activity
+                    currentActivityUpdatedEvent.setCurrentActivityEnum(CurrentActivityEnum.WAITING);
+                    eventBus.post(currentActivityUpdatedEvent);
 
                     // Start the services
                     getActivity().startService(locationProviderService);
@@ -209,33 +217,31 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             }
         });
 
-        this.pauseJourneyButton.setOnClickListener(new View.OnClickListener() {
+        this.boardTheBusButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                journeyManager.pauseTrip();
+
+                journeyManager.startTravelling();
                 refreshButtons();
+
+                // Fire update event for current activity
+                currentActivityUpdatedEvent.setCurrentActivityEnum(CurrentActivityEnum.TRAVELLING);
+                eventBus.post(currentActivityUpdatedEvent);
             }
         });
 
-        this.continueJourneyButton.setOnClickListener(new View.OnClickListener() {
+        this.finishRideButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                journeyManager.continueTrip();
-                refreshButtons();
-            }
-        });
-        
-        this.finishJourneyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                journeyManager.finishTrip();
-                refreshButtons();
+                journeyManager.finishRide();
 
                 // Stop the services
                 getActivity().stopService(locationProviderService);
                 getActivity().stopService(locationProcessorService);
+
+                refreshButtons();
             }
         });
 
@@ -243,35 +249,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             @Override
             public void onClick(View v) {
 
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Uploading...");
-                progressDialog.show();
-
-                WebCallBack<Integer> callback = new WebCallBack<Integer>() {
-                    @Override
-                    public void onSuccess(Integer data) {
-                        Stop previousEndStop = journeyManager.getRide().getEndStop();
-                        Ride ride = new Ride();
-                        ride.setStartStop(previousEndStop);
-                        ride.setJourneyId(data);
-
-                        journeyManager.setDefaults();
-                        journeyManager.setRide(ride);
-
-                        continueJourneyDialog.show();
-                        progressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, JSONObject response) {
-                        SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
-
-                        progressDialog.dismiss();
-                    }
-                };
-
-                journeyManager.saveTrip(callback);
+                uploadJourney();
             }
         });
 
@@ -311,14 +289,46 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setMyLocationEnabled(true);
-        //this.googleMap.setOnMapClickListener(this);
         this.refreshMap();
+    }
+
+    private void uploadJourney(){
+
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Uploading...");
+        progressDialog.show();
+
+        WebCallBack<Integer> saveRideCallback = new WebCallBack<Integer>() {
+            @Override
+            public void onSuccess(Integer data) {
+                Stop previousEndStop = journeyManager.getRide().getEndStop();
+                Ride ride = new Ride();
+                ride.setStartStop(previousEndStop);
+                ride.setJourneyId(data);
+
+                journeyManager.setDefaults();
+                journeyManager.setRide(ride);
+
+                continueJourneyDialog.show();
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(int statusCode, JSONObject response) {
+                SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
+
+                progressDialog.dismiss();
+            }
+        };
+
+        this.journeyManager.saveRide(saveRideCallback);
     }
 
     // Sets all tracking related text-fields
     private void refreshDataInterface(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
-        this.currentActivity.setText(String.valueOf(trackerStateUpdatedEvent.getCurrentActivityEnum()));
+        this.currentActivity.setText(String.valueOf(this.journeyManager.getCurrentActivityEnum()));
         this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
         this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
         this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
@@ -328,52 +338,76 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.latestUserLongitude = trackerStateUpdatedEvent.getLongitude();
     }
 
+    // Sets all timer related text-fields
+    private void refreshTimerInterface(TimerUpdatedEvent timerUpdatedEvent){
+
+        this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
+        this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
+        this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
+    }
+
     // Hides and displays buttons according to the current state of the journey
     private void refreshButtons(){
 
-        switch (this.journeyManager.getJourneyState()){
+        CurrentActivityEnum currentActivityEnum = this.journeyManager.getCurrentActivityEnum();
+        JourneyStateEnum journeyStateEnum = this.journeyManager.getJourneyStateEnum();
+
+        switch (journeyStateEnum){
             case SETUP_INCOMPLETE:
-                this.startJourneyButton.setVisibility(View.VISIBLE);
-                this.pauseJourneyButton.setVisibility(View.GONE);
-                this.continueJourneyButton.setVisibility(View.GONE);
-                this.finishJourneyButton.setVisibility(View.GONE);
+                this.startWaitingButton.setVisibility(View.VISIBLE);
+                this.boardTheBusButton.setVisibility(View.GONE);
+                this.finishRideButton.setVisibility(View.GONE);
                 this.uploadJourneyButton.setVisibility(View.GONE);
                 this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
+
             case READY_TO_START:
-                this.startJourneyButton.setVisibility(View.VISIBLE);
-                this.pauseJourneyButton.setVisibility(View.GONE);
-                this.continueJourneyButton.setVisibility(View.GONE);
-                this.finishJourneyButton.setVisibility(View.GONE);
+                this.startWaitingButton.setVisibility(View.VISIBLE);
+                this.boardTheBusButton.setVisibility(View.GONE);
+                this.finishRideButton.setVisibility(View.GONE);
                 this.uploadJourneyButton.setVisibility(View.GONE);
                 this.deleteJourneyButton.setVisibility(View.GONE);
                 break;
+
             case RUNNING:
-                this.startJourneyButton.setVisibility(View.GONE);
-                this.pauseJourneyButton.setVisibility(View.VISIBLE);
-                this.continueJourneyButton.setVisibility(View.GONE);
-                this.finishJourneyButton.setVisibility(View.GONE);
-                this.uploadJourneyButton.setVisibility(View.GONE);
-                this.deleteJourneyButton.setVisibility(View.GONE);
+                switch(currentActivityEnum){
+                    case PREPARING:
+                        this.startWaitingButton.setVisibility(View.VISIBLE);
+                        this.boardTheBusButton.setVisibility(View.GONE);
+                        this.finishRideButton.setVisibility(View.GONE);
+                        this.uploadJourneyButton.setVisibility(View.GONE);
+                        this.deleteJourneyButton.setVisibility(View.GONE);
+                        break;
+
+                    case WAITING:
+                        this.startWaitingButton.setVisibility(View.GONE);
+                        this.boardTheBusButton.setVisibility(View.VISIBLE);
+                        this.finishRideButton.setVisibility(View.GONE);
+                        this.uploadJourneyButton.setVisibility(View.GONE);
+                        this.deleteJourneyButton.setVisibility(View.GONE);
+                        break;
+
+                    case TRAVELLING:
+                        this.startWaitingButton.setVisibility(View.GONE);
+                        this.boardTheBusButton.setVisibility(View.GONE);
+                        this.finishRideButton.setVisibility(View.VISIBLE);
+                        this.uploadJourneyButton.setVisibility(View.GONE);
+                        this.deleteJourneyButton.setVisibility(View.GONE);
+                        break;
+                }
                 break;
-            case PAUSED:
-                this.startJourneyButton.setVisibility(View.GONE);
-                this.pauseJourneyButton.setVisibility(View.GONE);
-                this.continueJourneyButton.setVisibility(View.VISIBLE);
-                this.finishJourneyButton.setVisibility(View.VISIBLE);
-                this.uploadJourneyButton.setVisibility(View.GONE);
-                this.deleteJourneyButton.setVisibility(View.GONE);
-                break;
+
             case FINISHED:
-                this.startJourneyButton.setVisibility(View.GONE);
-                this.pauseJourneyButton.setVisibility(View.GONE);
-                this.continueJourneyButton.setVisibility(View.GONE);
-                this.finishJourneyButton.setVisibility(View.GONE);
+                this.startWaitingButton.setVisibility(View.GONE);
+                this.boardTheBusButton.setVisibility(View.GONE);
+                this.finishRideButton.setVisibility(View.GONE);
                 this.uploadJourneyButton.setVisibility(View.VISIBLE);
                 this.deleteJourneyButton.setVisibility(View.VISIBLE);
                 break;
+
             case UPLOADED:
                 break;
+
             default:
                 SnackbarManager.showError(getView(), "Journey is in an undefined state!");
                 break;
@@ -443,10 +477,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         // If we are near the end, finish the tracking
         if (trackerStateUpdatedEvent.getDistanceFromGoal() < 50){
 
-            this.journeyManager.finishTrip();
+            this.journeyManager.finishRide();
 
             // Automatically upload trip and/or fire events
-            if (this.journeyManager.getAutomaticUpload())
+            if (this.journeyManager.getAutomaticFlow())
             {
                 SnackbarManager.showError(getView(), "Uploading the trip...");
             }else
@@ -466,6 +500,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
             case NEW_RIDE:
                 this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
+                this.refreshTimerInterface(new TimerUpdatedEvent());
                 this.refreshMap();
                 break;
         }
@@ -473,11 +508,14 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     public void onEventMainThread(TimerUpdatedEvent timerUpdatedEvent){
 
-        if (this.journeyManager.getJourneyState().equals(JourneyStateEnum.RUNNING)){
-            this.waitingDurationTextView.setText(this.dateFormat.format(timerUpdatedEvent.getWaitingMilliseconds()));
-            this.travellingDuration.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds()));
-            this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
+        if (this.journeyManager.getJourneyStateEnum().equals(JourneyStateEnum.RUNNING)){
+            this.refreshTimerInterface(timerUpdatedEvent);
         }
+    }
+
+    public void onEvent(JourneyUploadRequestedEvent journeyUploadRequestedEvent){
+
+        this.uploadJourney();
     }
 
     @Override

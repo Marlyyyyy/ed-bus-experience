@@ -14,7 +14,6 @@ public class TrackerStateUpdatedEvent {
         this.currentSpeed = currentSpeed;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.currentActivityEnum = currentActivityEnum;
     }
 
     private double latitude;
@@ -34,16 +33,6 @@ public class TrackerStateUpdatedEvent {
     private int waitingTime;
 
     private int travellingTime;
-
-    private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.WAITING;
-
-    public CurrentActivityEnum getCurrentActivityEnum() {
-        return currentActivityEnum;
-    }
-
-    public void setCurrentActivityEnum(CurrentActivityEnum currentActivityEnum) {
-        this.currentActivityEnum = currentActivityEnum;
-    }
 
     public double getLatitude() {
         return latitude;

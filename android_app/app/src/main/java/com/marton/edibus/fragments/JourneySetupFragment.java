@@ -33,45 +33,43 @@ import roboguice.inject.InjectView;
 
 public class JourneySetupFragment extends RoboFragment{
 
-    private static final String TAG = JourneySetupFragment.class.getName();
-
     private EventBus eventBus = EventBus.getDefault();
 
-    ServiceDialogFragment serviceDialog;
+    private ServiceDialogFragment serviceDialog;
 
-    RideActionFiredEvent rideActionFiredEvent;
+    private RideActionFiredEvent rideActionFiredEvent;
 
     @Inject
-    JourneyManager journeyManager;
+    private JourneyManager journeyManager;
 
     @InjectView(R.id.choose_start_stop)
-    LinearLayout startStopLayout;
+    private LinearLayout startStopLayout;
 
     @InjectView(R.id.choose_service)
-    LinearLayout serviceLayout;
+    private LinearLayout serviceLayout;
 
     @InjectView(R.id.choose_end_stop)
-    LinearLayout endStopLayout;
+    private LinearLayout endStopLayout;
 
     @InjectView(R.id.journey_root)
-    View rootView;
+    private View rootView;
 
     @InjectView(R.id.journey_start_stop)
-    TextView journeyStartStopTextView;
+    private TextView journeyStartStopTextView;
 
     @InjectView(R.id.journey_service)
-    TextView journeyServiceTextView;
+    private TextView journeyServiceTextView;
 
     @InjectView(R.id.journey_end_stop)
-    TextView journeyEndStopTextView;
+    private TextView journeyEndStopTextView;
 
-    @InjectView(R.id.auto_sync_switch)
-    Switch autoSyncSwitch;
+    @InjectView(R.id.auto_journey_switch)
+    private Switch automaticJourneyHandlerSwitch;
 
     @InjectView(R.id.journey_setup_complete)
-    Button continueButton;
+    private Button continueButton;
 
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
 
     @Override
     public void onCreate(Bundle bundle){
@@ -122,29 +120,26 @@ public class JourneySetupFragment extends RoboFragment{
 
             @Override
             public void onClick(View v) {
-                if (journeyManager.getRide().getService() != null){
+                if (journeyManager.getRide().getService() != null) {
                     launchStopChooserActivity(StopTypeEnum.END);
-                }else{
+                } else {
                     SnackbarManager.showError(v, "Please select a service first!");
                 }
             }
         });
 
-        this.autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.automaticJourneyHandlerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    journeyManager.setAutomaticUpload(true);
-                } else {
-                    journeyManager.setAutomaticUpload(false);
-                }
+
+                journeyManager.setAutomaticFlow(isChecked);
             }
         });
 
         this.continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (journeyManager.tripSetupComplete()) {
+                if (journeyManager.rideSetupComplete()) {
                     rideActionFiredEvent.setRideActionEnum(RideActionEnum.SETUP_COMPLETED);
                     eventBus.post(rideActionFiredEvent);
                 } else {
@@ -216,7 +211,7 @@ public class JourneySetupFragment extends RoboFragment{
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
         }
 
-        if (this.journeyManager.tripSetupComplete()){
+        if (this.journeyManager.rideSetupComplete()){
             this.continueButton.setEnabled(true);
             this.continueButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimary));
         }else{

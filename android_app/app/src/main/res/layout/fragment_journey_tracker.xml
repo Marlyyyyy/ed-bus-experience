@@ -263,40 +263,33 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
+            <!-- 1 -->
             <Button
-                android:id="@+id/start_journey"
-                android:text="Start"
+                android:id="@+id/start_waiting"
+                android:text="Start Waiting"
                 style="@style/AppTheme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <!-- 2 -->
             <Button
-                android:id="@+id/pause_journey"
-                android:text="Stop"
-                style="@style/btnStyleOrange"
+                android:id="@+id/board_the_bus"
+                android:text="Board the Bus"
+                style="@style/AppTheme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+            <!-- 3 -->
             <Button
-                android:id="@+id/finish_journey"
-                android:text="End"
-                style="@style/btnStyleOrange"
-                android:layout_width="0px"
-                android:layout_weight="1"
-                android:layout_marginRight="10dp"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-
-            <Button
-                android:id="@+id/continue_journey"
-                android:text="Continue"
+                android:id="@+id/finish_ride"
+                android:text="Finish the Ride"
                 style="@style/btnStyleGreen"
-                android:layout_width="0px"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+            <!-- 4 -->
             <Button
                 android:id="@+id/delete_journey"
                 android:text="Delete Journey"

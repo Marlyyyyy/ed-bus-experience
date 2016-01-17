@@ -5,8 +5,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
+import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
+import com.marton.edibus.events.CurrentActivityUpdatedEvent;
+import com.marton.edibus.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.models.Stop;
@@ -43,8 +46,6 @@ public class LocationProcessorService extends RoboService {
 
     private Timer timer;
 
-    private CurrentActivityEnum currentActivityEnum = CurrentActivityEnum.PREPARING;
-
     private int waitingSeconds = 0;
 
     private int travellingSeconds = 0;
@@ -66,11 +67,11 @@ public class LocationProcessorService extends RoboService {
             @Override
             public void run() {
 
-                if (!journeyManager.getJourneyState().equals(JourneyStateEnum.RUNNING)){
+                if (!journeyManager.getJourneyStateEnum().equals(JourneyStateEnum.RUNNING)){
                     return;
                 }
 
-                switch(currentActivityEnum){
+                switch(journeyManager.getCurrentActivityEnum()){
                     case WAITING:
                         waitingSeconds++;
                         break;
@@ -88,13 +89,18 @@ public class LocationProcessorService extends RoboService {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy(){
 
         // Don't forget to stop the timer
         this.timer.cancel();
         this.waitingSeconds = 0;
         this.travellingSeconds = 0;
-        this.currentActivityEnum = CurrentActivityEnum.PREPARING;
         super.onDestroy();
     }
 
@@ -123,10 +129,10 @@ public class LocationProcessorService extends RoboService {
                 latitude, longitude, endStop.getLatitude(), endStop.getLongitude()
         );
 
-        switch (this.journeyManager.getJourneyState()){
+        switch (this.journeyManager.getJourneyStateEnum()){
             case RUNNING:
                 this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
-                this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds*1000);
+                this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds * 1000);
                 this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds * 1000);
 
                 // Update the waiting times on the ride
@@ -135,11 +141,11 @@ public class LocationProcessorService extends RoboService {
                 ride.setTravelDuration(this.travellingSeconds * 1000);
 
                 // Only count distances and speed if the user is travelling
-                if (this.currentActivityEnum == CurrentActivityEnum.TRAVELLING){
+                if (this.journeyManager.getCurrentActivityEnum() == CurrentActivityEnum.TRAVELLING){
 
                     // Calculate travelled distance in metres
-                    double pastDistanceDelta = 0.0;
-                    double pastDistance = 0.0;
+                    double pastDistanceDelta;
+                    double pastDistance;
                     double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
                     pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
                             this.trackerStateUpdatedEvent.getLatitude(),
@@ -170,34 +176,43 @@ public class LocationProcessorService extends RoboService {
                 }
         }
 
-        // Check if the user has left their start-stop
-        Stop startStop = this.journeyManager.getRide().getStartStop();
-        double passedDistance = GpsCalculator.getDistanceBetweenPoints(
-                latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
-        );
+        // Automate the actions if automation is enabled
+        if (this.journeyManager.getAutomaticFlow()){
 
-        if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
-            this.currentActivityEnum = CurrentActivityEnum.WAITING;
-        }else{
-            // If the user leaves the bus stop after waiting, then the travelling starts
-            if (this.currentActivityEnum.equals(CurrentActivityEnum.WAITING)){
-                this.currentActivityEnum = CurrentActivityEnum.TRAVELLING;
+            // Calculate the passed distance
+            Stop startStop = this.journeyManager.getRide().getStartStop();
+            double passedDistance = GpsCalculator.getDistanceBetweenPoints(
+                    latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
+            );
+
+            // Calculate the new activity enum
+            switch (this.journeyManager.getCurrentActivityEnum()){
+                case PREPARING:
+                    if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
+                        this.journeyManager.startWaiting();
+                    }
+                    break;
+                case WAITING:
+                    if (passedDistance >= START_STOP_DISTANCE_THRESHOLD){
+                        this.journeyManager.startTravelling();
+                    }
+                    break;
+                case TRAVELLING:
+                    if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
+                        this.journeyManager.finishRide();
+                        this.eventBus.post(new JourneyUploadRequestedEvent());
+                    }
+                    break;
             }
         }
 
-        this.trackerStateUpdatedEvent.setCurrentActivityEnum(this.currentActivityEnum);
-        this.eventBus.post(this.trackerStateUpdatedEvent);
-
         // Store the current state for later
-        if (!this.currentActivityEnum.equals(CurrentActivityEnum.PREPARING)){
+        if (!this.journeyManager.getCurrentActivityEnum().equals(CurrentActivityEnum.PREPARING)){
             this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
             this.latestUpdateTime = currentUpdateTime;
         }
 
-        // If the user has arrived at their destination
-        // TODO: upload journey automatically
-        if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
-            this.journeyManager.finishTrip();
-        }
+        // Fire the processed tracker information event
+        this.eventBus.post(this.trackerStateUpdatedEvent);
     }
 }
