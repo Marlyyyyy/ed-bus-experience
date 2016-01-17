@@ -91,7 +91,14 @@ class StatisticsViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response_content['ride_average_people_boarding'], 5.0, "Boarding people -1 should be ignored")
-        self.assertEqual(response_content['number_of_trips'], 2, "Number of trips should be 2.")
+        self.assertEqual(response_content['number_of_trips'], 2, "Number of rides should be 2.")
         self.assertEqual(response_content['number_of_journeys'], 2, "Number of journeys should be 2.")
-        self.assertEqual(response_content['ride_seat_positives'], 2, "Both trips should have a seat.")
-        self.assertEqual(response_content['ride_greet_negatives'], 1, "Only one trip didn't greet.")
+        self.assertEqual(response_content['ride_seat_positives'], 2, "Both rides should have a seat.")
+        self.assertEqual(response_content['ride_greet_negatives'], 1, "Only one ride didn't greet.")
+
+    def test_obtain_timeline_statics(self):
+
+        response = self.client.get('/bus/api/timeline_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(response_content), 30, "There should be 30 days in the results set.")

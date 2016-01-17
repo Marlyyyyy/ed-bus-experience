@@ -28,7 +28,17 @@
             Home.getStatistics().then(statisticsSuccessful, statisticsError);
 
             function statisticsSuccessful(data, status, headers, config){
-                console.log(data);
+                vm.labels = ["Yes", "No"];
+                var seatData = [];
+                seatData.push(data.data.ride_seat_positives);
+                seatData.push(data.data.ride_seat_negatives);
+                vm.data = seatData;
+                vm.type = 'Pie';
+
+                vm.toggle = function () {
+                    vm.type = vm.type === 'PolarArea' ?
+                        'Pie' : 'PolarArea';
+                };
             }
 
             function statisticsError(data, status, headers, config) {

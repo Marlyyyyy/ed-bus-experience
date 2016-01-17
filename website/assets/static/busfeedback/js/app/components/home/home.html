@@ -1,23 +1,7 @@
-<div ng-show="vm.logs && vm.logs.length">
+<div>
 
-    <div class="row">
-        <div class="col-md-1">Location</div>
-        <div class="col-md-1">Date</div>
-        <div class="col-md-1">Description</div>
-        <div class="col-md-1">Distance</div>
-        <div class="col-md-1">Duration</div>
-        <div class="col-md-1">Pace</div>
-
-    </div>
-
-    <div class="row" ng-repeat="log in vm.logs">
-        <div class="col-md-1">{{ log.location }}</div>
-        <div class="col-md-1">{{ log.date }}</div>
-        <div class="col-md-1">{{ log.description }}</div>
-        <div class="col-md-1">{{ log.distance }}</div>
-        <div class="col-md-1">{{ log.duration }}</div>
-        <div class="col-md-1">{{ log.pace }}</div>
-    </div>
+    <canvas id="base" class="chart-base" chart-type="vm.type" chart-data="vm.data" chart-labels="vm.labels" chart-legend="true">
+    </canvas>
 
 </div>
 
