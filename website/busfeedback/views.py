@@ -24,7 +24,7 @@ from django.template import loader
 
 @csrf_exempt
 def get_data(request):
-    update_services_and_stops()
+    # update_services_and_stops()
 
     # services_json = requests.get(API_SERVICES, headers=API_HEADER)
     return HttpResponse("lol", content_type='application/json')

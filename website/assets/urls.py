@@ -5,12 +5,12 @@ from busfeedback.views import get_data, remove_data, IndexView, custom_404
 
 urlpatterns = patterns(
     '',
-    url(r'^test/$', get_data),
-    url(r'^remove/$', remove_data),
+    url(r'^test', get_data),
+    url(r'^remove$', remove_data),
     url(r'^bus/', include('busfeedback.urls')),
     url(r'^auth/', include('authentication.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'/', custom_404),
+    # url(r'/', custom_404),
     url('^.*$', IndexView.as_view(), name='index')
 )
 
