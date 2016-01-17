@@ -25,7 +25,6 @@
         }
 
         function update(profile) {
-            console.log(profile);
             return $http.put('/auth/api/accounts/' + profile.username + '/', profile);
         }
     }

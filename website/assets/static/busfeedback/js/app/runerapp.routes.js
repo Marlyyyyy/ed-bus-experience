@@ -30,14 +30,16 @@
             templateUrl: '/static/busfeedback/js/app/components/profiles/profile.html',
             activeTab: 'profile'
         }).when('/settings', {
-          controller: 'ProfileSettingsController',
-          controllerAs: 'vm',
-          templateUrl: '/static/busfeedback/js/app/components/profiles/settings.html',
+            controller: 'ProfileSettingsController',
+            controllerAs: 'vm',
+            templateUrl: '/static/busfeedback/js/app/components/profiles/settings.html',
             activeTab: 'settings'
         }).when('/dashboard', {
-          controller: 'DashboardController',
-          controllerAs: 'vm',
-          templateUrl: '/static/busfeedback/js/app/components/dashboard/dashboard.html'
-        }).otherwise('/');
+            controller: 'DashboardController',
+            controllerAs: 'vm',
+            templateUrl: '/static/busfeedback/js/app/components/dashboard/dashboard.html'
+        }).otherwise({
+            redirectTo: '/home'
+        });
     }
 })();

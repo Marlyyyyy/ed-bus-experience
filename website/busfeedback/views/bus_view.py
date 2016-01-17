@@ -1,7 +1,7 @@
-from django.http.response import Http404, HttpResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest
 import json
 from django.http import HttpResponse, HttpResponseNotFound
-from busfeedback.utilities.bus_updater import update_services_and_stops, delete_services_stops
+from busfeedback.utilities.bus_updater import delete_services_stops
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
 from busfeedback.models.stop import Stop

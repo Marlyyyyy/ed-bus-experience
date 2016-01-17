@@ -237,3 +237,9 @@ class BusViewTestCase(TestCase):
 
         self.assertEqual(len(all_questionnaires), 1, "There should only be a single questionnaire created.")
         self.assertEqual(all_questionnaires[0].travel_reason, "Both", "The travel reason should be Both.")
+
+    def test_obtain_general_statics(self):
+
+        response = self.client.get('/bus/api/general_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+
+        self.assertEqual(1,1, "")

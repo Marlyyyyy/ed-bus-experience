@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.http.response import HttpResponse
 import json
 

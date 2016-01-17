@@ -6,31 +6,33 @@
         .module('runnerapp.home.controllers')
         .controller('IndexController', IndexController);
 
-    IndexController.$inject = ['$scope', 'Authentication', 'Snackbar'];
+    IndexController.$inject = ['$location', 'Authentication', 'Snackbar', 'Home'];
 
-    function IndexController($scope, Authentication, Snackbar) {
+    function IndexController($location, Authentication, Snackbar, Home) {
         var vm = this;
-
-        vm.isAuthenticated = Authentication.isAuthenticated();
-        vm.logs = [];
-        vm.username = Authentication.getAuthenticatedAccount();
-
-        vm.newPost = newPost;
 
         activate();
 
-        function newPost(){
-
-        }
-
         function activate() {
 
-            function logsSuccessFn(data, status, headers, config) {
-                vm.logs = data.data;
+            vm.isAuthenticated = Authentication.isAuthenticated();
+            var authenticatedAccount = Authentication.getAuthenticatedAccount();
+
+            // Redirect if not logged in
+            if (!authenticatedAccount) {
+                $location.url('/login');
+                Snackbar.error('You are not authorized to view this page.');
+                return;
             }
 
-            function logsErrorFn(data, status, headers, config) {
-                Snackbar.error(data.error);
+            Home.getStatistics().then(statisticsSuccessful, statisticsError);
+
+            function statisticsSuccessful(data, status, headers, config){
+                console.log(data);
+            }
+
+            function statisticsError(data, status, headers, config) {
+                Snackbar.error('Statistics could not be retrieved.');
             }
         }
     }

@@ -31,6 +31,7 @@
             function registerSuccessFn(data, status, headers, config) {
                 var response = data.data;
                 Authentication.setAuthenticatedAccount(response.token, response.username)
+                window.location = 'home';
             }
 
             function registerErrorFn(data, status, headers, config) {
@@ -62,7 +63,7 @@
         function getAuthenticatedAccount() {
             if (!$cookies.get('username')) {
                 console.log("User is not authenticated!");
-                return;
+                return null;
             }
 
             return $cookies.get('username');
@@ -86,6 +87,8 @@
 
             // Set the token as a header
             $http.defaults.headers.common['Authorization'] = 'JWT ' + token;
+
+            console.log(token);
 
             // Store the username
             $cookies.put('username', username,{

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from busfeedback.views import get_data, remove_data, IndexView, custom_404
+from busfeedback.views.bus_view import get_data, remove_data, IndexView, custom_404
 
 urlpatterns = patterns(
     '',
@@ -11,11 +11,11 @@ urlpatterns = patterns(
     url(r'^auth/', include('authentication.urls')),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'/', custom_404),
+    url(r'^silk/', include('silk.urls', namespace='silk')),
     url('^.*$', IndexView.as_view(), name='index')
 )
 
 # Silk Profiler
-urlpatterns += patterns('', url(r'^silk/', include('silk.urls', namespace='silk')))
 
 
 # development static media server
