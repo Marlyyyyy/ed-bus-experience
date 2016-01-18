@@ -2,6 +2,7 @@ from django.test import Client
 from django.test import TestCase
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.stop import Stop
+from busfeedback.models.ride import Ride
 from busfeedback.models.journey import Journey
 from busfeedback.models.questionnaire import Questionnaire
 from django.contrib.auth.models import User
@@ -102,3 +103,21 @@ class StatisticsViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_content), 30, "There should be 30 days in the results set.")
+
+    def test_obtain_averages_between_two_stops(self):
+
+        all_rides = list(Ride.objects.all())
+        random_ride = all_rides[0]
+
+        parameters = {
+            'start_stop_id': random_ride.start_stop_id,
+            'end_stop_id': random_ride.end_stop_id
+        }
+
+        response = self.client.get('/bus/api/bus_statistics/', parameters, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_content['average_people_waiting'], 2, "-1 People waiting should be ignored.")
+        self.assertEqual(response_content['average_people_boarding'], 5, "-1 People boarding should be ignored.")
+        self.assertEqual(response_content['average_waiting_duration'], 35000, "The average of two durations: 10k and 60k.")
+        self.assertEqual(response_content['average_rating'], 4.5, "The 0.0 rating should be ignored.")

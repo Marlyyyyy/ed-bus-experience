@@ -1,29 +1,15 @@
-from django.http.response import HttpResponseBadRequest
-import json
-from django.http import HttpResponse, HttpResponseNotFound
-from busfeedback.utilities.bus_updater import delete_services_stops
-from busfeedback.models.service import Service, ServiceStop
+from django.http import HttpResponse
 from busfeedback.models.journey import Journey
 from busfeedback.models.ride import Ride
-from busfeedback.models.stop import Stop
-from busfeedback.models.questionnaire import Questionnaire
-from django.db.models import Avg, Max, Min, Count
+from django.db.models import Avg, Count
 from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from busfeedback.serializers.service_serializer import ServiceSerializer
-from busfeedback.serializers.stop_serializer import StopSerializer
-from busfeedback.serializers.journey_serializer import JourneySerializer
 from rest_framework.renderers import JSONRenderer
 import datetime
 from django.utils import timezone
 from operator import itemgetter
-from django.core.exceptions import ObjectDoesNotExist
-import dateutil.parser
-from django.db import transaction
-from django.views.decorators.csrf import csrf_exempt
-import math
-from django.template import loader
+from itertools import groupby
 
 
 class GeneralStatisticsView(APIView):
@@ -93,20 +79,73 @@ class TimeLineStatisticsView(APIView):
 
     def get(self, request):
 
-        rides_per_day = Ride.objects.filter(created_at__lte=timezone.now(), created_at__gt=timezone.now()-datetime.timedelta(days=30)).extra(select={'day': 'date( created_at )'}).values('day') \
-               .annotate(available=Count('created_at'))
+        rides_per_day = Ride.objects.filter(
+            created_at__lte=timezone.now(),
+            created_at__gt=timezone.now()-datetime.timedelta(days=30)
+        ).extra(select={'day': 'date( created_at )'}).values('day').annotate(available=Count('created_at'))
 
         rides_per_day = list(rides_per_day)
 
         # Filling in the gaps for missing days
-        dates = [x['day'] for x in rides_per_day]
-        for d in (timezone.now() - datetime.timedelta(days=x) for x in range(0,30)):
-            d = d.strftime("%Y-%m-%d")
-            if d not in dates:
-                rides_per_day.append({'day': d, 'available': 0})
+        dates = [ride['day'] for ride in rides_per_day]
+        for day in (timezone.now() - datetime.timedelta(days=x) for x in range(0,30)):
+            day = day.strftime("%Y-%m-%d")
+            if day not in dates:
+                rides_per_day.append({'day': day, 'available': 0})
 
-        sorted_rides_per_day = sorted(rides_per_day, key=itemgetter('day'))
+        sorted_rides_per_date = sorted(rides_per_day, key=itemgetter('day'))
+        sorted_rides_per_day = []
+
+        # Group by the dates
+        for key, values in groupby(sorted_rides_per_date, key=lambda row: row['day']):
+            sum = 0
+            for value in values:
+                sum += value['available']
+
+            sorted_rides_per_day.append({'day': key, 'available': sum})
 
         return_json = JSONRenderer().render(sorted_rides_per_day)
+
+        return HttpResponse(return_json, content_type='application/json')
+
+
+class BusStatisticsView(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (JSONWebTokenAuthentication, )
+
+    def get(self, request):
+
+        start_stop_id = int(request.GET.get("start_stop_id", None))
+        end_stop_id = int(request.GET.get("end_stop_id", None))
+        service_id = int(request.GET.get("service_id", None))
+
+        # Queryset for all rides in the past 30 days
+        latest_rides = Ride.objects.filter(
+            created_at__lte=timezone.now(),
+            created_at__gt=timezone.now()-datetime.timedelta(days=30)
+        )
+
+        if start_stop_id and end_stop_id:
+            latest_rides.filter(start_stop_id=start_stop_id, end_stop_id=end_stop_id)
+
+        if service_id:
+            latest_rides.filter(service_id=service_id)
+
+        average_rating = latest_rides.filter(rating__gt=0.0).aggregate(Avg('rating'))['rating__avg']
+        average_travel_duration = latest_rides.aggregate(Avg('travel_duration'))['travel_duration__avg']
+        average_waiting_duration = latest_rides.aggregate(Avg('wait_duration'))['wait_duration__avg']
+        average_people_waiting = latest_rides.filter(people_waiting__gt=-1).aggregate(Avg('people_waiting'))['people_waiting__avg']
+        average_people_boarding = latest_rides.filter(people_boarding__gt=-1).aggregate(Avg('people_boarding'))['people_boarding__avg']
+
+        averages_dictionary = {
+            'average_rating': average_rating,
+            'average_travel_duration': average_travel_duration,
+            'average_waiting_duration': average_waiting_duration,
+            'average_people_waiting': average_people_waiting,
+            'average_people_boarding': average_people_boarding
+        }
+
+        return_json = JSONRenderer().render(averages_dictionary)
 
         return HttpResponse(return_json, content_type='application/json')

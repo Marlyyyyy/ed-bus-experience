@@ -26,6 +26,7 @@
             }
 
             Home.getStatistics().then(statisticsSuccessful, statisticsError);
+            Home.getTimelineStatistics().then(timelineStatisticsSuccessful, timelineStatisticsError);
 
             function statisticsSuccessful(data, status, headers, config){
                 vm.labels = ["Yes", "No"];
@@ -43,6 +44,25 @@
 
             function statisticsError(data, status, headers, config) {
                 Snackbar.error('Statistics could not be retrieved.');
+            }
+
+            function timelineStatisticsSuccessful(data, status, headers, config){
+                var timelineLabels = [];
+                var timelineData = [];
+
+                data.data.forEach(function(entry) {
+                    timelineLabels.push(entry['day']);
+                    timelineData.push(entry['available']);
+                });
+
+                vm.timelineLabels = timelineLabels;
+                vm.timelineSeries = ['Number of Rides'];
+
+                vm.timelineData = [timelineData];
+            }
+
+            function timelineStatisticsError(data, status, headers, config) {
+                Snackbar.error('Timeline statistics could not be retrieved.');
             }
         }
     }
