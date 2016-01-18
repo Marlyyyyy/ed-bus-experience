@@ -116,9 +116,9 @@ class BusStatisticsView(APIView):
 
     def get(self, request):
 
-        start_stop_id = int(request.GET.get("start_stop_id", None))
-        end_stop_id = int(request.GET.get("end_stop_id", None))
-        service_id = int(request.GET.get("service_id", None))
+        start_stop_id = int(request.GET.get("start_stop_id", -1))
+        end_stop_id = int(request.GET.get("end_stop_id", -1))
+        service_id = int(request.GET.get("service_id", -1))
 
         # Queryset for all rides in the past 30 days
         latest_rides = Ride.objects.filter(
@@ -126,10 +126,10 @@ class BusStatisticsView(APIView):
             created_at__gt=timezone.now()-datetime.timedelta(days=30)
         )
 
-        if start_stop_id and end_stop_id:
+        if start_stop_id != -1 and end_stop_id !=1:
             latest_rides.filter(start_stop_id=start_stop_id, end_stop_id=end_stop_id)
 
-        if service_id:
+        if service_id != -1:
             latest_rides.filter(service_id=service_id)
 
         average_rating = latest_rides.filter(rating__gt=0.0).aggregate(Avg('rating'))['rating__avg']
