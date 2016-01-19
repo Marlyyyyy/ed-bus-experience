@@ -407,6 +407,11 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     // Adjusts the camera position to include all visibleMarkers with the specified padding around the edges of the map
     private void moveCamera(int padding, List<Marker> visibleMarkers){
+
+        if (visibleMarkers.size() == 0){
+            return;
+        }
+
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Marker marker : visibleMarkers) {
             builder.include(marker.getPosition());

@@ -4,6 +4,7 @@ package com.marton.edibus.fragments;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +20,10 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
@@ -43,6 +47,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -58,11 +63,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private Intent locationProcessorService;
 
-    private double latestUserLatitude;
-
-    private double latestUserLongitude;
-
     private GoogleMap googleMap;
+
+    private Polyline userRoutePolyline;
+
+    private Marker startStopMarker;
+
+    private Marker endStopMarker;
 
     private boolean cameraCenteredOnUser;
 
@@ -289,7 +296,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setMyLocationEnabled(true);
-        this.refreshMap();
+        this.refreshStopMarkers();
+
+        this.userRoutePolyline = this.googleMap.addPolyline(new PolylineOptions().width(5).color(Color.BLUE));
     }
 
     private void uploadJourney(){
@@ -333,9 +342,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
         this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
         this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed() * 3.6) + "km/h");
-
-        this.latestUserLatitude = trackerStateUpdatedEvent.getLatitude();
-        this.latestUserLongitude = trackerStateUpdatedEvent.getLongitude();
     }
 
     // Sets all timer related text-fields
@@ -414,8 +420,38 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         }
     }
 
-    // Redraws all markers on the map
-    private void refreshMap(){
+    private void registerNewUserPosition(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
+
+        double userLatitude = trackerStateUpdatedEvent.getLatitude();
+        double userLongitude = trackerStateUpdatedEvent.getLongitude();
+
+        if (userLatitude == 0.0 || userLongitude == 0.0) {
+            return;
+        }
+
+        // Move view over the user's current position
+        if (!this.cameraCenteredOnUser) {
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(userLatitude, userLongitude), 15));
+            this.cameraCenteredOnUser = true;
+        }
+
+        // Add new coordinate points to the existing polyline, only if they're different from the last added one
+        List<LatLng> userRoutePoints = this.userRoutePolyline.getPoints();
+
+        if (userRoutePoints.size() > 0){
+            LatLng lastPoint = userRoutePoints.get(userRoutePoints.size()-1);
+            if (lastPoint.latitude != userLatitude || lastPoint.longitude != userLongitude){
+                userRoutePoints.add(new LatLng(userLatitude, userLongitude));
+                this.userRoutePolyline.setPoints(userRoutePoints);
+            }
+        }else{
+            userRoutePoints.add(new LatLng(userLatitude, userLongitude));
+            this.userRoutePolyline.setPoints(userRoutePoints);
+        }
+    }
+
+    // Redraws all stop markers on the map
+    private void refreshStopMarkers(){
 
         Ride ride = this.journeyManager.getRide();
         Stop startStop = ride.getStartStop();
@@ -423,8 +459,14 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         if (this.googleMap != null){
 
-            // Clear all markers
-            this.googleMap.clear();
+            // Clear stop markers
+            if (this.startStopMarker != null){
+                this.startStopMarker.remove();
+            }
+
+            if (this.endStopMarker != null){
+                this.endStopMarker.remove();
+            }
 
             MarkerOptions markerOptions = new MarkerOptions();
 
@@ -436,7 +478,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                         .anchor((float) 0.5, (float) 0.5)
                         .rotation(startStop.getOrientation());
 
-                this.googleMap.addMarker(markerOptions);
+                this.startStopMarker = this.googleMap.addMarker(markerOptions);
             }
 
             // Add end-stop to the map
@@ -448,50 +490,16 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                         .anchor((float) 0.5, (float) 0.5)
                         .rotation(endStop.getOrientation());
 
-                this.googleMap.addMarker(markerOptions);
-            }
-
-            // Add user to the map
-            if (endStop != null && startStop != null){
-                // TODO: remove this all
-                if (this.latestUserLatitude == 0.0){
-                    this.latestUserLatitude = startStop.getLatitude();
-                }
-
-                if (this.latestUserLongitude == 0.0){
-                    this.latestUserLongitude = startStop.getLongitude();
-                }
-
-                // Move view over the user's current position
-                if (!this.cameraCenteredOnUser){
-                    this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latestUserLatitude, this.latestUserLongitude),15));
-                    this.cameraCenteredOnUser = true;
-                }
+                this.endStopMarker = this.googleMap.addMarker(markerOptions);
             }
         }
     }
 
     public void onEventMainThread(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
-        // TODO: put this in the service?
-        // If we are near the end, finish the tracking
-        if (trackerStateUpdatedEvent.getDistanceFromGoal() < 50){
-
-            this.journeyManager.finishRide();
-
-            // Automatically upload trip and/or fire events
-            if (this.journeyManager.getAutomaticFlow())
-            {
-                SnackbarManager.showError(getView(), "Uploading the trip...");
-            }else
-            {
-                SnackbarManager.showError(getView(), "Please upload the trip...");
-            }
-        }
-
         // Refresh the UI
+        this.registerNewUserPosition(trackerStateUpdatedEvent);
         this.refreshDataInterface(trackerStateUpdatedEvent);
-        this.refreshMap();
     }
 
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
@@ -501,8 +509,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
                 this.refreshTimerInterface(new TimerUpdatedEvent());
-                this.refreshMap();
+                this.refreshStopMarkers();
                 break;
+            case RIDE_STARTED:
+                this.refreshStopMarkers();
         }
     }
 
