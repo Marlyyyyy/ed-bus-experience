@@ -141,14 +141,6 @@ class BusViewTestCase(TestCase):
             "The end_time should be the end_time of the second ride."
         )
 
-        # Upload our first ride of a new journey while logged in.
-        self.client.post('/bus/api/ride/', {'ride': ride_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
-
-        user = User.objects.latest('username')
-        user_journeys = user.journeys.all()
-
-        self.assertEqual(user_journeys.count(), 3, "The user should have now three journeys in their diary.")
-
     def test_upload_bad_ride(self):
         start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
         end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
@@ -179,37 +171,6 @@ class BusViewTestCase(TestCase):
 
         response = self.client.post('/bus/api/ride/', {'ride': ride_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertContains(response, "No existing service could be found with ID", status_code=400)
-
-    def test_get_diary_for_user(self):
-        start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
-        end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
-        service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
-
-        current_time = datetime.now()
-        start_time = current_time - timedelta(minutes=10)
-        end_time = current_time
-        ride = {
-            'start_time': start_time,
-            'end_time': end_time,
-            'start_stop_id': start_stop_id,
-            'end_stop_id': end_stop_id,
-            'service_id': service_id,
-            'wait_duration': 60000,
-            'travel_duration': 800000,
-            'distance':1000.2,
-            'greet':True,
-            'seat': True,
-            'rating': 4.5
-        }
-        rides_json = json.dumps(ride, cls=DjangoJSONEncoder)
-
-        # Upload our first ride of a new journey while logged in.
-        self.client.post('/bus/api/ride/', {'ride': rides_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
-
-        response = self.client.get('/bus/api/get_diary_for_user/', {'username': 'Heffalumps'}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
-        response_content = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(response_content['journeys'][0]['rides'][0]['rating'], 4.5, "The only uploaded ride should have a rating of 4.5")
 
     def test_get_all_services(self):
 

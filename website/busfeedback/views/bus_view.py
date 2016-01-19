@@ -168,10 +168,10 @@ class RideView(APIView):
             journey = Journey.objects.create(start_time=start_time, end_time=end_time)
 
             # Add journey to the user's diary
-            journey.account = request.user
-            journey.save()
+            # journey.account = request.user
+            # journey.save()
 
-        # Check if optinal parameters exist
+        # Check if optional parameters exist
         people_waiting = -1
         if "people_waiting" in new_ride:
             people_waiting = new_ride["people_waiting"]
