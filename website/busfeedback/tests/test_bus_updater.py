@@ -36,3 +36,4 @@ class BusUpdaterTestCase(TestCase):
         first_service_stops = services[0].stops
         self.assertGreater(first_service_stops.count(), 0, "Stops should not be empty.")
 
+

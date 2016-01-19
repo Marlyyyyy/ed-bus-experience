@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from django.utils import timezone
 from django.db import transaction
+from django.db import IntegrityError
 
 
 def is_table_filled(table_name):
@@ -48,7 +49,6 @@ def delete_services_stops():
 # Fills up both services and stops with up-to-date data
 @transaction.atomic
 def update_services_and_stops():
-    #  TODO : Instead of updating, just delete the old ones!
 
     # (Datetime of last update, List of objects) tuples
     service_date, services = get_external_list_of_services()
@@ -57,23 +57,29 @@ def update_services_and_stops():
     update_table_date("service", service_date)
     update_table_date("stop", stop_date)
 
+    insert_or_update(services, stops)
+
+
+# Modifies the database using the provided list of service and stop objects
+def insert_or_update(list_of_services, list_of_stops):
+
     existing_stops = Stop.objects.all()
     existing_services = Service.objects.all()
 
     # If both tables are empty, insert all data. Otherwise update existing data, and insert new data
     if not existing_stops and not existing_services:
-        create_and_insert_new_services_from_dictionary(services)
-        create_and_insert_new_stops_from_dictionary(stops)
+        create_and_insert_new_services_from_dictionary(list_of_services)
+        create_and_insert_new_stops_from_dictionary(list_of_stops)
 
     else:
         # Create dictionary of key: service_name, value: service
         new_services = {}
-        for service in services:
+        for service in list_of_services:
             new_services[service["name"]] = service
 
         # Create dictionary of key: stop_id, value: stop
         new_stops = {}
-        for stop in stops:
+        for stop in list_of_stops:
             new_stops[stop["stop_id"]] = stop
 
         # Update existing stops
@@ -87,9 +93,10 @@ def update_services_and_stops():
                 stop.latitude = existing_stop["latitude"]
                 stop.longitude = existing_stop["longitude"]
                 stop.orientation = existing_stop["orientation"]
+                stop.save()
 
         # Update existing
-        Stop.objects.bulk_update(existing_stops)
+        # Stop.objects.bulk_update(existing_stops)
 
         for service in existing_services:
             existing_service = new_services.pop(service.name, None)
@@ -97,9 +104,10 @@ def update_services_and_stops():
                 service.name = existing_service["name"]
                 service.type = existing_service["service_type"]
                 service.description = existing_service["description"]
+                service.save()
 
         # Update existing
-        Service.objects.bulk_update(existing_services)
+        # Service.objects.bulk_update(existing_services)
 
         # Insert new
         create_and_insert_new_stops_from_dictionary(new_stops.values())
@@ -115,16 +123,29 @@ def update_services_and_stops():
 
     # Create a dictionary of key: service name, value: [(direction, stop_id's in order)] list
     ordered_stops_per_service_id = {}
-    for service in services:
+    for service in list_of_services:
         service_name = service["name"]
         ordered_stops_per_service_id[service_name] = []
         direction = 0
+        inbound_found = False
+        outbound_found = False
         for route in service["routes"]:
+            if route["direction"] == "inbound":
+                if inbound_found:
+                    continue
+                inbound_found = True
+            elif route["direction"] == "outbound":
+                if outbound_found:
+                    continue
+                outbound_found = True
+            else:
+                raise Exception("Invalid direction found for service " + service_name)
+
             ordered_stops_per_service_id[service_name].append((str(direction), route["stops"]))
             direction += 1
 
             # Ad-hoc fix, because there's no need for a third direction
-            if direction > 1:
+            if inbound_found and outbound_found:
                 break
 
     # Add stops to services
@@ -138,7 +159,10 @@ def update_services_and_stops():
                 stop = saved_stops_dictionary[stop_id]
 
                 # Create the association
-                ServiceStop.objects.create(service=service, stop=stop, direction=int(direction), order=order)
+                try:
+                    ServiceStop.objects.create(service=service, stop=stop, direction=int(direction), order=order)
+                except IntegrityError:
+                    break
                 order += 1
 
 
@@ -164,8 +188,9 @@ def get_external_list_of_stops():
     return stop_date, stops_dictionary["stops"]
 
 
+# Creates a list of service objects to be inserted into the database
 def create_and_insert_new_services_from_dictionary(services):
-    # Create a list of service objects to be inserted into the database
+
     new_services = []
     for service in services:
         new_services.append(Service(name=service["name"], type=service["service_type"], description=service["description"]))
@@ -173,8 +198,9 @@ def create_and_insert_new_services_from_dictionary(services):
     Service.objects.bulk_create(new_services)
 
 
+# Creates a list of stop objects to be inserted into the database
 def create_and_insert_new_stops_from_dictionary(stops):
-    # Create a list of stop objects to be inserted into the database
+
     new_stops = []
     for stop in stops:
         new_stops.append(Stop(stop_id=stop["stop_id"],

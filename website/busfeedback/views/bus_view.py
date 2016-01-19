@@ -1,6 +1,7 @@
 from django.http.response import HttpResponseBadRequest
 import json
 from django.http import HttpResponse, HttpResponseNotFound
+import requests
 from busfeedback.utilities.bus_updater import delete_services_stops
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
@@ -20,14 +21,16 @@ from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 import math
 from django.template import loader
+from busfeedback.constants import API_SERVICES, API_HEADER
+from busfeedback.utilities.bus_updater import update_services_and_stops
 
 
 @csrf_exempt
 def get_data(request):
-    # update_services_and_stops()
+    update_services_and_stops()
 
     # services_json = requests.get(API_SERVICES, headers=API_HEADER)
-    return HttpResponse("lol", content_type='application/json')
+    return HttpResponse("Done", content_type='application/json')
 
 
 @csrf_exempt
@@ -35,6 +38,7 @@ def remove_data(request):
     delete_services_stops()
 
     return HttpResponse("Done", content_type='application/json')
+
 
 @csrf_exempt
 def custom_404(request):

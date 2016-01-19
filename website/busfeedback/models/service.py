@@ -44,3 +44,4 @@ class ServiceStop(models.Model):
     class Meta:
         db_table = 'tbl_busfeedback_service_stop'
         ordering = ('order',)
+        unique_together = ("service", "stop", "direction")
