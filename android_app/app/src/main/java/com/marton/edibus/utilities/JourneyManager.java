@@ -6,6 +6,7 @@ import com.marton.edibus.App;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
+import com.marton.edibus.events.RideFinishedEvent;
 import com.marton.edibus.models.Log;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Ride;
@@ -128,9 +129,11 @@ public class JourneyManager {
     }
 
     public void finishRide(){
+
         this.journeyStateEnum = JourneyStateEnum.FINISHED;
         this.finished = true;
 
+        this.eventBus.post(new RideFinishedEvent());
         this.ride.setEndTime(new Date());
     }
 

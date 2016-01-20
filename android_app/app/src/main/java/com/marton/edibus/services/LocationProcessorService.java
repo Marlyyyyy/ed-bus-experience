@@ -5,10 +5,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
-import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
-import com.marton.edibus.events.CurrentActivityUpdatedEvent;
 import com.marton.edibus.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.events.LocationUpdatedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;

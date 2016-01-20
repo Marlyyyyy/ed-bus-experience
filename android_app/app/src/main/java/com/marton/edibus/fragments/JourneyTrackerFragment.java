@@ -30,8 +30,8 @@ import com.marton.edibus.WebCallBack;
 import com.marton.edibus.enums.CurrentActivityEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.RideActionEnum;
-import com.marton.edibus.events.CurrentActivityUpdatedEvent;
 import com.marton.edibus.events.JourneyUploadRequestedEvent;
+import com.marton.edibus.events.RideFinishedEvent;
 import com.marton.edibus.events.TimerUpdatedEvent;
 import com.marton.edibus.events.TrackerStateUpdatedEvent;
 import com.marton.edibus.events.RideActionFiredEvent;
@@ -83,8 +83,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private DateFormat dateFormat;
 
-    private CurrentActivityUpdatedEvent currentActivityUpdatedEvent;
-
     @Inject private JourneyManager journeyManager;
 
     @InjectView(R.id.current_activity)
@@ -132,7 +130,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Initialise event objects
         this.rideActionFiredEvent = new RideActionFiredEvent();
-        this.currentActivityUpdatedEvent = new CurrentActivityUpdatedEvent();
 
         // Set up text view formats
         this.decimalFormat = new DecimalFormat("#.##");
@@ -210,10 +207,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     rideActionFiredEvent.setRideActionEnum(RideActionEnum.RIDE_STARTED);
                     eventBus.post(rideActionFiredEvent);
 
-                    // Fire update event for current activity
-                    currentActivityUpdatedEvent.setCurrentActivityEnum(CurrentActivityEnum.WAITING);
-                    eventBus.post(currentActivityUpdatedEvent);
-
                     // Start the services
                     getActivity().startService(locationProviderService);
                     getActivity().startService(locationProcessorService);
@@ -231,10 +224,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
                 journeyManager.startTravelling();
                 refreshButtons();
-
-                // Fire update event for current activity
-                currentActivityUpdatedEvent.setCurrentActivityEnum(CurrentActivityEnum.TRAVELLING);
-                eventBus.post(currentActivityUpdatedEvent);
             }
         });
 
@@ -242,12 +231,8 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
             @Override
             public void onClick(View v) {
+
                 journeyManager.finishRide();
-
-                // Stop the services
-                getActivity().stopService(locationProviderService);
-                getActivity().stopService(locationProcessorService);
-
                 refreshButtons();
             }
         });
@@ -526,6 +511,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onEvent(JourneyUploadRequestedEvent journeyUploadRequestedEvent){
 
         this.uploadJourney();
+    }
+
+    public void onEvent(RideFinishedEvent rideFinishedEvent){
+
+        // Stop the services
+        getActivity().stopService(locationProviderService);
+        getActivity().stopService(locationProcessorService);
     }
 
     @Override

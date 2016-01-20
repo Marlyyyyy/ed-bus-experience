@@ -19,8 +19,6 @@ import de.greenrobot.event.EventBus;
 
 public class LocationProviderService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks {
 
-    private static final String TAG = Service.class.getName();
-
     private EventBus eventBus = EventBus.getDefault();
 
     private LocationUpdatedEvent locationUpdateEvent;
@@ -81,6 +79,4 @@ public class LocationProviderService extends Service implements LocationListener
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
-
-
 }
