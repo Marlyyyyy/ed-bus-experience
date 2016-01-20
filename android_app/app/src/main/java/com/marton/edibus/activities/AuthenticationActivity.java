@@ -100,8 +100,6 @@ public class AuthenticationActivity extends RoboActionBarActivity {
                         StatisticsManager.clearStatistics();
                         Log.deleteAll(Log.class);
 
-                        // Prepare the web client with the authentication token
-                        webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
                         Intent intent = new Intent(AuthenticationActivity.this, ContentActivity.class);
                         startActivity(intent);
 

@@ -16,51 +16,18 @@ import roboguice.activity.RoboActivity;
 
 public class MainActivity extends RoboActivity {
 
-    private static final String TAG = MainActivity.class.getName();
+    @Inject
+    private AuthenticationManager authenticationManager;
 
     @Inject
-    AuthenticationManager authenticationManager;
-
-    @Inject
-    WebClient webClient;
+    private WebClient webClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Thread welcomeThread = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    super.run();
-                    // sleep(10000);
-                } catch (Exception e) {
-
-                } finally {
-
-                    // Launch the right activity depending on if the user is logged in
-                    Intent intent;
-
-                    if (authenticationManager.userAuthenticated()){
-                        // Prepare the web client with the authentication token
-                        webClient.setAuthenticationToken(authenticationManager.getTokenFromCache());
-                        intent = new Intent(MainActivity.this, ContentActivity.class);
-                    }else{
-                        intent = new Intent(MainActivity.this, AuthenticationActivity.class);
-                    }
-
-                    startActivity(intent);
-
-                    // No need to keep this activity any more.
-                    finish();
-                }
-            }
-        };
-        welcomeThread.start();
-
-
+        this.launchAppropriateActivity();
     }
 
     @Override
@@ -83,5 +50,20 @@ public class MainActivity extends RoboActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void launchAppropriateActivity(){
+
+        // Launch the right activity depending on if the user is logged in
+        Intent intent;
+        if (this.authenticationManager.userAuthenticated()){
+
+            this.authenticationManager.authenticateWebRequests();
+            intent = new Intent(MainActivity.this, ContentActivity.class);
+        }else{
+            intent = new Intent(MainActivity.this, AuthenticationActivity.class);
+        }
+
+        startActivity(intent);
     }
 }

@@ -67,9 +67,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
     // The service for which the bus stops should be displayed
     private Service previewService;
 
-    // The bus-stop marker which the user clicked on latest
-    private Marker latestClickedBusMarker;
-
     private HashMap<Marker, Stop> stopMarkersHashMap;
 
     private Marker clickedPointMarker;
@@ -246,7 +243,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
                     stopMarkers.add(marker);
                     stopMarkersHashMap.put(marker, stop);
-                    latestClickedBusMarker = null;
                 }
 
                 // Change the camera position of the map
@@ -326,7 +322,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
                                     // Make sure each stop is present only once within the hash-map
                                     addToHashMapIfValueNotExists(stopMarkersHashMap, marker, stop);
-                                    latestClickedBusMarker = null;
                                 }
 
                                 // Change the camera position of the map
@@ -344,15 +339,13 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        if (marker == clickedPointMarker){
+                        if (marker != clickedPointMarker) {
+                            if(stopMarkersHashMap.containsKey(marker)){
 
-                        }else if(stopMarkersHashMap.containsKey(marker)){
-
-                            latestClickedBusMarker = marker;
-
-                            // Launch custom dialog fragment
-                            journeyManager.setReviewStop(stopMarkersHashMap.get(marker));
-                            stopDialog.show(fragmentManager, "Stop Dialog Fragment");
+                                // Launch custom dialog fragment
+                                journeyManager.setReviewStop(stopMarkersHashMap.get(marker));
+                                stopDialog.show(fragmentManager, "Stop Dialog Fragment");
+                            }
                         }
 
                         return true;
@@ -377,7 +370,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
                             // Make sure each stop is present only once within the hash-map
                             addToHashMapIfValueNotExists(stopMarkersHashMap, marker, stop);
-                            latestClickedBusMarker = null;
                         }
 
                         // Change the camera position of the map

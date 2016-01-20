@@ -29,4 +29,8 @@ public class WebClient {
     public void setAuthenticationToken(String token){
         this.client.addHeader("Authorization", "JWT " + token);
     }
+
+    public void unsetAuthenticationToken(){
+        this.client.removeHeader("Authorization");
+    }
 }

@@ -101,7 +101,13 @@ public class DashboardFragment extends RoboFragment {
         int journeys = StatisticsManager.readJourneysFromSharedPreferences();
         double distance = StatisticsManager.readTotalTravellingDistanceFromSharedPreferences();
         int totalTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences() + StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
-        double averageSpeed = 1000 * distance / (totalTime);
+
+        double averageSpeed;
+        if (totalTime == 0){
+            averageSpeed = 0;
+        }else{
+            averageSpeed = 1000 * distance / (totalTime);
+        }
 
         this.journeysTextView.setText(String.valueOf(journeys));
         this.totalDistanceTextView.setText(String.valueOf(this.decimalFormat.format(distance)) + " m");

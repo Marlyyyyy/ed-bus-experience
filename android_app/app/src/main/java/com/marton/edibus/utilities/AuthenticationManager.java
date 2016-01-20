@@ -14,10 +14,11 @@ import org.json.JSONObject;
 @Singleton
 public class AuthenticationManager {
 
-    private @Inject
-    UserWebClient userWebservice;
-    private @Inject
-    WebClient webClient;
+    @Inject
+    private UserWebClient userWebservice;
+
+    @Inject
+    private WebClient webClient;
 
     private static final String TOKEN_KEY = "token";
 
@@ -30,12 +31,14 @@ public class AuthenticationManager {
     }
 
     public void authenticate(String username, String password, final WebCallBack callback){
+
         WebCallBack<JSONObject> authenticationCallback = new WebCallBack<JSONObject>() {
             @Override
             public void onSuccess(JSONObject data) {
                 try {
                     String token = data.getString("token");
                     SharedPreferencesManager.writeString(App.getAppContext(), TOKEN_KEY, token);
+                    authenticateWebRequests();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -43,10 +46,17 @@ public class AuthenticationManager {
                 callback.onSuccess(data);
             }
         };
-        userWebservice.get_token(username, password, authenticationCallback);
+        this.userWebservice.get_token(username, password, authenticationCallback);
+    }
+
+    // Prepares the web client with the authentication token
+    public void authenticateWebRequests(){
+
+        this.webClient.setAuthenticationToken(this.getTokenFromCache());
     }
 
     public void deAuthenticate(){
         SharedPreferencesManager.removeKeyValue(App.getAppContext(), TOKEN_KEY);
+        this.webClient.unsetAuthenticationToken();
     }
 }

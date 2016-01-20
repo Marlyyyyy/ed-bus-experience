@@ -6,27 +6,41 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.inject.Inject;
+import com.marton.edibus.App;
+import com.marton.edibus.MainActivity;
 import com.marton.edibus.R;
 import com.marton.edibus.adapters.ViewPagerAdapter;
+import com.marton.edibus.events.LoginRequiredEvent;
 import com.marton.edibus.fragments.DashboardFragment;
 import com.marton.edibus.fragments.DiaryFragment;
+import com.marton.edibus.utilities.AuthenticationManager;
 import com.marton.edibus.utilities.QuestionnaireManager;
-import com.marton.edibus.utilities.SharedPreferencesManager;
 import com.marton.edibus.widgets.SlidingTabLayout;
 
+import de.greenrobot.event.EventBus;
 import roboguice.activity.RoboActionBarActivity;
 
 public class ContentActivity extends RoboActionBarActivity {
 
-    private ViewPager pager;
+    private EventBus eventBus = EventBus.getDefault();
+
+    @Inject
+    private AuthenticationManager authenticationManager;
+
     private CharSequence titles[] = {"Dashboard", "Diary"};
+
     private int numberOfTabs = this.titles.length;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        // Register as a subscriber
+        this.eventBus.register(this);
 
         // Display questionnaire if required
         boolean questionnaireFilledIn = QuestionnaireManager.readQuestionnaireFilledInFromSharedPreferences();
@@ -49,8 +63,8 @@ public class ContentActivity extends RoboActionBarActivity {
         };
 
         // Assign ViewPager View and set the adapter
-        this.pager = (ViewPager) findViewById(R.id.pager);
-        this.pager.setAdapter(adapter);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
 
         // Assign the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -66,7 +80,7 @@ public class ContentActivity extends RoboActionBarActivity {
         });
 
         // Set the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(this.pager);
+        tabs.setViewPager(pager);
     }
 
     @Override
@@ -89,5 +103,25 @@ public class ContentActivity extends RoboActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy(){
+
+        // Register as a subscriber
+        this.eventBus.unregister(this);
+
+        super.onDestroy();
+    }
+
+    public void onEvent(LoginRequiredEvent loginRequiredEvent){
+
+        // Finish this activity, launch MainActivity again
+        Toast.makeText(App.getAppContext(), "Your old account cannot be used any longer.", Toast.LENGTH_LONG).show();
+
+        this.authenticationManager.deAuthenticate();
+        Intent intent = new Intent(ContentActivity.this, MainActivity.class);
+        this.startActivity(intent);
+        this.finish();
     }
 }

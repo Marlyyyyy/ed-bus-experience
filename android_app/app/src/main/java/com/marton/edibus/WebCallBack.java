@@ -2,14 +2,19 @@ package com.marton.edibus;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import com.marton.edibus.events.LoginRequiredEvent;
+
 import org.json.JSONObject;
+
+import de.greenrobot.event.EventBus;
 
 public abstract class WebCallBack<T> {
 
     private static final String TAG = WebCallBack.class.getName();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     public abstract void onSuccess(T data);
 
@@ -27,5 +32,13 @@ public abstract class WebCallBack<T> {
         Log.e(TAG, String.format("%d, %s", statusCode, message));
         Toast toast = Toast.makeText(context, String.format("Error: %d - %s", statusCode, message), Toast.LENGTH_LONG);
         toast.show();
+
+        switch(statusCode){
+            case 401:
+                this.eventBus.post(new LoginRequiredEvent());
+                break;
+            default:
+                break;
+        }
     }
 }
