@@ -29,17 +29,29 @@
             Home.getTimelineStatistics().then(timelineStatisticsSuccessful, timelineStatisticsError);
 
             function statisticsSuccessful(data, status, headers, config){
-                vm.labels = ["Yes", "No"];
-                var seatData = [];
-                seatData.push(data.data.ride_seat_positives);
-                seatData.push(data.data.ride_seat_negatives);
-                vm.data = seatData;
-                vm.type = 'Pie';
 
-                vm.toggle = function () {
-                    vm.type = vm.type === 'PolarArea' ?
-                        'Pie' : 'PolarArea';
-                };
+                console.log(data.data);
+
+                // Seat Pie
+                vm.seatPieLabels = ["Yes", "No"];
+                var seatData = [];
+                seatData.push(data.data.seat_positives);
+                seatData.push(data.data.seat_negatives);
+                vm.seatPieData = seatData;
+                vm.seatPieType = 'Pie';
+
+                // Greet Pie
+                vm.greetPieLabels = ["Yes", "No"];
+                var greetData = [];
+                greetData.push(data.data.greet_positives);
+                greetData.push(data.data.greet_negatives);
+                vm.greetPieData = greetData;
+                vm.greetPieType = 'Pie';
+
+                // General
+                vm.numberOfJourneys = data.data.number_of_journeys;
+                vm.numberOfRides = data.data.number_of_rides;
+                vm.averageRating = data.data.average_rating;
             }
 
             function statisticsError(data, status, headers, config) {

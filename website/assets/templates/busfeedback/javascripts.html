@@ -2,53 +2,52 @@
 {% load staticfiles %}
 
 {% compress js %}
-<script type="text/javascript" src="{% static 'dependencies/jquery/dist/jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/bootstrap/dist/js/bootstrap.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/bootstrap-material-design/dist/js/material.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/bootstrap-material-design/dist/js/ripples.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/underscore/underscore.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/jquery/dist/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/bootstrap/dist/js/bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/bootstrap-material-design/dist/js/material.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/bootstrap-material-design/dist/js/ripples.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/underscore/underscore.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'dependencies/angular/angular.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-route/angular-route.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-cookies/angular-cookies.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular/angular.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-route/angular-route.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-cookies/angular-cookies.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'dependencies/ngDialog/js/ngDialog.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/snackbarjs/src/snackbar.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-material/angular-material.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-animate/angular-animate.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-aria/angular-aria.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/ngDialog/js/ngDialog.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/snackbarjs/src/snackbar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-material/angular-material.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-animate/angular-animate.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-aria/angular-aria.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'dependencies/Chart.js/Chart.js' %}"></script>
-<script type="text/javascript" src="{% static 'dependencies/angular-chart.js/dist/angular-chart.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/Chart.js/Chart.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dependencies/angular-chart.js/dist/angular-chart.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/runerapp.module.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/config.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/runerapp.routes.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/runerapp.module.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/runerapp.routes.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/AuthenticationModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/AuthenticationService.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/RegisterController.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/LoginController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/AuthenticationModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/AuthenticationService.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/RegisterController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/authentication/LoginController.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarController.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarDirective.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/navbar/NavbarDirective.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/snackbar/SnackbarModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/snackbar/SnackbarService.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/snackbar/SnackbarModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/snackbar/SnackbarService.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeController.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeService.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/home/HomeService.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/dashboard/DashboardModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/dashboard/DashboardController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/dashboard/DashboardModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/dashboard/DashboardController.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileModule.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileService.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileController.js' %}"></script>
-<script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileSettingsController.js' %}"></script>
-
-<link rel="stylesheet" type="text/css" href="{% static 'dependencies/material-design-lite/material.min.js' %}" />
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileModule.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileService.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileController.js' %}"></script>
+    <script type="text/javascript" src="{% static 'busfeedback/js/app/components/profiles/ProfileSettingsController.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'dependencies/material-design-lite/material.min.js' %}" />
 
 {% endcompress %}

@@ -1,16 +1,59 @@
-<div>
+<div class="home-header">
 
-    <canvas id="bar" class="chart chart-bar" chart-data="vm.timelineData" chart-labels="vm.timelineLabels" chart-series="vm.timelineSeries">
-    </canvas>
+    <h1>Past 30 days</h1>
+
+    <div class="home-header-left">
+
+        <p>{{ vm.numberOfJourneys }} journeys</p>
+        <p>{{ vm.numberOfRides }} rides</p>
+        <p>{{ vm.averageRating }} average rating</p>
+
+    </div>
+
+    <div class="home-header-right">
+
+        <canvas id="header-timeline-bar"
+                class="chart chart-bar"
+                chart-data="vm.timelineData"
+                chart-labels="vm.timelineLabels"
+                chart-series="vm.timelineSeries"
+                width="5"
+                height="1">
+        </canvas>
+
+    </div>
 
 </div>
 
-<div>
 
-    <canvas id="base" class="chart-base" chart-type="vm.type" chart-data="vm.data" chart-labels="vm.labels" chart-legend="true">
-    </canvas>
+<div class="home-content">
+
+    <div>
+
+        <canvas id="seat-pie"
+                class="chart-base"
+                chart-type="vm.seatPieType"
+                chart-data="vm.seatPieData"
+                chart-labels="vm.seatPieLabels"
+                chart-legend="true">
+        </canvas>
+
+    </div>
+
+    <div>
+
+        <canvas id="greet-pie"
+                class="chart-base"
+                chart-type="vm.greetPieType"
+                chart-data="vm.greetPieData"
+                chart-labels="vm.greetPieLabels"
+                chart-legend="true">
+        </canvas>
+
+    </div>
 
 </div>
+
 
 <a class="btn btn-primary btn-fab btn-raised mdi-content-add btn-add-new-post"
     href="javascript:void(0)"

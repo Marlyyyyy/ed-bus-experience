@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from busfeedback.views.bus_view import RideView, get_diary_for_user,\
     StopsForServiceView, ServiceView, ServicesForStopView, StopsWithinRadius, QuestionnaireView
-from busfeedback.views.statistics_view import GeneralStatisticsView, TimeLineStatisticsView, BusStatisticsView
+from busfeedback.views.statistics_view import TimeLineStatisticsView, BusStatisticsView
 
 
 urlpatterns = patterns(
@@ -13,7 +13,6 @@ urlpatterns = patterns(
     url(r'^api/get_diary_for_user', get_diary_for_user, name='get_diary_for_user'),
     url(r'^api/service', ServiceView.as_view(), name='service'),
     url(r'^api/questionnaire', QuestionnaireView.as_view(), name='questionnaire'),
-    url(r'^api/general_statistics', GeneralStatisticsView.as_view(), name='general_statistics'),
     url(r'^api/timeline_statistics', TimeLineStatisticsView.as_view(), name='timeline_statistics'),
     url(r'^api/bus_statistics', BusStatisticsView.as_view(), name='bus_statistics'),
 )
