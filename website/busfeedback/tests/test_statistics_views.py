@@ -88,14 +88,14 @@ class StatisticsViewTestCase(TestCase):
 
     def test_obtain_general_statics(self):
 
-        response = self.client.get('/bus/api/general_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/bus/api/bus_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(response_content['ride_average_people_boarding'], 5.0, "Boarding people -1 should be ignored")
+        self.assertEqual(response_content['average_people_boarding'], 5.0, "Boarding people -1 should be ignored")
         self.assertEqual(response_content['number_of_rides'], 2, "Number of rides should be 2.")
         self.assertEqual(response_content['number_of_journeys'], 2, "Number of journeys should be 2.")
-        self.assertEqual(response_content['ride_seat_positives'], 2, "Both rides should have a seat.")
-        self.assertEqual(response_content['ride_greet_negatives'], 1, "Only one ride didn't greet.")
+        self.assertEqual(response_content['seat_positives'], 2, "Both rides should have a seat.")
+        self.assertEqual(response_content['greet_negatives'], 1, "Only one ride didn't greet.")
 
     def test_obtain_timeline_statics(self):
 
