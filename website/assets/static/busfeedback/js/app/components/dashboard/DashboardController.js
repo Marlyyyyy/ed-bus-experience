@@ -27,9 +27,9 @@
 
             // Display statistics
             Dashboard.getSeatYesAndNoStatistics().then(seatStatisticsSuccessFn, seatStatisticsErrorFn);
+            Dashboard.getGreetYesAndNoStatistics().then(greetStatisticsSuccessFn, greetStatisticsErrorFn);
 
             function seatStatisticsSuccessFn(data, status, headers, config) {
-                console.log(data.data);
 
                 var seatDataYes = [];
                 var seatDataNo = [];
@@ -60,6 +60,40 @@
             }
 
             function seatStatisticsErrorFn(data, status, headers, config) {
+                Snackbar.error(data.error);
+            }
+
+            function greetStatisticsSuccessFn(data, status, headers, config) {
+
+                var greetDataYes = [];
+                var greetDataNo = [];
+                var dayFlag = true;
+                vm.greetLabels = [];
+                vm.greetData = [];
+                data.data.forEach(function(entry) {
+
+                    if (entry['greet']){
+                        greetDataYes.push(entry['available']);
+                    }else{
+                        greetDataNo.push(entry['available']);
+                    }
+
+                    if (dayFlag){
+                        vm.greetLabels.push(entry['day']);
+                    }
+
+                    dayFlag = !dayFlag;
+                });
+
+                vm.greetSeries = ['Yes', 'No'];
+                vm.greetData.push(greetDataYes);
+                vm.greetData.push(greetDataNo);
+                vm.greetOnClick = function (points, evt) {
+                    console.log(points, evt);
+                };
+            }
+
+            function greetStatisticsErrorFn(data, status, headers, config) {
                 Snackbar.error(data.error);
             }
         }

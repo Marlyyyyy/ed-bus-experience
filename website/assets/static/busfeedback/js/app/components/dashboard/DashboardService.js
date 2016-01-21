@@ -11,13 +11,20 @@
     function Dashboard($http) {
 
         return {
-            getSeatYesAndNoStatistics: getRideStatistics
+            getSeatYesAndNoStatistics: getSeatYesAndNoStatistics,
+            getGreetYesAndNoStatistics: getGreetYesAndNoStatistics
         };
 
         // Get the distribution of seat values broken down to each day of the past month
-        function getRideStatistics() {
+        function getSeatYesAndNoStatistics() {
 
-            return $http.get('/bus/api/seat_yes_and_no_statistics/');
+            return $http.get('/bus/api/yes_and_no_statistics/', {params: {'group_by_value': 'seat'}});
+        }
+
+        // Get the distribution of greet values broken down to each day of the past month
+        function getGreetYesAndNoStatistics() {
+
+            return $http.get('/bus/api/yes_and_no_statistics/', {params: {'group_by_value': 'greet'}});
         }
     }
 })();

@@ -142,17 +142,23 @@ class TimeLineStatisticsView(APIView):
         return HttpResponse(return_json, content_type='application/json')
 
 
-class SeatYesAndNoStatisticsView(APIView):
+class YesAndNoTimeLineStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
     authentication_classes = (JSONWebTokenAuthentication, )
 
     def get(self, request):
 
+        group_by_value = request.GET.get("group_by_value", "")
+
+        if group_by_value == "":
+            return HttpResponse({'error': "Nothing to group by! Please provide a parameter 'group_by_value' in your request."},
+                                content_type='application/json')
+
         rides_group_by_seat_and_day = Ride.objects.filter(
             created_at__lte=timezone.now(),
             created_at__gt=timezone.now()-datetime.timedelta(days=30)
-        ).extra(select={'day': 'date( created_at )'}).values('day', 'seat').order_by().annotate(available=Count('created_at'))
+        ).extra(select={'day': 'date( created_at )'}).values('day', group_by_value).order_by().annotate(available=Count('created_at'))
 
         rides_group_by_seat_and_day = list(rides_group_by_seat_and_day)
 
@@ -167,8 +173,8 @@ class SeatYesAndNoStatisticsView(APIView):
         # Filling in the gaps for missing days
         for day in last_30_day_strings:
             if day not in existing_days:
-                rides_group_by_seat_and_day.append({'day': day, 'available': 0, 'seat': True})
-                rides_group_by_seat_and_day.append({'day': day, 'available': 0, 'seat': False})
+                rides_group_by_seat_and_day.append({'day': day, 'available': 0, group_by_value: True})
+                rides_group_by_seat_and_day.append({'day': day, 'available': 0, group_by_value: False})
 
         sorted_rides_per_date = sorted(rides_group_by_seat_and_day, key=itemgetter('day'))
 
@@ -179,13 +185,13 @@ class SeatYesAndNoStatisticsView(APIView):
             sum_of_true = 0
             sum_of_false = 0
             for value in values:
-                if value['seat']:
+                if value[group_by_value]:
                     sum_of_true += value['available']
                 else:
                     sum_of_false += value['available']
 
-            sorted_rides_per_day.append({'day': key, 'seat': True, 'available': sum_of_true})
-            sorted_rides_per_day.append({'day': key, 'seat': False, 'available': sum_of_false})
+            sorted_rides_per_day.append({'day': key, group_by_value: True, 'available': sum_of_true})
+            sorted_rides_per_day.append({'day': key, group_by_value: False, 'available': sum_of_false})
 
         return_json = JSONRenderer().render(sorted_rides_per_day)
 

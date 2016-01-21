@@ -122,7 +122,7 @@ class StatisticsViewTestCase(TestCase):
         self.assertEqual(response_content['average_waiting_duration'], 35000, "The average of two durations: 10k and 60k.")
         self.assertEqual(response_content['average_rating'], 4.5, "The 0.0 rating should be ignored.")
 
-    def test_obtain_seat_yes_and_no_statics(self):
+    def test_obtain_yes_and_no_statics(self):
 
         start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
         end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
@@ -152,7 +152,12 @@ class StatisticsViewTestCase(TestCase):
         # Upload our third ride of a new journey.
         self.client.post('/bus/api/ride/', {'ride': ride_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
 
-        response = self.client.get('/bus/api/seat_yes_and_no_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/bus/api/yes_and_no_statistics/', {'group_by_value': 'seat'}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(response_content), 60, "There should be 60 days in the results set.")
+
+        response = self.client.get('/bus/api/yes_and_no_statistics/', {'group_by_value': 'greet'}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_content), 60, "There should be 60 days in the results set.")
