@@ -35,12 +35,28 @@ h2{
     margin-bottom: 10px;
 }
 
+.center{
+    text-align:center;
+}
+
 .big-value{
     font-size: 20px;
 }
 
 .content-section{
-    padding: 25px;
+    padding: 5px 25px 25px 25px;
+}
+
+.mini-section{
+    display: inline-block;
+    vertical-align: top;
+    min-height: 310px;
+    padding: 0 15px 15px 15px;
+    background-color: #f3f3f3;
+}
+
+.chart-canvas{
+    margin: 15px;
 }
 
 /* Navigation bar */

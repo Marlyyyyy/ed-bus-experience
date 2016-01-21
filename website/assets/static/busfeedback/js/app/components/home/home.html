@@ -6,7 +6,7 @@
 
         <h2><span class="big-value">{{ vm.numberOfJourneys }}</span> journeys</h2>
         <h2><span class="big-value">{{ vm.numberOfRides }}</span> rides</h2>
-        <h2><span class="big-value">{{ vm.averageRating }}</span> average rating</h2>
+        <h2><span class="big-value">{{ vm.averageRating | number:2 }}</span> average rating</h2>
 
     </div>
 
@@ -32,10 +32,24 @@
 
     <div>
 
-        <div class="overall-pie-chart">
+        <div class="mini-section">
+
+            <div>
+
+                <h2><span class="big-value">{{ vm.numberOfJourneys }}</span> Journeys</h2>
+                <h2><span class="big-value">{{ vm.numberOfRides}}</span> Rides</h2>
+                <h2><span class="big-value">{{ vm.averageRating | number:2 }}</span> Average Rating</h2>
+
+            </div>
+
+        </div>
+
+        <div class="overall-pie-chart mini-section">
+
+            <h2 class="center">Seat Distribution</h2>
 
             <canvas id="seat-pie"
-                class="chart-base"
+                class="chart-base chart-canvas"
                 chart-type="vm.seatPieType"
                 chart-data="vm.seatPieData"
                 chart-labels="vm.seatPieLabels"
@@ -44,15 +58,27 @@
 
         </div>
 
-        <div class="overall-pie-chart">
+        <div class="overall-pie-chart mini-section">
+
+            <h2 class="center">Greet Distribution</h2>
 
             <canvas id="greet-pie"
-                    class="chart-base"
+                    class="chart-base chart-canvas"
                     chart-type="vm.greetPieType"
                     chart-data="vm.greetPieData"
                     chart-labels="vm.greetPieLabels"
                     chart-legend="true">
             </canvas>
+
+        </div>
+
+        <div class="mini-section">
+
+            <h2>Avg. Distance: <span class="big-value">{{ vm.averageDistance | number:2 }}</span> m</h2>
+            <h2>Avg. Waiting People: <span class="big-value">{{ vm.averagePeopleWaiting | number:2 }}</span></h2>
+            <h2>Avg. Boarding People: <span class="big-value">{{ vm.averagePeopleBoarding | number:2 }}</span></h2>
+            <h2>Avg. Travel Duration: <span class="big-value">{{ vm.averageTravelDuration | number:2 }}</span></h2>
+            <h2>Avg. Waiting Duration: <span class="big-value">{{ vm.averageWaitingDuration | number:2 }}</span></h2>
 
         </div>
 

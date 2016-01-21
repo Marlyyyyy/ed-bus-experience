@@ -57,8 +57,14 @@
                 vm.greetPieType = 'Pie';
 
                 // General
+                vm.averageDistance = data.data.average_distance;
+                vm.averagePeopleBoarding = data.data.average_people_boarding;
+                vm.averagePeopleWaiting = data.data.average_people_waiting;
+                vm.averageTravelDuration = data.data.average_travel_duration;
+                vm.averageWaitingDuration = data.data.average_waiting_duration;
                 vm.numberOfJourneys = data.data.number_of_journeys;
                 vm.numberOfRides = data.data.number_of_rides;
+                vm.tripsPerJourney = data.data.trips_per_journey;
                 vm.averageRating = data.data.average_rating;
             }
 
