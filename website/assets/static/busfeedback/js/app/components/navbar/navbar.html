@@ -9,11 +9,12 @@
         <div id="not-google-plus-nav">
 
             <ul>
-                <li ng-show="vm.isAuthenticated" ng-class="{ 'active': vm.isActive('/dashboard')}"><a href="dashboard">Dashboard</a></li>
+                <li ng-show="vm.isAuthenticated" ng-class="{ active: vm.isActive('/home')}"><a href="home">Home</a></li>
+                <li ng-show="vm.isAuthenticated" ng-class="{ active: vm.isActive('/dashboard')}"><a href="dashboard">Dashboard</a></li>
             </ul>
 
             <ul class="pull-right">
-                <li ng-show="vm.isAuthenticated" ng-class="{ 'active': vm.isActive('/user/'+vm.user)}"><a href="user/{{ vm.user }}">{{ vm.user }}</a></li>
+                <li ng-show="vm.isAuthenticated" ng-class="{ active: vm.isActive('/user/'+vm.user)}"><a href="user/{{ vm.user }}">{{ vm.user }}</a></li>
                 <li ng-show="vm.isAuthenticated" ng-class="{ active: vm.isActive('/settings')}"><a href="settings">Settings</a></li>
                 <li ng-show="vm.isAuthenticated" ><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
                 <li ng-hide="vm.isAuthenticated" ng-class="{ active: vm.isActive('/login')}"><a href="login">Login</a></li>

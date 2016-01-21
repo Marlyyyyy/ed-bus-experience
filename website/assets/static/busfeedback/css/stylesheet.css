@@ -1,6 +1,6 @@
 body{
     overflow-y: scroll !important;
-    min-width: 900px;
+    min-width: 1200px;
 }
 
 .main-content{
@@ -25,6 +25,18 @@ h1{
     font-size: 18px;
     color: #373737;
     margin-bottom: 20px;
+}
+
+h2{
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 15px;
+    color: #696969;
+    margin-bottom: 10px;
+}
+
+.big-value{
+    font-size: 20px;
 }
 
 .content-section{
@@ -116,9 +128,13 @@ h1{
 }
 
 .home-header-left{
+    border-left: 1px solid rgb(224,224,224);
+    border-top: 1px solid rgb(224,224,224);
+    border-bottom: 1px solid rgb(224,224,224);
     vertical-align: top;
     display: inline-block;
     width: 25%;
+    padding: 20px;
 }
 
 .home-header-right{
