@@ -12,7 +12,7 @@ from itertools import groupby
 import dateutil.parser
 
 
-class BusStatisticsView(APIView):
+class RideStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
     authentication_classes = (JSONWebTokenAuthentication, )
@@ -136,6 +136,56 @@ class TimeLineStatisticsView(APIView):
                 sum += value['available']
 
             sorted_rides_per_day.append({'day': key, 'available': sum})
+
+        return_json = JSONRenderer().render(sorted_rides_per_day)
+
+        return HttpResponse(return_json, content_type='application/json')
+
+
+class SeatYesAndNoStatisticsView(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (JSONWebTokenAuthentication, )
+
+    def get(self, request):
+
+        rides_group_by_seat_and_day = Ride.objects.filter(
+            created_at__lte=timezone.now(),
+            created_at__gt=timezone.now()-datetime.timedelta(days=30)
+        ).extra(select={'day': 'date( created_at )'}).values('day', 'seat').order_by().annotate(available=Count('created_at'))
+
+        rides_group_by_seat_and_day = list(rides_group_by_seat_and_day)
+
+        # Create a list of past 30 days
+        last_30_day_strings = []
+        for x in range(0,30):
+            full_date = timezone.now() - datetime.timedelta(days=x)
+            last_30_day_strings.append(full_date.strftime("%Y-%m-%d"))
+
+        existing_days = [ride['day'] for ride in rides_group_by_seat_and_day]
+
+        # Filling in the gaps for missing days
+        for day in last_30_day_strings:
+            if day not in existing_days:
+                rides_group_by_seat_and_day.append({'day': day, 'available': 0, 'seat': True})
+                rides_group_by_seat_and_day.append({'day': day, 'available': 0, 'seat': False})
+
+        sorted_rides_per_date = sorted(rides_group_by_seat_and_day, key=itemgetter('day'))
+
+        sorted_rides_per_day = []
+
+        # Group by the dates and the seats
+        for key, values in groupby(sorted_rides_per_date, key=lambda row: row['day']):
+            sum_of_true = 0
+            sum_of_false = 0
+            for value in values:
+                if value['seat']:
+                    sum_of_true += value['available']
+                else:
+                    sum_of_false += value['available']
+
+            sorted_rides_per_day.append({'day': key, 'seat': True, 'available': sum_of_true})
+            sorted_rides_per_day.append({'day': key, 'seat': False, 'available': sum_of_false})
 
         return_json = JSONRenderer().render(sorted_rides_per_day)
 

@@ -1,4 +1,4 @@
-<div class="home-header">
+<div class="home-header content-section">
 
     <h1>Past 30 days</h1>
 
@@ -26,29 +26,35 @@
 </div>
 
 
-<div class="home-content">
+<div class="home-content content-section">
+
+    <h1>Overall Statistics</h1>
 
     <div>
 
-        <canvas id="seat-pie"
+        <div class="overall-pie-chart">
+
+            <canvas id="seat-pie"
                 class="chart-base"
                 chart-type="vm.seatPieType"
                 chart-data="vm.seatPieData"
                 chart-labels="vm.seatPieLabels"
                 chart-legend="true">
-        </canvas>
+            </canvas>
 
-    </div>
+        </div>
 
-    <div>
+        <div class="overall-pie-chart">
 
-        <canvas id="greet-pie"
-                class="chart-base"
-                chart-type="vm.greetPieType"
-                chart-data="vm.greetPieData"
-                chart-labels="vm.greetPieLabels"
-                chart-legend="true">
-        </canvas>
+            <canvas id="greet-pie"
+                    class="chart-base"
+                    chart-type="vm.greetPieType"
+                    chart-data="vm.greetPieData"
+                    chart-labels="vm.greetPieLabels"
+                    chart-legend="true">
+            </canvas>
+
+        </div>
 
     </div>
 

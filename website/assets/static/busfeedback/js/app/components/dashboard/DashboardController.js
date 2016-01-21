@@ -6,36 +6,60 @@
         .module('busfeedback.dashboard.controllers')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', 'Authentication', 'Snackbar'];
+    DashboardController.$inject = ['$scope', 'Authentication', 'Snackbar', 'Dashboard'];
 
-    function DashboardController($scope, Authentication, Snackbar) {
+    function DashboardController($scope, Authentication, Snackbar, Dashboard) {
 
         var vm = this;
-        this.tab = 1;
-        this.selectTab = function (setTab){
-            this.tab = setTab;
-        };
-        this.isSelected = function(checkTab) {
-            return this.tab === checkTab;
-        };
 
-        $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-        $scope.series = ['Series A', 'Series B'];
-        $scope.data = [
-            [65, 59, 80, 81, 56, 55, 40],
-            [28, 48, 40, 19, 86, 27, 90]
-        ];
-        $scope.onClick = function (points, evt) {
-            console.log(points, evt);
-        };
+        activate();
 
         function activate() {
 
-            function logsSuccessFn(data, status, headers, config) {
-                vm.logs = data.data;
+            // Tab management
+            vm.tab = 1;
+            vm.selectTab = function (setTab){
+                this.tab = setTab;
+            };
+            vm.isSelected = function(checkTab) {
+                return this.tab === checkTab;
+            };
+
+            // Display statistics
+            Dashboard.getSeatYesAndNoStatistics().then(seatStatisticsSuccessFn, seatStatisticsErrorFn);
+
+            function seatStatisticsSuccessFn(data, status, headers, config) {
+                console.log(data.data);
+
+                var seatDataYes = [];
+                var seatDataNo = [];
+                var dayFlag = true;
+                vm.seatLabels = [];
+                vm.seatData = [];
+                data.data.forEach(function(entry) {
+
+                    if (entry['seat']){
+                        seatDataYes.push(entry['available']);
+                    }else{
+                        seatDataNo.push(entry['available']);
+                    }
+
+                    if (dayFlag){
+                        vm.seatLabels.push(entry['day']);
+                    }
+
+                    dayFlag = !dayFlag;
+                });
+
+                vm.seatSeries = ['Yes', 'No'];
+                vm.seatData.push(seatDataYes);
+                vm.seatData.push(seatDataNo);
+                vm.seatOnClick = function (points, evt) {
+                    console.log(points, evt);
+                };
             }
 
-            function logsErrorFn(data, status, headers, config) {
+            function seatStatisticsErrorFn(data, status, headers, config) {
                 Snackbar.error(data.error);
             }
         }

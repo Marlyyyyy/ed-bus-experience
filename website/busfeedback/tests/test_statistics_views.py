@@ -57,7 +57,7 @@ class StatisticsViewTestCase(TestCase):
             'wait_duration': 60000,
             'travel_duration': 800000,
             'distance':1000.2,
-            'greet':True,
+            'greet': True,
             'seat': True,
             'rating': 4.5
         }
@@ -78,15 +78,15 @@ class StatisticsViewTestCase(TestCase):
             'people_waiting': 2,
             'distance': 264,
             'greet': False,
-            'seat': True,
+            'seat': False,
             'rating': 0.0
         }
         ride_json = json.dumps(ride, cls=DjangoJSONEncoder)
 
-        # Upload our first ride of a new journey.
+        # Upload our second ride of a new journey.
         self.client.post('/bus/api/ride/', {'ride': ride_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
 
-    def test_obtain_general_statics(self):
+    def test_obtain_general_ride_statics(self):
 
         response = self.client.get('/bus/api/bus_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         response_content = json.loads(response.content.decode('utf-8'))
@@ -94,7 +94,7 @@ class StatisticsViewTestCase(TestCase):
         self.assertEqual(response_content['average_people_boarding'], 5.0, "Boarding people -1 should be ignored")
         self.assertEqual(response_content['number_of_rides'], 2, "Number of rides should be 2.")
         self.assertEqual(response_content['number_of_journeys'], 2, "Number of journeys should be 2.")
-        self.assertEqual(response_content['seat_positives'], 2, "Both rides should have a seat.")
+        self.assertEqual(response_content['seat_positives'], 1, "Both rides should have a seat.")
         self.assertEqual(response_content['greet_negatives'], 1, "Only one ride didn't greet.")
 
     def test_obtain_timeline_statics(self):
@@ -121,3 +121,38 @@ class StatisticsViewTestCase(TestCase):
         self.assertEqual(response_content['average_people_boarding'], 5, "-1 People boarding should be ignored.")
         self.assertEqual(response_content['average_waiting_duration'], 35000, "The average of two durations: 10k and 60k.")
         self.assertEqual(response_content['average_rating'], 4.5, "The 0.0 rating should be ignored.")
+
+    def test_obtain_seat_yes_and_no_statics(self):
+
+        start_stop_id = Stop.objects.filter(stop_id=95624797).values_list('id', flat=True)[0]
+        end_stop_id = Stop.objects.filter(stop_id=95624798).values_list('id', flat=True)[0]
+        service_id = Service.objects.filter(name="3").values_list('id', flat=True)[0]
+
+        current_time = datetime.now()
+        start_time = current_time - timedelta(minutes=10)
+        end_time = current_time
+
+        ride = {
+            'start_time': start_time,
+            'end_time': end_time,
+            'start_stop_id': start_stop_id,
+            'end_stop_id': end_stop_id,
+            'service_id': service_id,
+            'wait_duration': 10000,
+            'travel_duration': 100000,
+            'people_boarding': 5,
+            'people_waiting': 2,
+            'distance': 264,
+            'greet': False,
+            'seat': False,
+            'rating': 0.0
+        }
+        ride_json = json.dumps(ride, cls=DjangoJSONEncoder)
+
+        # Upload our third ride of a new journey.
+        self.client.post('/bus/api/ride/', {'ride': ride_json}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+
+        response = self.client.get('/bus/api/seat_yes_and_no_statistics/', {}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(response_content), 60, "There should be 60 days in the results set.")

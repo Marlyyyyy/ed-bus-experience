@@ -25,7 +25,15 @@
                 return;
             }
 
-            Home.getStatistics().then(statisticsSuccessful, statisticsError);
+            // Get ride statistics for the past 30 days
+            var now = new Date();
+            var thirtyDaysAgo = new Date(new Date().setDate(new Date().getDate()-30));
+            var rideStatisticsQueryParameters = {
+                created_at_lte: thirtyDaysAgo,
+                created_at_gt: now
+            };
+
+            Home.getRideStatistics(rideStatisticsQueryParameters).then(statisticsSuccessful, statisticsError);
             Home.getTimelineStatistics().then(timelineStatisticsSuccessful, timelineStatisticsError);
 
             function statisticsSuccessful(data, status, headers, config){

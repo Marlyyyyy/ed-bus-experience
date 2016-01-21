@@ -3,6 +3,10 @@ body{
     min-width: 900px;
 }
 
+.main-content{
+    padding: 20px;
+}
+
 a{
     color: white !important;
 }
@@ -13,6 +17,18 @@ a:focus{
 
 a:hover{
     text-decoration: none;
+}
+
+h1{
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 18px;
+    color: #373737;
+    margin-bottom: 20px;
+}
+
+.content-section{
+    padding: 25px;
 }
 
 /* Navigation bar */
@@ -97,7 +113,6 @@ a:hover{
 .home-header{
     height: 20%;
     max-height: 400px;
-    border: 1px solid red;
 }
 
 .home-header-left{
@@ -118,4 +133,10 @@ a:hover{
 
 .home-content{
     height: 70%;
+    background-color: #e7e7e7;
+}
+
+.overall-pie-chart{
+    display: inline-block;
+    width: 20%;
 }
