@@ -28,6 +28,7 @@
             // Display statistics
             Dashboard.getSeatYesAndNoStatistics().then(seatStatisticsSuccessFn, seatStatisticsErrorFn);
             Dashboard.getGreetYesAndNoStatistics().then(greetStatisticsSuccessFn, greetStatisticsErrorFn);
+            Dashboard.getAverageWaitDurationStatistics().then(averageWaitDurationStatisticsSuccessFn, averageWaitDurationStatisticsErrorFn);
 
             function seatStatisticsSuccessFn(data, status, headers, config) {
 
@@ -94,6 +95,28 @@
             }
 
             function greetStatisticsErrorFn(data, status, headers, config) {
+                Snackbar.error(data.error);
+            }
+
+            function averageWaitDurationStatisticsSuccessFn(data, status, headers, config) {
+
+                console.log(data.data);
+
+                var averageData = [];
+                vm.averageWaitDurationLabels = [];
+                vm.averageWaitDurationData = [];
+                data.data.forEach(function(entry) {
+                    averageData.push(entry['average']);
+                });
+
+                vm.averageWaitDurationSeries = ['Wait Duration'];
+                vm.averageWaitDurationData.push(averageData);
+                vm.averageWaitDurationOnClick = function (points, evt) {
+                    console.log(points, evt);
+                };
+            }
+
+            function averageWaitDurationStatisticsErrorFn(data, status, headers, config) {
                 Snackbar.error(data.error);
             }
         }

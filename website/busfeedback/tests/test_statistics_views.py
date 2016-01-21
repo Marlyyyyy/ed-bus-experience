@@ -161,3 +161,10 @@ class StatisticsViewTestCase(TestCase):
         response_content = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_content), 60, "There should be 60 days in the results set.")
+
+    def test_obtain_average_wait_duration_statics(self):
+
+        response = self.client.get('/bus/api/average_statistics/', {'aggregate_value': 'wait_duration'}, HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(response_content), 30, "There should be 30 days in the results set.")
