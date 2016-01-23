@@ -38,7 +38,7 @@ import com.marton.edibus.fragments.StopDialogFragment;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Ride;
-import com.marton.edibus.network.BusWebClient;
+import com.marton.edibus.network.BusClient;
 import com.marton.edibus.utilities.CoordinateProvider;
 import com.marton.edibus.utilities.GpsCalculator;
 import com.marton.edibus.utilities.JourneyManager;
@@ -84,7 +84,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
     private JourneyManager journeyManager;
 
     @Inject
-    private BusWebClient busWebService;
+    private BusClient busWebService;
 
     @InjectView(R.id.listView)
     private ListView listView;

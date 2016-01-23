@@ -18,7 +18,7 @@ import com.marton.edibus.R;
 import com.marton.edibus.adapters.ServiceAdapter;
 import com.marton.edibus.events.JourneyUpdatedEvent;
 import com.marton.edibus.models.Service;
-import com.marton.edibus.network.BusWebClient;
+import com.marton.edibus.network.BusClient;
 import com.marton.edibus.utilities.JourneyManager;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class ServiceDialogFragment extends RoboDialogFragment {
     private EventBus eventBus = EventBus.getDefault();
 
     @Inject
-    private BusWebClient busWebService;
+    private BusClient busWebService;
 
     @Inject
     private JourneyManager journeyManager;

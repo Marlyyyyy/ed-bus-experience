@@ -10,7 +10,7 @@ import com.marton.edibus.events.RideFinishedEvent;
 import com.marton.edibus.models.Log;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Ride;
-import com.marton.edibus.network.BusWebClient;
+import com.marton.edibus.network.BusClient;
 
 import java.util.Date;
 
@@ -20,7 +20,7 @@ import de.greenrobot.event.EventBus;
 public class JourneyManager {
 
     @Inject
-    private BusWebClient busWebService;
+    private BusClient busWebService;
 
     private EventBus eventBus = EventBus.getDefault();
 

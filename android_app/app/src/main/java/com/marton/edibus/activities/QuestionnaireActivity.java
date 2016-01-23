@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.models.Questionnaire;
-import com.marton.edibus.network.BusWebClient;
+import com.marton.edibus.network.BusClient;
 import com.marton.edibus.utilities.QuestionnaireManager;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -40,7 +40,7 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
     private String selectedTravelReason = "Work";
 
     @Inject
-    BusWebClient busWebClient;
+    BusClient busClient;
 
     @InjectView(R.id.age)
     EditText ageEditText;
@@ -189,7 +189,7 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
 
         Questionnaire questionnaire = new Questionnaire(age, this.selectedGender, this.concessionCardSwitch.isChecked(), selectedTravelReason);
 
-        this.busWebClient.uploadNewQuestionnaire(questionnaire, callback);
+        this.busClient.uploadNewQuestionnaire(questionnaire, callback);
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.App;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.network.UserWebClient;
+import com.marton.edibus.network.UserClient;
 import com.marton.edibus.network.WebClient;
 
 import org.json.JSONException;
@@ -15,7 +15,7 @@ import org.json.JSONObject;
 public class AuthenticationManager {
 
     @Inject
-    private UserWebClient userWebservice;
+    private UserClient userWebservice;
 
     @Inject
     private WebClient webClient;

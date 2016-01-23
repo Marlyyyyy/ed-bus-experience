@@ -17,6 +17,7 @@ import com.marton.edibus.events.LocationUpdatedEvent;
 import de.greenrobot.event.EventBus;
 
 
+// Frequently publishes events that include the new coordinates of the user
 public class LocationProviderService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks {
 
     private EventBus eventBus = EventBus.getDefault();
@@ -25,7 +26,7 @@ public class LocationProviderService extends Service implements LocationListener
 
     private GoogleApiClient googleApiClient;
 
-    LocationRequest locationRequest;
+    private LocationRequest locationRequest;
 
     public LocationProviderService() {
         this.locationUpdateEvent = new LocationUpdatedEvent();
@@ -77,6 +78,6 @@ public class LocationProviderService extends Service implements LocationListener
     }
 
     protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(this.googleApiClient, this.locationRequest, this);
     }
 }

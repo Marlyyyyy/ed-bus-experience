@@ -127,6 +127,12 @@ public class LocationProcessorService extends RoboService {
                 latitude, longitude, endStop.getLatitude(), endStop.getLongitude()
         );
 
+        // Calculate the passed distance (euclidean)
+        Stop startStop = this.journeyManager.getRide().getStartStop();
+        double passedDistance = GpsCalculator.getDistanceBetweenPoints(
+                latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
+        );
+
         switch (this.journeyManager.getJourneyStateEnum()){
             case RUNNING:
                 this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
@@ -174,34 +180,10 @@ public class LocationProcessorService extends RoboService {
                 }
         }
 
-        // Automate the actions if automation is enabled
+        // Automatically change the user's activity, if enabled
         if (this.journeyManager.getAutomaticFlow()){
 
-            // Calculate the passed distance
-            Stop startStop = this.journeyManager.getRide().getStartStop();
-            double passedDistance = GpsCalculator.getDistanceBetweenPoints(
-                    latitude, longitude, startStop.getLatitude(), startStop.getLongitude()
-            );
-
-            // Calculate the new activity enum
-            switch (this.journeyManager.getCurrentActivityEnum()){
-                case PREPARING:
-                    if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
-                        this.journeyManager.startWaiting();
-                    }
-                    break;
-                case WAITING:
-                    if (passedDistance >= START_STOP_DISTANCE_THRESHOLD){
-                        this.journeyManager.startTravelling();
-                    }
-                    break;
-                case TRAVELLING:
-                    if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
-                        this.journeyManager.finishRide();
-                        this.eventBus.post(new JourneyUploadRequestedEvent());
-                    }
-                    break;
-            }
+            this.triggerNewActivity(passedDistance, remainingDistance);
         }
 
         // Store the current state for later
@@ -212,5 +194,28 @@ public class LocationProcessorService extends RoboService {
 
         // Fire the processed tracker information event
         this.eventBus.post(this.trackerStateUpdatedEvent);
+    }
+
+    private void triggerNewActivity(double passedDistance, double remainingDistance){
+
+        // Calculate the new activity enum
+        switch (this.journeyManager.getCurrentActivityEnum()){
+            case PREPARING:
+                if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
+                    this.journeyManager.startWaiting();
+                }
+                break;
+            case WAITING:
+                if (passedDistance >= START_STOP_DISTANCE_THRESHOLD){
+                    this.journeyManager.startTravelling();
+                }
+                break;
+            case TRAVELLING:
+                if (remainingDistance < END_STOP_DISTANCE_THRESHOLD){
+                    this.journeyManager.finishRide();
+                    this.eventBus.post(new JourneyUploadRequestedEvent());
+                }
+                break;
+        }
     }
 }

@@ -12,9 +12,7 @@ import cz.msebera.android.httpclient.Header;
 
 
 @Singleton
-public class UserWebClient {
-
-    private static final String TAG = UserWebClient.class.getName();
+public class UserClient {
 
     private static final String BASE_URL_AUTHENTICATION = WebClient.BASE_URL + "auth";
 
@@ -28,7 +26,7 @@ public class UserWebClient {
         parameters.put("password", password);
 
         String url = getAbsoluteUrl("/api/get_token/");
-        webClient.post(url, parameters, new JsonHttpResponseHandler() {
+        this.webClient.post(url, parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -52,7 +50,7 @@ public class UserWebClient {
         parameters.put("password", password);
 
         String url = "/api/accounts/";
-        webClient.post(getAbsoluteUrl(url), parameters, new JsonHttpResponseHandler() {
+        this.webClient.post(getAbsoluteUrl(url), parameters, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

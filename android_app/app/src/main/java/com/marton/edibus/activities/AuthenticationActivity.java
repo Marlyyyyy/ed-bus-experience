@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -16,7 +15,7 @@ import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
 import com.marton.edibus.models.Log;
-import com.marton.edibus.network.UserWebClient;
+import com.marton.edibus.network.UserClient;
 import com.marton.edibus.network.WebClient;
 import com.marton.edibus.utilities.AuthenticationManager;
 import com.marton.edibus.utilities.StatisticsManager;
@@ -42,7 +41,7 @@ public class AuthenticationActivity extends RoboActionBarActivity {
     TextView thankYouTextView;
 
     @Inject
-    UserWebClient userWebClient;
+    UserClient userClient;
 
     @Inject
     WebClient webClient;
@@ -89,7 +88,7 @@ public class AuthenticationActivity extends RoboActionBarActivity {
         final String username = generateUniqueString();
         final String password = generateUniqueString();
 
-        this.userWebClient.register(username, password, new WebCallBack<JSONObject>() {
+        this.userClient.register(username, password, new WebCallBack<JSONObject>() {
             @Override
             public void onSuccess(JSONObject data) {
                 authenticationManager.authenticate(username, password, new WebCallBack() {

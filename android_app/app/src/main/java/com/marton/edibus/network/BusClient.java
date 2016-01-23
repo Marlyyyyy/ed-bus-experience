@@ -28,16 +28,16 @@ import cz.msebera.android.httpclient.Header;
 
 
 @Singleton
-public class BusWebClient {
+public class BusClient {
 
-    private static final String TAG = BusWebClient.class.getName();
+    private static final String TAG = BusClient.class.getName();
 
     private static final String BASE_URL_BUS = WebClient.BASE_URL + "bus";
 
     @Inject
     private WebClient webClient;
 
-    public BusWebClient(){
+    public BusClient(){
     }
 
     public void getServicesForStop(int id, final WebCallBack<List<Service>> callback) {
@@ -67,7 +67,6 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
@@ -97,7 +96,6 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
@@ -130,7 +128,6 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
@@ -163,7 +160,6 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
@@ -189,8 +185,11 @@ public class BusWebClient {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                // TODO: check for null
-                Stop[] stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
+
+                Stop[] stopArray = new Stop[0];
+                if (stopJsonArray != null) {
+                    stopArray = gson.fromJson(stopJsonArray.toString(), Stop[].class);
+                }
                 List<Stop> stopList = Arrays.asList(stopArray);
                 callback.onSuccess(stopList);
             }
@@ -198,14 +197,13 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
     }
 
     public void uploadNewTrip(Ride ride, final WebCallBack<Integer> callback) {
-        uploadNewTrip(0, ride, callback);
+        this.uploadNewTrip(0, ride, callback);
     }
 
     public void uploadNewTrip(final int journeyId, Ride ride, final WebCallBack<Integer> callback) {
@@ -239,41 +237,7 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
-            }
-        });
-    }
-
-    public void getDiaryForUser(String username, WebCallBack<List<Journey>> callback){
-
-        RequestParams parameters = new RequestParams();
-        String url = "/api/get_diary_for_user/";
-        this.webClient.get(getAbsoluteBusUrl(url), parameters, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                JSONArray journeys = null;
-
-                try {
-                    journeys = response.getJSONArray("journeys");
-                } catch (JSONException e) {
-                    Log.e(TAG, "Was unable to get the journey ID integer from Json response");
-                }
-
-                Gson gson = new Gson();
-
-                Journey[] journey_array = gson.fromJson(journeys.toString(), Journey[].class);
-                List<Journey> stopList = Arrays.asList(journey_array);
-                // callback.onSuccess(journeyId);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                // TODO: error response should be contained within the JsonObject
-                // callback.onFailure(statusCode, errorResponse);
             }
         });
     }
@@ -300,7 +264,6 @@ public class BusWebClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                // TODO: error response should be contained within the JsonObject
                 callback.onFailure(statusCode, errorResponse);
             }
         });
