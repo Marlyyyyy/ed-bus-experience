@@ -1,7 +1,7 @@
 package com.marton.edibus.enums;
 
 
-public enum CurrentActivityEnum {
+public enum RideStateEnum {
     PREPARING,
     WAITING,
     TRAVELLING

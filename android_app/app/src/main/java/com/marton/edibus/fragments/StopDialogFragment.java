@@ -69,7 +69,7 @@ public class StopDialogFragment extends RoboDialogFragment {
     // The list of services belonging to the stop on display
     private ArrayList<Service> services;
 
-    private ServiceAdapter serviceAdapter;
+    private Service selectedService;
 
     @Override
     public void onCreate(Bundle bundle){
@@ -116,7 +116,7 @@ public class StopDialogFragment extends RoboDialogFragment {
         // Initialise the list of services when selecting a start stop
         if (this.stop.getServices() != null && this.stopTypeEnum.equals(StopTypeEnum.START)){
             services = new ArrayList<>(this.stop.getServices());
-            serviceAdapter = new ServiceAdapter(getActivity(), services, getResources());
+            ServiceAdapter serviceAdapter = new ServiceAdapter(getActivity(), services, getResources());
             serviceAdapter.setSmallServiceItem(true);
             servicesListView.setAdapter(serviceAdapter);
 
@@ -125,8 +125,7 @@ public class StopDialogFragment extends RoboDialogFragment {
             this.serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Service service = services.get(position);
-                    journeyManager.getRide().setService(service);
+                    selectedService = services.get(position);
                 }
             });
         }else{
@@ -149,13 +148,19 @@ public class StopDialogFragment extends RoboDialogFragment {
     }
 
     private void selectStop(Stop stop){
+
         Ride ride = this.journeyManager.getRide();
+
         switch (this.stopTypeEnum){
             case START:
+
                 ride.setStartStop(stop);
-                // TODO: figure out when to make service NULL
-                if (ride.getService() != null){
-                    // Start end stop selector activity
+
+                if (this.selectedService != null){
+
+                    ride.setService(this.selectedService);
+
+                    // Start end-stop selector activity
                     Activity currentActivity = getActivity();
                     Intent intent = new Intent(currentActivity, StopSetupActivity.class);
                     intent.putExtra("STOP", StopTypeEnum.END);
@@ -164,12 +169,14 @@ public class StopDialogFragment extends RoboDialogFragment {
                     // Close down the activity
                     currentActivity.finish();
                 }else{
+
                     // Close down the activity
                     Activity currentActivity = getActivity();
                     currentActivity.finish();
                 }
                 break;
             case END:
+
                 ride.setEndStop(stop);
 
                 // Close down the activity
@@ -177,6 +184,5 @@ public class StopDialogFragment extends RoboDialogFragment {
                 currentActivity.finish();
                 break;
         }
-        this.journeyManager.setRide(ride);
     }
 }

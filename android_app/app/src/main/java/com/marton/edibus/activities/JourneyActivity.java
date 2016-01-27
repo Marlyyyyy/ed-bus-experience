@@ -101,18 +101,18 @@ public class JourneyActivity extends RoboActionBarActivity {
         }
     }
 
-    // Manages the flow of the journey
+    // Dynamically changes the UI page of the journey recording
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
 
         switch(rideActionFiredEvent.getRideActionEnum()){
-            case NEW_RIDE:
+            case NEW_RIDE_STARTED:
                 this.pager.setCurrentItem(JourneyTabEnum.SETUP.ordinal());
                 break;
             case SETUP_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());
                 break;
-            case RIDE_STARTED:
-                // this.pager.setCurrentItem(JourneyTabEnum.FEEDBACK.ordinal());
+            case TRAVELLING_STARTED:
+                this.pager.setCurrentItem(JourneyTabEnum.FEEDBACK.ordinal());
                 break;
             case FEEDBACK_COMPLETED:
                 this.pager.setCurrentItem(JourneyTabEnum.TRACKER.ordinal());

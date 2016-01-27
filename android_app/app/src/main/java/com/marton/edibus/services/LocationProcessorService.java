@@ -5,7 +5,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
-import com.marton.edibus.enums.CurrentActivityEnum;
+import com.marton.edibus.enums.RideStateEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.events.LocationUpdatedEvent;
@@ -69,7 +69,7 @@ public class LocationProcessorService extends RoboService {
                     return;
                 }
 
-                switch(journeyManager.getCurrentActivityEnum()){
+                switch(journeyManager.getRideStateEnum()){
                     case WAITING:
                         waitingSeconds++;
                         break;
@@ -145,7 +145,7 @@ public class LocationProcessorService extends RoboService {
                 ride.setTravelDuration(this.travellingSeconds * 1000);
 
                 // Only count distances and speed if the user is travelling
-                if (this.journeyManager.getCurrentActivityEnum() == CurrentActivityEnum.TRAVELLING){
+                if (this.journeyManager.getRideStateEnum() == RideStateEnum.TRAVELLING){
 
                     // Calculate travelled distance in metres
                     double pastDistanceDelta;
@@ -187,7 +187,7 @@ public class LocationProcessorService extends RoboService {
         }
 
         // Store the current state for later
-        if (!this.journeyManager.getCurrentActivityEnum().equals(CurrentActivityEnum.PREPARING)){
+        if (!this.journeyManager.getRideStateEnum().equals(RideStateEnum.PREPARING)){
             this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
             this.latestUpdateTime = currentUpdateTime;
         }
@@ -199,7 +199,7 @@ public class LocationProcessorService extends RoboService {
     private void triggerNewActivity(double passedDistance, double remainingDistance){
 
         // Calculate the new activity enum
-        switch (this.journeyManager.getCurrentActivityEnum()){
+        switch (this.journeyManager.getRideStateEnum()){
             case PREPARING:
                 if (passedDistance < START_STOP_DISTANCE_THRESHOLD){
                     this.journeyManager.startWaiting();

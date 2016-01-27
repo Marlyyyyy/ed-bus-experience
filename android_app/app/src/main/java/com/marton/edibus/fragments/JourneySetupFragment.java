@@ -19,7 +19,7 @@ import com.marton.edibus.R;
 import com.marton.edibus.activities.StopSetupActivity;
 import com.marton.edibus.enums.StopTypeEnum;
 import com.marton.edibus.enums.RideActionEnum;
-import com.marton.edibus.events.JourneyUpdatedEvent;
+import com.marton.edibus.events.JourneySetupUpdatedEvent;
 import com.marton.edibus.events.RideActionFiredEvent;
 import com.marton.edibus.models.Service;
 import com.marton.edibus.models.Stop;
@@ -220,13 +220,13 @@ public class JourneySetupFragment extends RoboFragment{
         }
     }
 
-    public void onEvent(JourneyUpdatedEvent event){
+    public void onEvent(JourneySetupUpdatedEvent event){
         this.refreshUserInterface();
     }
 
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
         switch (rideActionFiredEvent.getRideActionEnum()){
-            case NEW_RIDE:
+            case NEW_RIDE_STARTED:
                 this.refreshUserInterface();
                 break;
         }

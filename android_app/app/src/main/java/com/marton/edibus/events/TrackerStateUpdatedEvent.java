@@ -1,14 +1,14 @@
 package com.marton.edibus.events;
 
 
-import com.marton.edibus.enums.CurrentActivityEnum;
+import com.marton.edibus.enums.RideStateEnum;
 
 public class TrackerStateUpdatedEvent {
 
     public TrackerStateUpdatedEvent(){
     }
 
-    public TrackerStateUpdatedEvent(double distanceFromGoal, double distanceFromStart, double currentSpeed, double latitude, double longitude, CurrentActivityEnum currentActivityEnum){
+    public TrackerStateUpdatedEvent(double distanceFromGoal, double distanceFromStart, double currentSpeed, double latitude, double longitude, RideStateEnum rideStateEnum){
         this.distanceFromGoal = distanceFromGoal;
         this.distanceFromStart = distanceFromStart;
         this.currentSpeed = currentSpeed;

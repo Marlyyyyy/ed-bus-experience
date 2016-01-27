@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.enums.CurrentActivityEnum;
+import com.marton.edibus.enums.RideStateEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
 import com.marton.edibus.enums.RideActionEnum;
 import com.marton.edibus.events.JourneyUploadRequestedEvent;
@@ -157,7 +157,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         builder.setPositiveButton("Yes, let's continue", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                eventBus.post(new RideActionFiredEvent(RideActionEnum.NEW_RIDE));
+                eventBus.post(new RideActionFiredEvent(RideActionEnum.NEW_RIDE_STARTED));
             }
         });
 
@@ -203,10 +203,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                     journeyManager.startWaiting();
                     refreshButtons();
 
-                    // Move on to the feedback page
-                    rideActionFiredEvent.setRideActionEnum(RideActionEnum.RIDE_STARTED);
-                    eventBus.post(rideActionFiredEvent);
-
                     // Start the services
                     getActivity().startService(locationProviderService);
                     getActivity().startService(locationProcessorService);
@@ -221,6 +217,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
             @Override
             public void onClick(View v) {
+
+                // Move on to the feedback page
+                rideActionFiredEvent.setRideActionEnum(RideActionEnum.TRAVELLING_STARTED);
+                eventBus.post(rideActionFiredEvent);
 
                 journeyManager.startTravelling();
                 refreshButtons();
@@ -260,6 +260,8 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
         // Register as a subscriber
         this.eventBus.register(this);
+
+        this.refreshStopMarkers();
     }
 
     @Override
@@ -272,6 +274,8 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     @Override
     public void onDestroy(){
+
+        // Stop the location services
         this.getActivity().stopService(this.locationProviderService);
         this.getActivity().stopService(this.locationProcessorService);
         super.onDestroy();
@@ -279,8 +283,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         this.googleMap = googleMap;
         this.googleMap.setMyLocationEnabled(true);
+
         this.refreshStopMarkers();
 
         this.userRoutePolyline = this.googleMap.addPolyline(new PolylineOptions().width(5).color(Color.BLUE));
@@ -310,8 +316,9 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
             @Override
             public void onFailure(int statusCode, JSONObject response) {
-                SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
+                super.onFailure(statusCode, response);
 
+                SnackbarManager.showError(getView(), String.format("Journey upload has failed, status code: %d!", statusCode));
                 progressDialog.dismiss();
             }
         };
@@ -322,7 +329,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     // Sets all tracking related text-fields
     private void refreshDataInterface(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
-        this.currentActivity.setText(String.valueOf(this.journeyManager.getCurrentActivityEnum()));
+        this.currentActivity.setText(String.valueOf(this.journeyManager.getRideStateEnum()));
         this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
         this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
         this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
@@ -337,11 +344,56 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         this.elapsedTimeTextView.setText(this.dateFormat.format(timerUpdatedEvent.getTravellingMilliseconds() + timerUpdatedEvent.getWaitingMilliseconds()));
     }
 
+    // Redraws all stop markers on the map
+    private void refreshStopMarkers(){
+
+        Ride ride = this.journeyManager.getRide();
+        Stop startStop = ride.getStartStop();
+        Stop endStop = ride.getEndStop();
+
+        if (this.googleMap != null){
+
+            // Clear stop markers
+            if (this.startStopMarker != null){
+                this.startStopMarker.remove();
+            }
+
+            if (this.endStopMarker != null){
+                this.endStopMarker.remove();
+            }
+
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            // Add start-stop to the map
+            if(startStop != null){
+                markerOptions.position(new LatLng(startStop.getLatitude(), startStop.getLongitude()))
+                        .title(startStop.getName())
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                        .anchor((float) 0.5, (float) 0.5)
+                        .rotation(startStop.getOrientation());
+
+                this.startStopMarker = this.googleMap.addMarker(markerOptions);
+            }
+
+            // Add end-stop to the map
+            if (endStop != null){
+                markerOptions = new MarkerOptions()
+                        .position(new LatLng(endStop.getLatitude(), endStop.getLongitude()))
+                        .title(endStop.getName())
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
+                        .anchor((float) 0.5, (float) 0.5)
+                        .rotation(endStop.getOrientation());
+
+                this.endStopMarker = this.googleMap.addMarker(markerOptions);
+            }
+        }
+    }
+
     // Hides and displays buttons according to the current state of the journey
     private void refreshButtons(){
 
-        CurrentActivityEnum currentActivityEnum = this.journeyManager.getCurrentActivityEnum();
         JourneyStateEnum journeyStateEnum = this.journeyManager.getJourneyStateEnum();
+        RideStateEnum rideStateEnum = this.journeyManager.getRideStateEnum();
 
         switch (journeyStateEnum){
             case SETUP_INCOMPLETE:
@@ -361,7 +413,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
                 break;
 
             case RUNNING:
-                switch(currentActivityEnum){
+                switch(rideStateEnum){
                     case PREPARING:
                         this.startWaitingButton.setVisibility(View.VISIBLE);
                         this.boardTheBusButton.setVisibility(View.GONE);
@@ -435,51 +487,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         }
     }
 
-    // Redraws all stop markers on the map
-    private void refreshStopMarkers(){
-
-        Ride ride = this.journeyManager.getRide();
-        Stop startStop = ride.getStartStop();
-        Stop endStop = ride.getEndStop();
-
-        if (this.googleMap != null){
-
-            // Clear stop markers
-            if (this.startStopMarker != null){
-                this.startStopMarker.remove();
-            }
-
-            if (this.endStopMarker != null){
-                this.endStopMarker.remove();
-            }
-
-            MarkerOptions markerOptions = new MarkerOptions();
-
-            // Add start-stop to the map
-            if(startStop != null){
-                        markerOptions.position(new LatLng(startStop.getLatitude(), startStop.getLongitude()))
-                        .title(startStop.getName())
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
-                        .anchor((float) 0.5, (float) 0.5)
-                        .rotation(startStop.getOrientation());
-
-                this.startStopMarker = this.googleMap.addMarker(markerOptions);
-            }
-
-            // Add end-stop to the map
-            if (endStop != null){
-                markerOptions = new MarkerOptions()
-                        .position(new LatLng(endStop.getLatitude(), endStop.getLongitude()))
-                        .title(endStop.getName())
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.edi_bus_marker))
-                        .anchor((float) 0.5, (float) 0.5)
-                        .rotation(endStop.getOrientation());
-
-                this.endStopMarker = this.googleMap.addMarker(markerOptions);
-            }
-        }
-    }
-
     public void onEventMainThread(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
 
         // Refresh the UI
@@ -490,14 +497,15 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
 
         switch (rideActionFiredEvent.getRideActionEnum()){
-            case NEW_RIDE:
+            case NEW_RIDE_STARTED:
                 this.refreshButtons();
                 this.refreshDataInterface(new TrackerStateUpdatedEvent());
                 this.refreshTimerInterface(new TimerUpdatedEvent());
                 this.refreshStopMarkers();
                 break;
-            case RIDE_STARTED:
+            case WAITING_STARTED:
                 this.refreshStopMarkers();
+                break;
         }
     }
 

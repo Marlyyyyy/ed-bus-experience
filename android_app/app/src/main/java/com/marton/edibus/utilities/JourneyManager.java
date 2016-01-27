@@ -4,9 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.App;
 import com.marton.edibus.WebCallBack;
-import com.marton.edibus.enums.CurrentActivityEnum;
+import com.marton.edibus.enums.RideStateEnum;
 import com.marton.edibus.enums.JourneyStateEnum;
+import com.marton.edibus.enums.RideActionEnum;
 import com.marton.edibus.events.RideFinishedEvent;
+import com.marton.edibus.events.RideActionFiredEvent;
 import com.marton.edibus.models.Log;
 import com.marton.edibus.models.Stop;
 import com.marton.edibus.models.Ride;
@@ -32,7 +34,9 @@ public class JourneyManager {
 
     private JourneyStateEnum journeyStateEnum;
 
-    private CurrentActivityEnum currentActivityEnum;
+    private RideStateEnum rideStateEnum;
+
+    private RideActionFiredEvent rideActionFiredEvent;
 
     // The flag indicating whether the journey has been paused
     private boolean paused;
@@ -55,19 +59,20 @@ public class JourneyManager {
         this.ride = new Ride();
         this.reviewStop = null;
         this.journeyStateEnum = JourneyStateEnum.SETUP_INCOMPLETE;
-        this.currentActivityEnum = CurrentActivityEnum.PREPARING;
+        this.rideStateEnum = RideStateEnum.PREPARING;
         this.paused = true;
         this.finished = false;
         this.started = false;
         this.automaticFlow = false;
+        this.rideActionFiredEvent = new RideActionFiredEvent();
     }
 
     public JourneyStateEnum getJourneyStateEnum() {
         return journeyStateEnum;
     }
 
-    public CurrentActivityEnum getCurrentActivityEnum() {
-        return currentActivityEnum;
+    public RideStateEnum getRideStateEnum() {
+        return rideStateEnum;
     }
 
     public Ride getRide() {
@@ -108,8 +113,12 @@ public class JourneyManager {
 
     public void startWaiting(){
 
+        // Fire event
+        this.rideActionFiredEvent.setRideActionEnum(RideActionEnum.WAITING_STARTED);
+        this.eventBus.post(rideActionFiredEvent);
+
         this.journeyStateEnum = JourneyStateEnum.RUNNING;
-        this.currentActivityEnum = CurrentActivityEnum.WAITING;
+        this.rideStateEnum = RideStateEnum.WAITING;
 
         this.paused = false;
         this.started = true;
@@ -119,8 +128,12 @@ public class JourneyManager {
 
     public void startTravelling(){
 
+        // Fire event
+        this.rideActionFiredEvent.setRideActionEnum(RideActionEnum.TRAVELLING_STARTED);
+        this.eventBus.post(rideActionFiredEvent);
+
         this.journeyStateEnum = JourneyStateEnum.RUNNING;
-        this.currentActivityEnum = CurrentActivityEnum.TRAVELLING;
+        this.rideStateEnum = RideStateEnum.TRAVELLING;
 
         this.paused = false;
         this.started = true;
