@@ -180,6 +180,7 @@ public class JourneySetupFragment extends RoboFragment{
     // Refreshes the display of the current journey configuration
     private void refreshUserInterface(){
 
+        // Start Stop button
         Stop currentStartStop = this.journeyManager.getRide().getStartStop();
         if (currentStartStop != null){
             this.journeyStartStopTextView.setText(String.valueOf(currentStartStop.getName()));
@@ -187,6 +188,7 @@ public class JourneySetupFragment extends RoboFragment{
             this.journeyStartStopTextView.setText("None");
         }
 
+        // Service button
         Service currentService = this.journeyManager.getRide().getService();
         if (currentService != null) {
             this.journeyServiceTextView.setText(String.valueOf(currentService.getName()));
@@ -199,11 +201,12 @@ public class JourneySetupFragment extends RoboFragment{
             this.serviceLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
         }
 
+        // End Stop button
         Stop currentEndStop = this.journeyManager.getRide().getEndStop();
         if (currentEndStop != null) {
             this.journeyEndStopTextView.setText(String.valueOf(currentEndStop.getName()));
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
-        }else if (currentService != null){
+        }else if (currentService != null && currentStartStop != null ){
             this.journeyEndStopTextView.setText("None");
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryLight));
         }else{
@@ -211,6 +214,7 @@ public class JourneySetupFragment extends RoboFragment{
             this.endStopLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimaryUnavailable));
         }
 
+        // Continue button
         if (this.journeyManager.rideSetupComplete()){
             this.continueButton.setEnabled(true);
             this.continueButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.ColorPrimary));

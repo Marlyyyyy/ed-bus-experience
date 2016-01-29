@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -27,8 +28,6 @@ import roboguice.activity.RoboActionBarActivity;
 
 public class JourneyActivity extends RoboActionBarActivity {
 
-    private static final String TAG = JourneyActivity.class.getName();
-
     private EventBus eventBus = EventBus.getDefault();
 
     private final String activityTitle = "New Journey";
@@ -44,10 +43,6 @@ public class JourneyActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_journey);
-
-        // Create The Toolbar and setting it as the Toolbar for the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
 
         // Configure sliding pages
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), this.titles, this.numberOfTabs) {
@@ -92,12 +87,20 @@ public class JourneyActivity extends RoboActionBarActivity {
         final ActionBar actionBar = this.getSupportActionBar();
 
         if (actionBar != null){
-            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.actionbar_journey, null);
-            actionBar.setCustomView(view, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            TextView activityTitleTextView = (TextView) view.findViewById(R.id.activity_title);
-            activityTitleTextView.setText(this.activityTitle);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            setTitle(this.activityTitle);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

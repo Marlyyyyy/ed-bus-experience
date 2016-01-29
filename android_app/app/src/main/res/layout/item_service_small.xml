@@ -29,7 +29,7 @@
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:textSize="10sp"
-            android:textColor="@color/oil"
+            android:textColor="@drawable/list_item_text"
             android:gravity="start|center_vertical"/>
 
     </LinearLayout>

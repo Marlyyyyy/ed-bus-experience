@@ -11,8 +11,8 @@ public class WebClient {
 
     private AsyncHttpClient client;
 
-    public static final String BASE_URL = "http://192.168.162.78:8000/";
-    // public static final String BASE_URL = "http://ec2-52-31-124-50.eu-west-1.compute.amazonaws.com:8000/";
+    // public static final String BASE_URL = "http://192.168.162.78:8000/";
+    public static final String BASE_URL = "http://ec2-52-31-124-50.eu-west-1.compute.amazonaws.com:8000/";
 
     public WebClient(){
         this.client = new AsyncHttpClient();

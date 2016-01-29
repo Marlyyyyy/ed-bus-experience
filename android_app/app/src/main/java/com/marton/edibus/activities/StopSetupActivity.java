@@ -105,10 +105,6 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_setup);
 
-        // Create The Toolbar and setting it as the Toolbar for the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-
         this.resources = getResources();
         this.fragmentManager = getSupportFragmentManager();
         this.previewService = null;
@@ -195,19 +191,14 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
         final ActionBar actionBar = this.getSupportActionBar();
 
         if (actionBar != null){
-            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.actionbar_journey, null);
-            actionBar.setCustomView(view, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            TextView activityTitleTextView = (TextView) view.findViewById(R.id.activity_title);
-
+            actionBar.setDisplayHomeAsUpEnabled(true);
             switch (this.stopTypeEnum){
                 case START:
-                    activityTitleTextView.setText("Start Stop");
+                    setTitle("Start Stop");
                     break;
                 case END:
-                    activityTitleTextView.setText("End Stop");
-                    slidingUpPanelHeaderTextView.setText("Service: " + journeyManager.getRide().getService().getName());
+                    setTitle("End Stop");
+                    this.slidingUpPanelHeaderTextView.setText("Service: " + journeyManager.getRide().getService().getName());
                     break;
             }
         }
@@ -257,17 +248,14 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -417,6 +405,10 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
     // Calculates the distance between the user and each bus stop in the specified list. This method modifies the original object in place.
     private void attachDistancesToStops(List<Stop> stops, Location location){
+
+        if (location == null){
+            return;
+        }
 
         for (int i=0; i<stops.size(); i++){
             Stop stop = stops.get(i);
