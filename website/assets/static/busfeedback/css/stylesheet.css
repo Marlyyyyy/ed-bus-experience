@@ -39,6 +39,11 @@ h2{
     text-align:center;
 }
 
+.value-label{
+    display: inline-block;
+    width: 65%;
+}
+
 .big-value{
     font-size: 20px;
 }
@@ -50,6 +55,7 @@ h2{
 .mini-section{
     display: inline-block;
     vertical-align: top;
+    width: 20%;
     min-height: 310px;
     padding: 0 15px 15px 15px;
     background-color: #f3f3f3;
@@ -84,11 +90,11 @@ h2{
 }
 
 .custom-navbar li:hover{
-    border-bottom: 4px solid rgb(0, 75, 105);
+    border-bottom: 4px solid white;
 }
 
 .active{
-    border-bottom: 4px solid rgb(0, 75, 105);
+    border-bottom: 4px solid white;
 }
 
 .custom-navbar li a{
@@ -166,9 +172,4 @@ h2{
 .home-content{
     height: 70%;
     background-color: #e7e7e7;
-}
-
-.overall-pie-chart{
-    display: inline-block;
-    width: 20%;
 }

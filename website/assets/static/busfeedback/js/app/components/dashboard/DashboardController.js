@@ -26,6 +26,10 @@
             };
 
             // Display statistics
+            vm.chartOptions = {
+                animation: false
+            };
+
             Dashboard.getSeatYesAndNoStatistics().then(seatStatisticsSuccessFn, seatStatisticsErrorFn);
             Dashboard.getGreetYesAndNoStatistics().then(greetStatisticsSuccessFn, greetStatisticsErrorFn);
             Dashboard.getAverageWaitDurationStatistics().then(averageWaitDurationStatisticsSuccessFn, averageWaitDurationStatisticsErrorFn);
@@ -106,10 +110,11 @@
                 vm.averageWaitDurationLabels = [];
                 vm.averageWaitDurationData = [];
                 data.data.forEach(function(entry) {
-                    averageData.push(entry['average']);
+                    averageData.push(entry['average'] / 1000);
+                    vm.averageWaitDurationLabels.push(entry['day']);
                 });
 
-                vm.averageWaitDurationSeries = ['Wait Duration'];
+                vm.averageWaitDurationSeries = ['Wait Duration in seconds'];
                 vm.averageWaitDurationData.push(averageData);
                 vm.averageWaitDurationOnClick = function (points, evt) {
                     console.log(points, evt);

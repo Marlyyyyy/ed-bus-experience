@@ -6,15 +6,15 @@
 
                     <h1>Seat Distribution</h1>
 
-                    <canvas id="seat-line"
-                            class="chart chart-line"
+                    <canvas id="seat-bar"
+                            class="chart chart-bar"
                             chart-data="vm.seatData"
                             chart-labels="vm.seatLabels"
-                            chart-legend="true"
                             chart-series="vm.seatSeries"
-                            chart-click="vm.seatOnClick"
+                            chart-options="vm.chartOptions"
                             width="5"
                             height="1">
+
                     </canvas>
 
                 </md-content>
@@ -24,15 +24,15 @@
 
                     <h1>Greet Distribution</h1>
 
-                    <canvas id="greet-line"
-                            class="chart chart-line"
+                    <canvas id="greet-bar"
+                            class="chart chart-bar"
                             chart-data="vm.greetData"
                             chart-labels="vm.greetLabels"
-                            chart-legend="true"
                             chart-series="vm.greetSeries"
-                            chart-click="vm.greetOnClick"
+                            chart-options="vm.chartOptions"
                             width="5"
                             height="1">
+
                     </canvas>
 
                 </md-content>
@@ -49,6 +49,7 @@
                             chart-legend="true"
                             chart-series="vm.averageWaitDurationSeries"
                             chart-click="vm.averageWaitDurationOnClick"
+                            chart-options="vm.chartOptions"
                             width="5"
                             height="1">
                     </canvas>

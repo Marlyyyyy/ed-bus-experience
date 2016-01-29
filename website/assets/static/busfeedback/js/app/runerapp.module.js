@@ -25,8 +25,11 @@ angular
     angular
         .module('runnerapp')
         .factory('httpRequestInterceptor', httpRequestInterceptor)
-        .config(function($httpProvider) {
+        .config(function($httpProvider, $mdThemingProvider) {
             $httpProvider.interceptors.push('httpRequestInterceptor');
+            $mdThemingProvider.theme('default')
+                .primaryPalette('blue')
+                .accentPalette('blue');
         })
         .run(run);
 
