@@ -178,12 +178,12 @@ public class LocationProcessorService extends RoboService {
                     double averageSpeed = this.trackerStateUpdatedEvent.getDistanceFromStart()/(this.trackerStateUpdatedEvent.getTravellingTime()/1000);
                     this.trackerStateUpdatedEvent.setAverageSpeed(averageSpeed);
                 }
-        }
 
-        // Automatically change the user's activity, if automation is enabled
-        if (this.journeyManager.getAutomaticFlow()){
+                // Automatically change the user's activity, if automation is enabled
+                if (this.journeyManager.getAutomaticFlow()){
 
-            this.triggerNewActivity(passedDistance, remainingDistance);
+                    this.triggerNewActivity(passedDistance, remainingDistance);
+                }
         }
 
         // Store the current state for later

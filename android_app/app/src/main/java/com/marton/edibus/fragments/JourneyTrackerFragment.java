@@ -294,6 +294,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
 
     private void uploadJourney(){
 
+        // Stop the services
+        getActivity().stopService(locationProviderService);
+        getActivity().stopService(locationProcessorService);
+
         final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Uploading...");
@@ -519,13 +523,6 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     public void onEvent(JourneyUploadRequestedEvent journeyUploadRequestedEvent){
 
         this.uploadJourney();
-    }
-
-    public void onEvent(RideFinishedEvent rideFinishedEvent){
-
-        // Stop the services
-        getActivity().stopService(locationProviderService);
-        getActivity().stopService(locationProcessorService);
     }
 
     @Override

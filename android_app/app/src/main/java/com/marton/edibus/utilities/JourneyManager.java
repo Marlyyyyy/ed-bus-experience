@@ -144,8 +144,6 @@ public class JourneyManager {
 
         this.journeyStateEnum = JourneyStateEnum.FINISHED;
         this.finished = true;
-
-        this.eventBus.post(new RideFinishedEvent());
         this.ride.setEndTime(new Date());
     }
 
