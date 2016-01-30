@@ -6,10 +6,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.inject.Inject;
-import com.marton.edibus.activities.AuthenticationActivity;
-import com.marton.edibus.activities.ContentActivity;
-import com.marton.edibus.network.WebClient;
-import com.marton.edibus.utilities.AuthenticationManager;
+import com.marton.edibus.main.activities.AuthenticationActivity;
+import com.marton.edibus.main.activities.ContentActivity;
+import com.marton.edibus.shared.network.WebClient;
+import com.marton.edibus.shared.utilities.AuthenticationManager;
 
 import roboguice.activity.RoboActivity;
 

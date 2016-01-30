@@ -37,7 +37,7 @@
         </activity>
 
         <activity
-            android:name=".activities.AuthenticationActivity"
+            android:name=".main.activities.AuthenticationActivity"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_login"
             android:noHistory="true"
@@ -46,36 +46,36 @@
         </activity>
 
         <activity
-            android:name=".activities.QuestionnaireActivity"
+            android:name=".main.activities.QuestionnaireActivity"
             android:label="@string/title_activity_questionnaire"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".activities.ContentActivity"
+            android:name=".main.activities.ContentActivity"
             android:label="@string/title_activity_content"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name=".activities.JourneyActivity"
+            android:name=".journey.activities.JourneyActivity"
             android:label="@string/title_activity_journey"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".activities.StopSetupActivity"
+            android:name=".journey.activities.StopSetupActivity"
             android:label="@string/title_activity_stop"
             android:screenOrientation="portrait">
         </activity>
 
         <service
-            android:name=".services.LocationProviderService"
+            android:name=".journey.services.LocationProviderService"
             android:exported="false"/>
 
         <service
-            android:name=".services.LocationProcessorService"
+            android:name=".journey.services.LocationProcessorService"
             android:exported="false"/>
 
         <meta-data
