@@ -80,10 +80,6 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_questionnaire);
 
-        // Create The Toolbar and setting it as the Toolbar for the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-
         // Set up alert dialogs with simple lists
         final AlertDialog.Builder genderBuilder = new AlertDialog.Builder(this);
         genderBuilder.setTitle("Gender");
@@ -190,21 +186,5 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
         Questionnaire questionnaire = new Questionnaire(age, this.selectedGender, this.concessionCardSwitch.isChecked(), selectedTravelReason);
 
         this.busClient.uploadNewQuestionnaire(questionnaire, callback);
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
-        final ActionBar actionBar = this.getSupportActionBar();
-
-        if (actionBar != null){
-            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.actionbar_journey, null);
-            actionBar.setCustomView(view, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            TextView activityTitleTextView = (TextView) view.findViewById(R.id.activity_title);
-            activityTitleTextView.setText("Questionnaire");
-        }
     }
 }

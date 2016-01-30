@@ -41,8 +41,8 @@ public class DashboardFragment extends RoboFragment {
     @InjectView(R.id.total_distance)
     private TextView totalDistanceTextView;
 
-    @InjectView(R.id.total_time)
-    private TextView totalTimeTextView;
+    @InjectView(R.id.total_waiting_time)
+    private TextView totalWaitingTime;
 
     @InjectView(R.id.average_speed)
     private TextView averageSpeedTextView;
@@ -100,18 +100,19 @@ public class DashboardFragment extends RoboFragment {
         // Fill in statistics
         int journeys = StatisticsManager.readJourneysFromSharedPreferences();
         double distance = StatisticsManager.readTotalTravellingDistanceFromSharedPreferences();
-        int totalTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences() + StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
+        int waitingTime = StatisticsManager.readTotalWaitingTimeFromSharedPreferences();
+        int travellingTime = StatisticsManager.readTotalTravellingTimeFromSharedPreferences();
 
         double averageSpeed;
-        if (totalTime == 0){
+        if (travellingTime == 0){
             averageSpeed = 0;
         }else{
-            averageSpeed = 1000 * distance / (totalTime);
+            averageSpeed = 1000 * distance / (travellingTime);
         }
 
         this.journeysTextView.setText(String.valueOf(journeys));
         this.totalDistanceTextView.setText(String.valueOf(this.decimalFormat.format(distance)) + " m");
-        this.totalTimeTextView.setText(String.valueOf(this.dateFormat.format(totalTime)) + " minutes");
+        this.totalWaitingTime.setText(String.valueOf(this.dateFormat.format(waitingTime)) + " minutes");
         this.averageSpeedTextView.setText(String.valueOf(this.decimalFormat.format(averageSpeed)) + " km/h");
     }
 }

@@ -47,9 +47,8 @@
 
         <activity
             android:name=".activities.QuestionnaireActivity"
-            android:label="@string/title_activity_content"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/title_activity_questionnaire"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity

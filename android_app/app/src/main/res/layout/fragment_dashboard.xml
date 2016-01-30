@@ -83,7 +83,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
-                    android:text="Total Time"
+                    android:text="Waiting Time"
                     android:textColor="@color/monsoon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
 
                 <TextView
                     android:text="1020:35"
-                    android:id="@+id/total_time"
+                    android:id="@+id/total_waiting_time"
                     android:textColor="@color/ColorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
