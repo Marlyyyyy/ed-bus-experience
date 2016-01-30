@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from busfeedback.models.ride import Ride
+from busfeedback.models.journey import Journey
 from django.db.models import Avg, Count
 from rest_framework.views import APIView
 from rest_framework import permissions
@@ -26,20 +27,21 @@ class RideStatisticsView(APIView):
         created_at_lte_string = request.GET.get("created_at_lte", "")
         created_at_gt_string = request.GET.get("created_at_gt", "")
 
+        # Figure out time boundaries
+        if created_at_lte_string == "":
+            created_at_lte = timezone.now()
+        else:
+            created_at_lte = timezone.make_aware(dateutil.parser.parse(created_at_lte_string), timezone.get_current_timezone())
+
+        if created_at_gt_string == "":
+            created_at_gt = timezone.now()-datetime.timedelta(days=30)
+        else:
+            created_at_gt = timezone.make_aware(dateutil.parser.parse(created_at_gt_string), timezone.get_current_timezone())
+
         # If no time interval was provided, return all rides.
         if created_at_lte_string == "" and created_at_gt_string == "":
             latest_rides = Ride.objects.all()
         else:
-            if created_at_lte_string == "":
-                created_at_lte = timezone.now()
-            else:
-                created_at_lte = timezone.make_aware(dateutil.parser.parse(created_at_lte_string), timezone.get_current_timezone())
-
-            if created_at_gt_string == "":
-                created_at_gt = timezone.now()-datetime.timedelta(days=30)
-            else:
-                created_at_gt = timezone.make_aware(dateutil.parser.parse(created_at_gt_string), timezone.get_current_timezone())
-
             latest_rides = Ride.objects.filter(
                 created_at__lte=created_at_lte,
                 created_at__gt=created_at_gt
@@ -52,7 +54,14 @@ class RideStatisticsView(APIView):
             latest_rides.filter(service_id=service_id)
 
         # Total number of trips and journeys
-        number_of_journeys = latest_rides.prefetch_related('journey').distinct().count()
+        if created_at_lte_string == "" and created_at_gt_string == "":
+            number_of_journeys = Journey.objects.all().count()
+        else:
+            number_of_journeys = Journey.objects.filter(
+                created_at__lte=created_at_lte,
+                created_at__gt=created_at_gt
+            ).count()
+
         number_of_rides = latest_rides.count()
         if number_of_journeys == 0:
             trips_per_journey = 0

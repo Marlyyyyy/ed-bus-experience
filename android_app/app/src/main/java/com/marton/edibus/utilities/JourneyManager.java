@@ -63,7 +63,6 @@ public class JourneyManager {
         this.paused = true;
         this.finished = false;
         this.started = false;
-        this.automaticFlow = false;
         this.rideActionFiredEvent = new RideActionFiredEvent();
     }
 

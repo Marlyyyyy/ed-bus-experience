@@ -28,9 +28,9 @@ public class LocationProcessorService extends RoboService {
     @Inject
     private JourneyManager journeyManager;
     
-    private static final double START_STOP_DISTANCE_THRESHOLD = 50;
+    private static final double START_STOP_DISTANCE_THRESHOLD = 35;
 
-    private static final double END_STOP_DISTANCE_THRESHOLD = 50;
+    private static final double END_STOP_DISTANCE_THRESHOLD = 35;
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -180,7 +180,7 @@ public class LocationProcessorService extends RoboService {
                 }
         }
 
-        // Automatically change the user's activity, if enabled
+        // Automatically change the user's activity, if automation is enabled
         if (this.journeyManager.getAutomaticFlow()){
 
             this.triggerNewActivity(passedDistance, remainingDistance);
