@@ -31,6 +31,7 @@ class AccountViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
+
             # Manually generate a token for the new user
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -109,6 +110,7 @@ class RestrictedView(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
 
     def post(self, request):
+
         # If the user can access this view, that means the user is authenticated
         response_data = json.dumps({"authenticated": True})
         return HttpResponse(response_data, content_type='application/json')

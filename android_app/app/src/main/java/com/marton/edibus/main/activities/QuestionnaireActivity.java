@@ -3,6 +3,7 @@ package com.marton.edibus.main.activities;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -149,6 +150,11 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
                     public void onSuccess(Boolean data) {
 
                         QuestionnaireManager.writeQuestionnaireFilledInToSharedPreferences(true);
+
+                        // Start the Content activity
+                        Intent intent = new Intent(QuestionnaireActivity.this, ContentActivity.class);
+                        startActivity(intent);
+
                         currentActivity.finish();
                     }
                 };

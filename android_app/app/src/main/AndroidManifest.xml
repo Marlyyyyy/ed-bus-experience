@@ -26,10 +26,10 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".MainActivity"
+            android:name=".main.activities.ContentActivity"
             android:label="@string/app_name"
-            android:noHistory="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -49,13 +49,6 @@
             android:name=".main.activities.QuestionnaireActivity"
             android:label="@string/title_activity_questionnaire"
             android:screenOrientation="portrait">
-        </activity>
-
-        <activity
-            android:name=".main.activities.ContentActivity"
-            android:label="@string/title_activity_content"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
@@ -88,9 +81,9 @@
 
         <!-- Database configuration -->
         <meta-data android:name="DATABASE" android:value="edi_bus_mobile_db.db" />
-        <meta-data android:name="VERSION" android:value="5" />
+        <meta-data android:name="VERSION" android:value="6" />
         <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.marton.edibus.models" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.marton.edibus.shared.models" />
     </application>
 
 </manifest>

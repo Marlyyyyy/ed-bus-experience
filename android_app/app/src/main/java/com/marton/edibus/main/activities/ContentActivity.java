@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.google.inject.Inject;
 import com.marton.edibus.App;
-import com.marton.edibus.MainActivity;
 import com.marton.edibus.R;
 import com.marton.edibus.main.fragments.DashboardFragment;
 import com.marton.edibus.main.fragments.DiaryFragment;
@@ -44,11 +43,23 @@ public class ContentActivity extends RoboActionBarActivity {
         // Register as a subscriber
         this.eventBus.register(this);
 
+        // Launch authentication activity depending on if the user is logged in
+        if (!this.authenticationManager.userAuthenticated()) {
+            Intent intent = new Intent(ContentActivity.this, AuthenticationActivity.class);
+            startActivity(intent);
+            this.finish();
+            return;
+        }else{
+            this.authenticationManager.authenticateWebRequests();
+        }
+
         // Display questionnaire if required
         boolean questionnaireFilledIn = QuestionnaireManager.readQuestionnaireFilledInFromSharedPreferences();
         if (!questionnaireFilledIn){
             Intent intent = new Intent(ContentActivity.this, QuestionnaireActivity.class);
             startActivity(intent);
+            this.finish();
+            return;
         }
 
         // Configure sliding pages
@@ -111,19 +122,16 @@ public class ContentActivity extends RoboActionBarActivity {
     @Override
     public void onDestroy(){
 
-        // Register as a subscriber
-        this.eventBus.unregister(this);
-
         super.onDestroy();
     }
 
     public void onEvent(LoginRequiredEvent loginRequiredEvent){
 
-        // Finish this activity, launch MainActivity again
+        // Finish this activity, launch Authentication activity again
         Toast.makeText(App.getAppContext(), "Your old account cannot be used any longer.", Toast.LENGTH_LONG).show();
 
         this.authenticationManager.deAuthenticate();
-        Intent intent = new Intent(ContentActivity.this, MainActivity.class);
+        Intent intent = new Intent(ContentActivity.this, AuthenticationActivity.class);
         this.startActivity(intent);
         this.finish();
     }

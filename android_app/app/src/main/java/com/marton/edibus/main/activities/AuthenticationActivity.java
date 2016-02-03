@@ -99,6 +99,7 @@ public class AuthenticationActivity extends RoboActionBarActivity {
                         StatisticsManager.clearStatistics();
                         Log.deleteAll(Log.class);
 
+                        // Start the Content activity
                         Intent intent = new Intent(AuthenticationActivity.this, ContentActivity.class);
                         startActivity(intent);
 
@@ -136,8 +137,9 @@ public class AuthenticationActivity extends RoboActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable going back to the MainActivity
-        moveTaskToBack(true);
+
+        // Disable going back
+        this.moveTaskToBack(true);
     }
 
     // Generates a unique string suitable for temporary user-names or passwords
