@@ -171,6 +171,11 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
                 if (neverAskAgain){
                     QuestionnaireManager.writeQuestionnaireFilledInToSharedPreferences(true);
                 }
+
+                // Start the Content activity
+                Intent intent = new Intent(QuestionnaireActivity.this, ContentActivity.class);
+                startActivity(intent);
+
                 currentActivity.finish();
             }
         });

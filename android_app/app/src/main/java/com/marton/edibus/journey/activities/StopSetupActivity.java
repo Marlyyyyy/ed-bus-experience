@@ -223,17 +223,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                 // Calculate the distance between the user and the bus stop
                 attachDistancesToStops(stops, userLocation);
 
-                // Create the stop marker and add it to the list of stop-markers
-                List<Marker> stopMarkers = new ArrayList<>();
-                for (int i = 0; i< stops.size(); i++){
-                    Stop stop = stops.get(i);
-                    Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
-                    stopMarkers.add(marker);
-                    stopMarkersHashMap.put(marker, stop);
-                }
-
-                // Change the camera position of the map
-                moveCamera(100, stopMarkers);
+                displayStops(stops);
 
                 progressDialog.dismiss();
             }
@@ -274,47 +264,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     @Override
                     public void onMapClick(LatLng latLng) {
 
-                        if (stopTypeEnum.equals(StopTypeEnum.END)) {
-                            return;
-                        }
-
-                        // Remove previously clicked point marker
-                        if (clickedPointMarker != null) {
-                            clickedPointMarker.remove();
-                        }
-
-                        // Add currently clicked point marker
-                        MarkerOptions markerOptions = new MarkerOptions()
-                                .position(new LatLng(latLng.latitude, latLng.longitude))
-                                .anchor((float) 0.5, (float) 0.5);
-
-                        clickedPointMarker = googleMap.addMarker(markerOptions);
-
-                        // Append new stops to the map
-                        WebCallBack<List<Stop>> stopCallback = new WebCallBack<List<Stop>>() {
-
-                            @Override
-                            public void onSuccess(List<Stop> stops) {
-
-                                // Calculate the distance between the user and the bus stop
-                                attachDistancesToStops(stops, location);
-
-                                // Create the stop marker and add it to the list of stop-markers
-                                for (int i = 0; i < stops.size(); i++) {
-                                    Stop stop = stops.get(i);
-                                    Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
-
-                                    // Make sure each stop is present only once within the hash-map
-                                    addToHashMapIfValueNotExists(stopMarkersHashMap, marker, stop);
-                                }
-
-                                // Change the camera position of the map
-                                moveCamera(100, new ArrayList<>(stopMarkersHashMap.keySet()));
-                            }
-                        };
-
-
-                        busWebService.getStopsWithinRadius(latLng.latitude, latLng.longitude, CLOSEST_STOPS_RADIUS, stopCallback);
+                        clickOnMap(latLng, userLocation);
                     }
                 });
 
@@ -323,16 +273,7 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        if (marker != clickedPointMarker) {
-                            if(stopMarkersHashMap.containsKey(marker)){
-
-                                // Launch custom dialog fragment
-                                journeyManager.setReviewStop(stopMarkersHashMap.get(marker));
-                                stopDialog.show(fragmentManager, "Stop Dialog Fragment");
-                            }
-                        }
-
-                        return true;
+                        return clickOnMarker(marker);
                     }
                 });
 
@@ -345,22 +286,11 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
                         // Calculate the distance between the user and the bus stop
                         attachDistancesToStops(stops, location);
 
-                        // Create the stop marker and add it to the list of stop-markers
-                        List<Marker> stopMarkers = new ArrayList<>();
-                        for (int i = 0; i< stops.size(); i++){
-                            Stop stop = stops.get(i);
-                            Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
-                            stopMarkers.add(marker);
-
-                            // Make sure each stop is present only once within the hash-map
-                            addToHashMapIfValueNotExists(stopMarkersHashMap, marker, stop);
-                        }
-
-                        // Change the camera position of the map
-                        moveCamera(100, stopMarkers);
+                        displayStops(stops);
                     }
                 };
 
+                // Request the list of stops from the server
                 switch (stopTypeEnum){
                     case START:
                         busWebService.getStopsWithinRadius(userLatitude, userLongitude, CLOSEST_STOPS_RADIUS, stopCallback);
@@ -379,6 +309,73 @@ public class StopSetupActivity extends RoboActionBarActivity implements OnMapRea
 
         this.coordinateProvider.disconnect();
         super.onDestroy();
+    }
+
+    private boolean clickOnMarker(Marker marker){
+
+        if (marker != this.clickedPointMarker) {
+            if(this.stopMarkersHashMap.containsKey(marker)){
+
+                // Launch custom dialog fragment
+                this.journeyManager.setReviewStop(this.stopMarkersHashMap.get(marker));
+                this.stopDialog.show(this.fragmentManager, "Stop Dialog Fragment");
+            }
+        }
+
+        return true;
+    }
+
+    private void clickOnMap(LatLng latLng, final Location userLocation){
+
+        // Disable clicking on the map at end-stop selection
+        if (this.stopTypeEnum.equals(StopTypeEnum.END)) {
+            return;
+        }
+
+        // Remove previously clicked point marker
+        if (this.clickedPointMarker != null) {
+            this.clickedPointMarker.remove();
+        }
+
+        // Add currently clicked point marker
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(new LatLng(latLng.latitude, latLng.longitude))
+                .anchor((float) 0.5, (float) 0.5);
+
+        this.clickedPointMarker = this.googleMap.addMarker(markerOptions);
+
+        // Append new stops to the map
+        WebCallBack<List<Stop>> stopCallback = new WebCallBack<List<Stop>>() {
+
+            @Override
+            public void onSuccess(List<Stop> stops) {
+
+                // Calculate the distance between the user and the bus stop
+                attachDistancesToStops(stops, userLocation);
+
+                displayStops(stops);
+            }
+        };
+
+
+        this.busWebService.getStopsWithinRadius(latLng.latitude, latLng.longitude, CLOSEST_STOPS_RADIUS, stopCallback);
+    }
+
+    private void displayStops(List<Stop> stops){
+
+        // Create the stop marker and add it to the list of stop-markers
+        List<Marker> stopMarkers = new ArrayList<>();
+        for (int i = 0; i< stops.size(); i++){
+            Stop stop = stops.get(i);
+            Marker marker = createAndAddStopMarker(stop, R.drawable.edi_bus_marker);
+            stopMarkers.add(marker);
+
+            // Make sure each stop is present only once within the hash-map
+            addToHashMapIfValueNotExists(this.stopMarkersHashMap, marker, stop);
+        }
+
+        // Change the camera position of the map
+        moveCamera(100, stopMarkers);
     }
 
     // Adjusts the camera position to include all visibleMarkers with the specified padding around the edges of the map
