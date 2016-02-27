@@ -5,6 +5,7 @@ import requests
 from busfeedback.utilities.bus_updater import delete_services_stops
 from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.journey import Journey
+from busfeedback.models.ride import Ride
 from busfeedback.models.stop import Stop
 from busfeedback.models.questionnaire import Questionnaire
 from rest_framework.views import APIView
@@ -13,6 +14,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from busfeedback.serializers.service_serializer import ServiceSerializer
 from busfeedback.serializers.stop_serializer import StopSerializer
 from busfeedback.serializers.journey_serializer import JourneySerializer
+from busfeedback.serializers.ride_serializer import RideSerializer
 from rest_framework.renderers import JSONRenderer
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -201,6 +203,15 @@ class RideView(APIView):
         response_data = json.dumps({"journey_id": journey.id})
 
         return HttpResponse(response_data, content_type='application/json')
+
+    def get(self, request):
+
+        rides = Ride.objects.all()
+        ride_serializer = RideSerializer(rides, many=True)
+
+        json_rides = JSONRenderer().render({"rides": ride_serializer.data})
+
+        return HttpResponse(json_rides, content_type='application/json')
 
 
 class QuestionnaireView(APIView):

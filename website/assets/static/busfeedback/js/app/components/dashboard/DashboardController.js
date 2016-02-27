@@ -6,9 +6,9 @@
         .module('busfeedback.dashboard.controllers')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', 'Authentication', 'Snackbar', 'Dashboard'];
+    DashboardController.$inject = ['$scope', 'Authentication', 'Snackbar', 'Dashboard', 'uiGmapGoogleMapApi', 'uiGmapIsReady'];
 
-    function DashboardController($scope, Authentication, Snackbar, Dashboard) {
+    function DashboardController($scope, Authentication, Snackbar, Dashboard, uiGmapGoogleMapApi, uiGmapIsReady) {
 
         var vm = this;
 
@@ -33,6 +33,45 @@
             Dashboard.getSeatYesAndNoStatistics().then(seatStatisticsSuccessFn, seatStatisticsErrorFn);
             Dashboard.getGreetYesAndNoStatistics().then(greetStatisticsSuccessFn, greetStatisticsErrorFn);
             Dashboard.getAverageWaitDurationStatistics().then(averageWaitDurationStatisticsSuccessFn, averageWaitDurationStatisticsErrorFn);
+            Dashboard.getAllRides().then(getAllRidesSuccessFn, getAllRidesErrorFn);
+
+            // Display the map
+            var center = {
+                latitude: 55.9531,
+                longitude: -3.1889
+            };
+
+            // Fix for grey map
+            vm.control = {};
+
+            uiGmapIsReady.promise().then(function (maps) {
+                vm.control.refresh();
+            });
+
+            uiGmapGoogleMapApi.then(function(maps) {
+            });
+
+            vm.map = {
+                center: center,
+                zoom: 11,
+                markers: [],
+                events: {
+                    click: function (map, eventName, originalEventArgs) {
+                        var e = originalEventArgs[0];
+                        var lat = e.latLng.lat(), lon = e.latLng.lng();
+                        var marker = {
+                            id: Date.now(),
+                            coords: {
+                                latitude: lat,
+                                longitude: lon
+                            }
+                        };
+                        vm.map.markers.push(marker);
+                        console.log(vm.map.markers);
+                        vm.$apply();
+                    }
+                }
+            };
 
             function seatStatisticsSuccessFn(data, status, headers, config) {
 
@@ -104,8 +143,6 @@
 
             function averageWaitDurationStatisticsSuccessFn(data, status, headers, config) {
 
-                console.log(data.data);
-
                 var averageData = [];
                 vm.averageWaitDurationLabels = [];
                 vm.averageWaitDurationData = [];
@@ -122,6 +159,31 @@
             }
 
             function averageWaitDurationStatisticsErrorFn(data, status, headers, config) {
+                Snackbar.error(data.error);
+            }
+
+            function getAllRidesSuccessFn(data, status, headers, config) {
+
+                var rides = data.data.rides;
+                var marker;
+                var ride;
+
+                for (var i = 0; i < rides.length; i++) {
+                    ride = rides[i];
+
+                    marker = {
+                        id: "marker" + i,
+                        coords: {
+                            latitude: ride["start_stop"]["latitude"],
+                            longitude: ride["start_stop"]["longitude"]
+                        }
+                    };
+
+                    vm.map.markers.push(marker);
+                }
+            }
+
+            function getAllRidesErrorFn(data, status, headers, config) {
                 Snackbar.error(data.error);
             }
         }

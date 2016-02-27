@@ -4,7 +4,6 @@ from busfeedback.models.service import Service, ServiceStop
 from busfeedback.models.stop import Stop
 from busfeedback.models.journey import Journey
 from busfeedback.models.questionnaire import Questionnaire
-from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import json
 from django.core.serializers.json import DjangoJSONEncoder

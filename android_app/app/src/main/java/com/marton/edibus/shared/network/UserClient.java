@@ -4,8 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.marton.edibus.shared.utilities.WebCallBack;
+import com.marton.edibus.App;
+import com.marton.edibus.shared.utilities.SharedPreferencesManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -19,7 +21,7 @@ public class UserClient {
     @Inject
     private WebClient webClient;
 
-    public void get_token(String username, String password, final WebCallBack<JSONObject> callback) {
+    public void get_token(String username, String password, final WebCallBack<String> callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("username", username);
@@ -31,12 +33,19 @@ public class UserClient {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                callback.onSuccess(response);
+                String token = "";
+                try {
+                    token = response.getString("token");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                callback.onSuccess(token);
             }
 
             @Override
+            // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
                 callback.onFailure(statusCode, errorResponse);
             }
@@ -59,8 +68,8 @@ public class UserClient {
             }
 
             @Override
+            // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
                 callback.onFailure(statusCode, errorResponse);
             }

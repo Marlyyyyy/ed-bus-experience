@@ -38,8 +38,6 @@
 
             function statisticsSuccessful(data, status, headers, config){
 
-                console.log(data.data);
-
                 // Seat Pie
                 vm.seatPieLabels = ["Yes", "No"];
                 var seatData = [];

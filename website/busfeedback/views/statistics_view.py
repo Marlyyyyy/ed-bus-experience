@@ -13,6 +13,8 @@ from itertools import groupby
 import dateutil.parser
 
 
+# Returns journey-statistics in the specified time interval, between the specified stops, with the specified service.
+# Calculates overall statistics if no arguments are are provided.
 class RideStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -114,6 +116,7 @@ class RideStatisticsView(APIView):
         return HttpResponse(return_json, content_type='application/json')
 
 
+# Returns the distribution of ride-counts in the past 30 days
 class RideCountTimeLineStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -151,6 +154,7 @@ class RideCountTimeLineStatisticsView(APIView):
         return HttpResponse(return_json, content_type='application/json')
 
 
+# Returns the distribution of boolean values for each day in the past 30 days
 class YesAndNoTimeLineStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -207,6 +211,7 @@ class YesAndNoTimeLineStatisticsView(APIView):
         return HttpResponse(return_json, content_type='application/json')
 
 
+# Returns the distribution of averages of the provided parameter in the past 30 days
 class AverageTimeLineStatisticsView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -240,12 +245,12 @@ class AverageTimeLineStatisticsView(APIView):
             if day not in existing_days:
                 annotated_rides.append({'day': day, 'available': 0, 'wait_duration':0})
 
-        sorted_rides_per_date = sorted(annotated_rides, key=itemgetter('day'))
+        sorted_entities_per_date = sorted(annotated_rides, key=itemgetter('day'))
 
-        sorted_rides_per_day = []
+        sorted_entities_per_day = []
 
-        # Group by the dates and the seats
-        for key, values in groupby(sorted_rides_per_date, key=lambda row: row['day']):
+        # Group by
+        for key, values in groupby(sorted_entities_per_date, key=lambda row: row['day']):
             counter = 0
             sum_of_value = 0
             for value in values:
@@ -257,8 +262,8 @@ class AverageTimeLineStatisticsView(APIView):
             else:
                 average = sum_of_value/counter
 
-            sorted_rides_per_day.append({'day': key, 'average': average})
+            sorted_entities_per_day.append({'day': key, 'average': average})
 
-        return_json = JSONRenderer().render(sorted_rides_per_day)
+        return_json = JSONRenderer().render(sorted_entities_per_day)
 
         return HttpResponse(return_json, content_type='application/json')

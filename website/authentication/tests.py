@@ -40,6 +40,16 @@ class AuthenticationViewTestCase(TestCase):
 
         self.assertTrue(response_content["authenticated"], "The user should be able to access this endpoint.")
 
+    def test_authorised_access_via_login(self):
+        response = self.client.post("/auth/api/login/", {"username": "Heffalumps", "password": "Woozles"})
+        self.assertEqual(response.status_code, 200, "The token should be successfully returned.")
 
+        response_content = json.loads(response.content.decode('utf-8'))
+        token = response_content["token"]
+
+        response = self.client.post("/auth/api/authenticated/", {}, HTTP_AUTHORIZATION='JWT {}'.format(token))
+        response_content = json.loads(response.content.decode('utf-8'))
+
+        self.assertTrue(response_content["authenticated"], "The user should be able to access this endpoint.")
 
 

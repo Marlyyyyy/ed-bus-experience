@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.shared.utilities.WebCallBack;
+import com.marton.edibus.shared.network.WebCallBack;
 import com.marton.edibus.main.models.Questionnaire;
 import com.marton.edibus.shared.network.BusClient;
 import com.marton.edibus.main.utilities.QuestionnaireManager;

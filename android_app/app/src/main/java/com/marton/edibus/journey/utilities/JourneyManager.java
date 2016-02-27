@@ -3,7 +3,7 @@ package com.marton.edibus.journey.utilities;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.App;
-import com.marton.edibus.shared.utilities.WebCallBack;
+import com.marton.edibus.shared.network.WebCallBack;
 import com.marton.edibus.journey.enums.RideStateEnum;
 import com.marton.edibus.journey.enums.JourneyStateEnum;
 import com.marton.edibus.journey.enums.RideActionEnum;

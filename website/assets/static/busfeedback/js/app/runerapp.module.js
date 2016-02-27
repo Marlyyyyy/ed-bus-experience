@@ -13,7 +13,8 @@ angular
             'runnerapp.home',
             'runnerapp.snackbar',
             'runnerapp.profiles',
-            'busfeedback.dashboard'
+            'busfeedback.dashboard',
+            'uiGmapgoogle-maps'
         ]);
 
     angular
@@ -25,11 +26,18 @@ angular
     angular
         .module('runnerapp')
         .factory('httpRequestInterceptor', httpRequestInterceptor)
-        .config(function($httpProvider, $mdThemingProvider) {
+        .config(function($httpProvider, $mdThemingProvider, uiGmapGoogleMapApiProvider) {
             $httpProvider.interceptors.push('httpRequestInterceptor');
+
             $mdThemingProvider.theme('default')
                 .primaryPalette('blue')
                 .accentPalette('blue');
+
+            uiGmapGoogleMapApiProvider.configure({
+                //    key: 'your api key',
+                v: '3.20', //defaults to latest 3.X anyhow
+                libraries: 'weather,geometry,visualization'
+            });
         })
         .run(run);
 

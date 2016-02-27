@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.marton.edibus.App;
 import com.marton.edibus.shared.network.UserClient;
+import com.marton.edibus.shared.network.WebCallBack;
 import com.marton.edibus.shared.network.WebClient;
 
 import org.json.JSONException;
@@ -31,18 +32,14 @@ public class AuthenticationManager {
 
     public void authenticate(String username, String password, final WebCallBack callback){
 
-        WebCallBack<JSONObject> authenticationCallback = new WebCallBack<JSONObject>() {
+        WebCallBack<String> authenticationCallback = new WebCallBack<String>() {
             @Override
-            public void onSuccess(JSONObject data) {
-                try {
-                    String token = data.getString("token");
-                    SharedPreferencesManager.writeString(App.getAppContext(), TOKEN_KEY, token);
-                    authenticateWebRequests();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onSuccess(String token) {
 
-                callback.onSuccess(data);
+                SharedPreferencesManager.writeString(App.getAppContext(), TOKEN_KEY, token);
+                authenticateWebRequests();
+
+                callback.onSuccess(token);
             }
         };
         this.userWebservice.get_token(username, password, authenticationCallback);

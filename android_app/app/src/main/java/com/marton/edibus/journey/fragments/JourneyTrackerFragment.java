@@ -39,7 +39,7 @@ import com.marton.edibus.journey.utilities.JourneyManager;
 import com.marton.edibus.shared.models.Stop;
 import com.marton.edibus.shared.models.Ride;
 import com.marton.edibus.shared.utilities.SnackbarManager;
-import com.marton.edibus.shared.utilities.WebCallBack;
+import com.marton.edibus.shared.network.WebCallBack;
 
 import org.json.JSONObject;
 

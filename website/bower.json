@@ -24,7 +24,8 @@
     "underscore": "~1.7.0",
     "angular-material": null,
     "angular-chart.js":null,
-    "Chart.js":null
+    "Chart.js":null,
+    "angular-google-maps":null
   },
   "homepage": "https://github.com/Marlyyyyy/edi-bus-feedback",
   "authors": [

@@ -173,3 +173,9 @@ h2{
     height: 70%;
     background-color: #e7e7e7;
 }
+
+/*Dashboard*/
+
+.angular-google-map-container {
+    height: 300px;
+}

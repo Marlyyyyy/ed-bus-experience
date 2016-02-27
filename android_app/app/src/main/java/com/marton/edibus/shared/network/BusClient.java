@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.marton.edibus.shared.utilities.WebCallBack;
 import com.marton.edibus.main.models.Questionnaire;
 import com.marton.edibus.shared.models.Service;
 import com.marton.edibus.shared.models.Stop;

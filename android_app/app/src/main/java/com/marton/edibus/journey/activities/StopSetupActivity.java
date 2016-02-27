@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.inject.Inject;
 import com.marton.edibus.R;
-import com.marton.edibus.shared.utilities.WebCallBack;
+import com.marton.edibus.shared.network.WebCallBack;
 import com.marton.edibus.journey.adapters.ServiceAdapter;
 import com.marton.edibus.journey.enums.StopTypeEnum;
 import com.marton.edibus.journey.fragments.StopDialogFragment;

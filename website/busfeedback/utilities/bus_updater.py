@@ -107,7 +107,7 @@ def insert_or_update(list_of_services, list_of_stops):
                 service.save()
 
         # Update existing
-        # Service.objects.bulk_update(existing_services)
+        # Service.objects.bulk_update(existing_services) # TODO: use with batch_size=900 parameter to make this usable with SQLite
 
         # Insert new
         create_and_insert_new_stops_from_dictionary(new_stops.values())

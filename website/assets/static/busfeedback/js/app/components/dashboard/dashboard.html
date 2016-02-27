@@ -1,5 +1,9 @@
 <div ng-cloak>
     <md-content>
+            <ui-gmap-google-map center="vm.map.center"  control='vm.control' zoom="vm.map.zoom" draggable="true" events="vm.map.events" ng-cloak>
+                <ui-gmap-markers models='vm.map.markers' coords="'coords'"></ui-gmap-markers>
+            </ui-gmap-google-map>
+
         <md-tabs md-dynamic-height md-border-bottom>
             <md-tab label="Seat">
                 <md-content class="md-padding">
@@ -37,7 +41,7 @@
 
                 </md-content>
             </md-tab>
-            <md-tab label="three">
+            <md-tab label="Waiting">
                 <md-content class="md-padding">
 
                     <h1>Wait Duration</h1>
