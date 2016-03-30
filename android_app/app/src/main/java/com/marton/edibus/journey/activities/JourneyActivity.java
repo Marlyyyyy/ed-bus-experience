@@ -59,6 +59,7 @@ public class JourneyActivity extends RoboActionBarActivity {
 
         // Assign the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+
         // To make the Tabs Fixed set this true. This makes the tabs Space Evenly in Available width
         tabs.setDistributeEvenly(true);
 

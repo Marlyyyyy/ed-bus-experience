@@ -73,18 +73,11 @@ class BusViewTestCase(TestCase):
         current_time = datetime.now()
         start_time = current_time - timedelta(minutes=10)
         end_time = current_time
+
         ride = {
-            'start_time': start_time,
-            'end_time': end_time,
-            'start_stop_id': start_stop_id,
-            'end_stop_id': end_stop_id,
-            'service_id': service_id,
-            'wait_duration': 60000,
-            'travel_duration': 800000,
-            'distance':1000.2,
-            'greet':True,
-            'seat': True,
-            'rating': 4.5
+            'start_time': start_time, 'end_time': end_time, 'start_stop_id': start_stop_id, 'end_stop_id': end_stop_id,
+            'service_id': service_id, 'wait_duration': 60000, 'travel_duration': 800000, 'distance': 1000.2,
+            'greet': True, 'seat': True, 'rating': 4.5
         }
         ride_json = json.dumps(ride, cls=DjangoJSONEncoder)
 

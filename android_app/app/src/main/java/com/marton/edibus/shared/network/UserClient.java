@@ -21,7 +21,7 @@ public class UserClient {
     @Inject
     private WebClient webClient;
 
-    public void get_token(String username, String password, final WebCallBack<String> callback) {
+    public void getToken(String username, String password, final WebCallBack<String> callback) {
 
         RequestParams parameters = new RequestParams();
         parameters.put("username", username);

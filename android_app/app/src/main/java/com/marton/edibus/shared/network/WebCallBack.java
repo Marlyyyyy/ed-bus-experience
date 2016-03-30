@@ -14,28 +14,21 @@ public abstract class WebCallBack<T> {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    // Executed when the web-service returns 200 OK response
     public abstract void onSuccess(T data);
 
+    // Executed when the web-service does not return 200 OK response
     public void onFailure(int statusCode, JSONObject response){
 
         Context context = App.getAppContext();
 
-        String message;
-        if (response == null){
-            message = "No response was returned";
-        }else{
-            message = response.toString();
-        }
-
-        Toast toast = Toast.makeText(context, String.format("Error: %d - %s", statusCode, message), Toast.LENGTH_LONG);
+        String message = response == null ? "No response was returned" : response.toString();
+        Toast toast = Toast.makeText(context, String.format("Error: %d - %s",
+                        statusCode, message), Toast.LENGTH_LONG);
         toast.show();
 
-        switch(statusCode){
-            case 401:
-                this.eventBus.post(new LoginRequiredEvent());
-                break;
-            default:
-                break;
+        if (statusCode == 401 || statusCode == 403) {
+            this.eventBus.post(new LoginRequiredEvent());
         }
     }
 }

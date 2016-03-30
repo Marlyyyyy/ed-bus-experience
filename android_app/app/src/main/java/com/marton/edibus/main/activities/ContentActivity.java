@@ -18,6 +18,7 @@ import com.marton.edibus.main.fragments.DiaryFragment;
 import com.marton.edibus.main.utilities.QuestionnaireManager;
 import com.marton.edibus.shared.adapters.ViewPagerAdapter;
 import com.marton.edibus.shared.events.LoginRequiredEvent;
+import com.marton.edibus.shared.network.WebClient;
 import com.marton.edibus.shared.utilities.AuthenticationManager;
 import com.marton.edibus.shared.widgets.SlidingTabLayout;
 
@@ -30,6 +31,9 @@ public class ContentActivity extends RoboActionBarActivity {
 
     @Inject
     private AuthenticationManager authenticationManager;
+
+    @Inject
+    private WebClient webClient;
 
     private CharSequence titles[] = {"Dashboard", "Diary"};
 
@@ -50,7 +54,7 @@ public class ContentActivity extends RoboActionBarActivity {
             this.finish();
             return;
         }else{
-            this.authenticationManager.authenticateWebRequests();
+            this.webClient.setAuthenticationToken(this.authenticationManager.getTokenFromCache());
         }
 
         // Display questionnaire if required
@@ -131,6 +135,7 @@ public class ContentActivity extends RoboActionBarActivity {
         Toast.makeText(App.getAppContext(), "Your old account cannot be used any longer.", Toast.LENGTH_LONG).show();
 
         this.authenticationManager.deAuthenticate();
+        this.webClient.unsetAuthenticationToken();
         Intent intent = new Intent(ContentActivity.this, AuthenticationActivity.class);
         this.startActivity(intent);
         this.finish();

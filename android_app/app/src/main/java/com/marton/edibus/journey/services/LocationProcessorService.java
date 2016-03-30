@@ -11,7 +11,7 @@ import com.marton.edibus.journey.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.journey.events.LocationUpdatedEvent;
 import com.marton.edibus.journey.events.TimerUpdatedEvent;
 import com.marton.edibus.shared.models.Stop;
-import com.marton.edibus.journey.events.TrackerStateUpdatedEvent;
+import com.marton.edibus.journey.events.TrackingUpdatedEvent;
 import com.marton.edibus.shared.models.Ride;
 import com.marton.edibus.journey.utilities.GpsCalculator;
 import com.marton.edibus.journey.utilities.JourneyManager;
@@ -34,9 +34,9 @@ public class LocationProcessorService extends RoboService {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    private TrackerStateUpdatedEvent previousTrackerStateUpdatedEvent;
+    private TrackingUpdatedEvent previousTrackingUpdatedEvent;
 
-    private TrackerStateUpdatedEvent trackerStateUpdatedEvent;
+    private TrackingUpdatedEvent trackingUpdatedEvent;
 
     private long latestUpdateTime;
 
@@ -50,8 +50,8 @@ public class LocationProcessorService extends RoboService {
 
     public LocationProcessorService() {
         this.eventBus.register(this);
-        this.trackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
-        this.previousTrackerStateUpdatedEvent = new TrackerStateUpdatedEvent();
+        this.trackingUpdatedEvent = new TrackingUpdatedEvent();
+        this.previousTrackingUpdatedEvent = new TrackingUpdatedEvent();
         this.timerUpdatedEvent = new TimerUpdatedEvent();
     }
 
@@ -118,8 +118,8 @@ public class LocationProcessorService extends RoboService {
 
         long currentUpdateTime = System.currentTimeMillis();
 
-        this.trackerStateUpdatedEvent.setLatitude(latitude);
-        this.trackerStateUpdatedEvent.setLongitude(longitude);
+        this.trackingUpdatedEvent.setLatitude(latitude);
+        this.trackingUpdatedEvent.setLongitude(longitude);
 
         // Calculate the remaining distance
         Stop endStop = this.journeyManager.getRide().getEndStop();
@@ -135,9 +135,9 @@ public class LocationProcessorService extends RoboService {
 
         switch (this.journeyManager.getJourneyStateEnum()){
             case STARTED:
-                this.trackerStateUpdatedEvent.setDistanceFromGoal(remainingDistance);
-                this.trackerStateUpdatedEvent.setWaitingTime(this.waitingSeconds * 1000);
-                this.trackerStateUpdatedEvent.setTravellingTime(this.travellingSeconds * 1000);
+                this.trackingUpdatedEvent.setDistanceFromGoal(remainingDistance);
+                this.trackingUpdatedEvent.setWaitingTime(this.waitingSeconds * 1000);
+                this.trackingUpdatedEvent.setTravellingTime(this.travellingSeconds * 1000);
 
                 // Update the waiting times on the ride
                 Ride ride = this.journeyManager.getRide();
@@ -150,14 +150,14 @@ public class LocationProcessorService extends RoboService {
                     // Calculate travelled distance in metres
                     double pastDistanceDelta;
                     double pastDistance;
-                    double previousDistanceFromStart = this.trackerStateUpdatedEvent.getDistanceFromStart();
+                    double previousDistanceFromStart = this.trackingUpdatedEvent.getDistanceFromStart();
                     pastDistanceDelta = GpsCalculator.getDistanceBetweenPoints(
-                            this.trackerStateUpdatedEvent.getLatitude(),
-                            this.trackerStateUpdatedEvent.getLongitude(),
-                            this.previousTrackerStateUpdatedEvent.getLatitude(),
-                            this.previousTrackerStateUpdatedEvent.getLongitude());
+                            this.trackingUpdatedEvent.getLatitude(),
+                            this.trackingUpdatedEvent.getLongitude(),
+                            this.previousTrackingUpdatedEvent.getLatitude(),
+                            this.previousTrackingUpdatedEvent.getLongitude());
                     pastDistance = previousDistanceFromStart + pastDistanceDelta;
-                    this.trackerStateUpdatedEvent.setDistanceFromStart(pastDistance);
+                    this.trackingUpdatedEvent.setDistanceFromStart(pastDistance);
 
                     ride.setDistance(pastDistance);
 
@@ -165,18 +165,18 @@ public class LocationProcessorService extends RoboService {
                     if (this.latestUpdateTime != 0.0 && pastDistanceDelta != 0.0){
                         long timeDelta = (currentUpdateTime - this.latestUpdateTime)/1000;
                         double speed = pastDistanceDelta/timeDelta;
-                        this.trackerStateUpdatedEvent.setCurrentSpeed(speed);
+                        this.trackingUpdatedEvent.setCurrentSpeed(speed);
                     }
 
                     // Calculate the maximum speed in metre per second
-                    double currentSpeed = this.trackerStateUpdatedEvent.getCurrentSpeed();
-                    if (currentSpeed > this.trackerStateUpdatedEvent.getMaximumSpeed()){
-                        this.trackerStateUpdatedEvent.setMaximumSpeed(currentSpeed);
+                    double currentSpeed = this.trackingUpdatedEvent.getCurrentSpeed();
+                    if (currentSpeed > this.trackingUpdatedEvent.getMaximumSpeed()){
+                        this.trackingUpdatedEvent.setMaximumSpeed(currentSpeed);
                     }
 
                     // Calculate the average speed in metre per second
-                    double averageSpeed = this.trackerStateUpdatedEvent.getDistanceFromStart()/(this.trackerStateUpdatedEvent.getTravellingTime()/1000);
-                    this.trackerStateUpdatedEvent.setAverageSpeed(averageSpeed);
+                    double averageSpeed = this.trackingUpdatedEvent.getDistanceFromStart()/(this.trackingUpdatedEvent.getTravellingTime()/1000);
+                    this.trackingUpdatedEvent.setAverageSpeed(averageSpeed);
                 }
 
                 // Automatically change the user's activity, if automation is enabled
@@ -188,12 +188,12 @@ public class LocationProcessorService extends RoboService {
 
         // Store the current state for later
         if (!this.journeyManager.getRideStateEnum().equals(RideStateEnum.PREPARING)){
-            this.previousTrackerStateUpdatedEvent.copyValuesFrom(this.trackerStateUpdatedEvent);
+            this.previousTrackingUpdatedEvent.copyValuesFrom(this.trackingUpdatedEvent);
             this.latestUpdateTime = currentUpdateTime;
         }
 
         // Fire the processed tracker information event
-        this.eventBus.post(this.trackerStateUpdatedEvent);
+        this.eventBus.post(this.trackingUpdatedEvent);
     }
 
     private void triggerNewActivity(double passedDistance, double remainingDistance){

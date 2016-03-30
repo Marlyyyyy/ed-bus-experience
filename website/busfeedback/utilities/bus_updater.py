@@ -84,7 +84,7 @@ def insert_or_update(list_of_services, list_of_stops):
 
         # Update existing stops
         for stop in existing_stops:
-            stop.services.clear()
+            # stop.services.clear()
             existing_stop = new_stops.pop(stop.stop_id, None)
 
             if existing_stop:
@@ -93,10 +93,10 @@ def insert_or_update(list_of_services, list_of_stops):
                 stop.latitude = existing_stop["latitude"]
                 stop.longitude = existing_stop["longitude"]
                 stop.orientation = existing_stop["orientation"]
-                stop.save()
+                # stop.save()
 
         # Update existing
-        # Stop.objects.bulk_update(existing_stops)
+        Stop.objects.bulk_update(existing_stops, batch_size=50)
 
         for service in existing_services:
             existing_service = new_services.pop(service.name, None)
@@ -104,10 +104,10 @@ def insert_or_update(list_of_services, list_of_stops):
                 service.name = existing_service["name"]
                 service.type = existing_service["service_type"]
                 service.description = existing_service["description"]
-                service.save()
+                # service.save()
 
         # Update existing
-        # Service.objects.bulk_update(existing_services) # TODO: use with batch_size=900 parameter to make this usable with SQLite
+        Service.objects.bulk_update(existing_services, batch_size=50) # TODO: use with batch_size=900 parameter to make this usable with SQLite
 
         # Insert new
         create_and_insert_new_stops_from_dictionary(new_stops.values())
@@ -149,6 +149,7 @@ def insert_or_update(list_of_services, list_of_stops):
                 break
 
     # Add stops to services
+    new_service_stops = []
     for service in saved_services:
         direction_stop_id_tuples = ordered_stops_per_service_id[service.name]
         for direction_stop_id_tuple in direction_stop_id_tuples:
@@ -160,10 +161,13 @@ def insert_or_update(list_of_services, list_of_stops):
 
                 # Create the association
                 try:
-                    ServiceStop.objects.create(service=service, stop=stop, direction=int(direction), order=order)
+                    new_service_stops.append(ServiceStop(service=service, stop=stop, direction=int(direction), order=order))
                 except IntegrityError:
                     break
                 order += 1
+
+    ServiceStop.objects.all().delete()
+    ServiceStop.objects.bulk_create(new_service_stops, batch_size=50)
 
 
 # Gets the last updated time of services, and the list of service objects
@@ -195,7 +199,7 @@ def create_and_insert_new_services_from_dictionary(services):
     for service in services:
         new_services.append(Service(name=service["name"], type=service["service_type"], description=service["description"]))
 
-    Service.objects.bulk_create(new_services)
+    Service.objects.bulk_create(new_services, batch_size=50)
 
 
 # Creates a list of stop objects to be inserted into the database
@@ -209,4 +213,4 @@ def create_and_insert_new_stops_from_dictionary(stops):
                               longitude=stop["longitude"],
                               orientation=stop["orientation"]))
 
-    Stop.objects.bulk_create(new_stops)
+    Stop.objects.bulk_create(new_stops, batch_size=50)

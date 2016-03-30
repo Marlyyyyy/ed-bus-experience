@@ -11,7 +11,8 @@
     angular
         .module('busfeedback.dashboard.controllers', [
             'ngMaterial',
-            'chart.js']);
+            'chart.js',
+            'heatmap']);
 
     angular
         .module('busfeedback.dashboard.services', []);

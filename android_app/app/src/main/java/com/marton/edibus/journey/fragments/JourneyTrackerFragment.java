@@ -31,7 +31,7 @@ import com.marton.edibus.journey.enums.JourneyStateEnum;
 import com.marton.edibus.journey.enums.RideActionEnum;
 import com.marton.edibus.journey.events.JourneyUploadRequestedEvent;
 import com.marton.edibus.journey.events.TimerUpdatedEvent;
-import com.marton.edibus.journey.events.TrackerStateUpdatedEvent;
+import com.marton.edibus.journey.events.TrackingUpdatedEvent;
 import com.marton.edibus.journey.events.RideActionFiredEvent;
 import com.marton.edibus.journey.services.LocationProcessorService;
 import com.marton.edibus.journey.services.LocationProviderService;
@@ -330,13 +330,13 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
     }
 
     // Sets all tracking related text-fields
-    private void refreshDataInterface(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
+    private void refreshDataInterface(TrackingUpdatedEvent trackingUpdatedEvent){
 
         this.currentActivity.setText(String.valueOf(this.journeyManager.getRideStateEnum()));
-        this.remainingDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromGoal()) + "m");
-        this.travelledDistanceTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getDistanceFromStart()) + "m");
-        this.averageSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
-        this.maximumSpeedTextView.setText(this.decimalFormat.format(trackerStateUpdatedEvent.getMaximumSpeed() * 3.6) + "km/h");
+        this.remainingDistanceTextView.setText(this.decimalFormat.format(trackingUpdatedEvent.getDistanceFromGoal()) + "m");
+        this.travelledDistanceTextView.setText(this.decimalFormat.format(trackingUpdatedEvent.getDistanceFromStart()) + "m");
+        this.averageSpeedTextView.setText(this.decimalFormat.format(trackingUpdatedEvent.getAverageSpeed() * 3.6) + "km/h");
+        this.maximumSpeedTextView.setText(this.decimalFormat.format(trackingUpdatedEvent.getMaximumSpeed() * 3.6) + "km/h");
     }
 
     // Sets all timer related text-fields
@@ -460,10 +460,10 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         }
     }
 
-    private void registerNewUserPosition(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
+    private void registerNewUserPosition(TrackingUpdatedEvent trackingUpdatedEvent){
 
-        double userLatitude = trackerStateUpdatedEvent.getLatitude();
-        double userLongitude = trackerStateUpdatedEvent.getLongitude();
+        double userLatitude = trackingUpdatedEvent.getLatitude();
+        double userLongitude = trackingUpdatedEvent.getLongitude();
 
         if (userLatitude == 0.0 || userLongitude == 0.0) {
             return;
@@ -490,11 +490,11 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         }
     }
 
-    public void onEventMainThread(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
+    public void onEventMainThread(TrackingUpdatedEvent trackingUpdatedEvent){
 
         // Refresh the UI
-        this.registerNewUserPosition(trackerStateUpdatedEvent);
-        this.refreshDataInterface(trackerStateUpdatedEvent);
+        this.registerNewUserPosition(trackingUpdatedEvent);
+        this.refreshDataInterface(trackingUpdatedEvent);
     }
 
     public void onEventMainThread(RideActionFiredEvent rideActionFiredEvent){
@@ -502,7 +502,7 @@ public class JourneyTrackerFragment extends RoboFragment implements OnMapReadyCa
         switch (rideActionFiredEvent.getRideActionEnum()){
             case NEW_RIDE_STARTED:
                 this.refreshButtons();
-                this.refreshDataInterface(new TrackerStateUpdatedEvent());
+                this.refreshDataInterface(new TrackingUpdatedEvent());
                 this.refreshTimerInterface(new TimerUpdatedEvent());
                 this.refreshStopMarkers();
                 break;

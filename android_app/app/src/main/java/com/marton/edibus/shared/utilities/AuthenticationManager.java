@@ -7,15 +7,12 @@ import com.marton.edibus.shared.network.UserClient;
 import com.marton.edibus.shared.network.WebCallBack;
 import com.marton.edibus.shared.network.WebClient;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 @Singleton
 public class AuthenticationManager {
 
     @Inject
-    private UserClient userWebservice;
+    private UserClient userClient;
 
     @Inject
     private WebClient webClient;
@@ -30,29 +27,26 @@ public class AuthenticationManager {
         return getTokenFromCache() != null;
     }
 
-    public void authenticate(String username, String password, final WebCallBack callback){
+    // Authenticates the user with the provided username and password, and executes callback
+    public void authenticate(String username, String password, final WebCallBack<String> callback){
 
         WebCallBack<String> authenticationCallback = new WebCallBack<String>() {
+
             @Override
             public void onSuccess(String token) {
 
+                // Store the returned token
                 SharedPreferencesManager.writeString(App.getAppContext(), TOKEN_KEY, token);
-                authenticateWebRequests();
-
                 callback.onSuccess(token);
             }
         };
-        this.userWebservice.get_token(username, password, authenticationCallback);
+
+        // Get the authentication token from the web-service
+        this.userClient.getToken(username, password, authenticationCallback);
     }
 
-    // Prepares the web client with the authentication token
-    public void authenticateWebRequests(){
-
-        this.webClient.setAuthenticationToken(this.getTokenFromCache());
-    }
-
+    // Removes the authentication token from the shared preferences
     public void deAuthenticate(){
         SharedPreferencesManager.removeKeyValue(App.getAppContext(), TOKEN_KEY);
-        this.webClient.unsetAuthenticationToken();
     }
 }

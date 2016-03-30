@@ -3,12 +3,12 @@ package com.marton.edibus.journey.events;
 
 import com.marton.edibus.journey.enums.RideStateEnum;
 
-public class TrackerStateUpdatedEvent {
+public class TrackingUpdatedEvent {
 
-    public TrackerStateUpdatedEvent(){
+    public TrackingUpdatedEvent(){
     }
 
-    public TrackerStateUpdatedEvent(double distanceFromGoal, double distanceFromStart, double currentSpeed, double latitude, double longitude, RideStateEnum rideStateEnum){
+    public TrackingUpdatedEvent(double distanceFromGoal, double distanceFromStart, double currentSpeed, double latitude, double longitude, RideStateEnum rideStateEnum){
         this.distanceFromGoal = distanceFromGoal;
         this.distanceFromStart = distanceFromStart;
         this.currentSpeed = currentSpeed;
@@ -106,15 +106,15 @@ public class TrackerStateUpdatedEvent {
         this.averageSpeed = averageSpeed;
     }
 
-    public void copyValuesFrom(TrackerStateUpdatedEvent trackerStateUpdatedEvent){
-        this.latitude = trackerStateUpdatedEvent.getLatitude();
-        this.longitude = trackerStateUpdatedEvent.getLongitude();
-        this.distanceFromGoal = trackerStateUpdatedEvent.getDistanceFromGoal();
-        this.distanceFromStart = trackerStateUpdatedEvent.getDistanceFromStart();
-        this.currentSpeed = trackerStateUpdatedEvent.getCurrentSpeed();
-        this.maximumSpeed = trackerStateUpdatedEvent.getMaximumSpeed();
-        this.averageSpeed = trackerStateUpdatedEvent.getAverageSpeed();
-        this.waitingTime = trackerStateUpdatedEvent.getWaitingTime();
-        this.travellingTime = trackerStateUpdatedEvent.getTravellingTime();
+    public void copyValuesFrom(TrackingUpdatedEvent trackingUpdatedEvent){
+        this.latitude = trackingUpdatedEvent.getLatitude();
+        this.longitude = trackingUpdatedEvent.getLongitude();
+        this.distanceFromGoal = trackingUpdatedEvent.getDistanceFromGoal();
+        this.distanceFromStart = trackingUpdatedEvent.getDistanceFromStart();
+        this.currentSpeed = trackingUpdatedEvent.getCurrentSpeed();
+        this.maximumSpeed = trackingUpdatedEvent.getMaximumSpeed();
+        this.averageSpeed = trackingUpdatedEvent.getAverageSpeed();
+        this.waitingTime = trackingUpdatedEvent.getWaitingTime();
+        this.travellingTime = trackingUpdatedEvent.getTravellingTime();
     }
 }

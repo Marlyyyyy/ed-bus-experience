@@ -39,15 +39,6 @@ public class JourneyManager {
 
     private RideActionFiredEvent rideActionFiredEvent;
 
-    // The flag indicating whether the journey has been paused
-    private boolean paused;
-
-    // The flag indicating whether the journey has been finished
-    private boolean finished;
-
-    // The flag indicating whether the journey has been started
-    private boolean started;
-
     // The flag indicating whether the ride should be automated
     private boolean automaticFlow;
 
@@ -61,9 +52,6 @@ public class JourneyManager {
         this.reviewStop = null;
         this.journeyStateEnum = JourneyStateEnum.SETUP_INCOMPLETE;
         this.rideStateEnum = RideStateEnum.PREPARING;
-        this.paused = true;
-        this.finished = false;
-        this.started = false;
         this.rideActionFiredEvent = new RideActionFiredEvent();
     }
 
@@ -91,18 +79,6 @@ public class JourneyManager {
         this.reviewStop = reviewStop;
     }
 
-    public boolean getPaused() {
-        return paused;
-    }
-
-    public boolean getFinished() {
-        return finished;
-    }
-
-    public boolean getStarted() {
-        return started;
-    }
-
     public boolean getAutomaticFlow() {
         return automaticFlow;
     }
@@ -120,9 +96,6 @@ public class JourneyManager {
         this.journeyStateEnum = JourneyStateEnum.STARTED;
         this.rideStateEnum = RideStateEnum.WAITING;
 
-        this.paused = false;
-        this.started = true;
-
         this.ride.setStartTime(new Date());
     }
 
@@ -135,16 +108,12 @@ public class JourneyManager {
         this.journeyStateEnum = JourneyStateEnum.STARTED;
         this.rideStateEnum = RideStateEnum.TRAVELLING;
 
-        this.paused = false;
-        this.started = true;
-
         this.ride.setStartTime(new Date());
     }
 
     public void finishRide(){
 
         this.journeyStateEnum = JourneyStateEnum.FINISHED;
-        this.finished = true;
         this.ride.setEndTime(new Date());
     }
 

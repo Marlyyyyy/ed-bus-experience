@@ -25,7 +25,8 @@
     "angular-material": null,
     "angular-chart.js":null,
     "Chart.js":null,
-    "angular-google-maps":null
+    "angular-google-maps":null,
+    "heatmap.js-amd":null
   },
   "homepage": "https://github.com/Marlyyyyy/edi-bus-feedback",
   "authors": [

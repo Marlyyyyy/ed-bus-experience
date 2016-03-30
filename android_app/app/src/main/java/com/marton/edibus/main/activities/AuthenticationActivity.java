@@ -91,9 +91,11 @@ public class AuthenticationActivity extends RoboActionBarActivity {
         this.userClient.register(username, password, new WebCallBack<JSONObject>() {
             @Override
             public void onSuccess(JSONObject data) {
-                authenticationManager.authenticate(username, password, new WebCallBack() {
+                authenticationManager.authenticate(username, password, new WebCallBack<String>() {
                     @Override
-                    public void onSuccess(Object data) {
+                    public void onSuccess(String data) {
+
+                        webClient.setAuthenticationToken(data);
 
                         // Reset local statistics
                         StatisticsManager.clearStatistics();
