@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.home.controllers')
+        .module('busfeedback.home.controllers')
         .controller('IndexController', IndexController);
 
     IndexController.$inject = ['$location', 'Authentication', 'Snackbar', 'Home'];

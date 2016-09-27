@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.navbar.directives')
+        .module('busfeedback.navbar.directives')
         .directive('navbar', navbar);
 
     function navbar() {

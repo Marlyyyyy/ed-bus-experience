@@ -3,14 +3,14 @@
     'use strict';
 
     angular
-        .module('runnerapp.home', [
-            'runnerapp.home.controllers',
-            'runnerapp.home.services'
+        .module('busfeedback.home', [
+            'busfeedback.home.controllers',
+            'busfeedback.home.services'
         ]);
 
     angular
-        .module('runnerapp.home.controllers', ['ngRoute']);
+        .module('busfeedback.home.controllers', ['ngRoute']);
 
     angular
-        .module('runnerapp.home.services', []);
+        .module('busfeedback.home.services', []);
 })();

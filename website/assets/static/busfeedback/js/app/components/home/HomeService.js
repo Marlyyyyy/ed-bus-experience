@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.home.services')
+        .module('busfeedback.home.services')
         .factory('Home', Home);
 
     Home.$inject = ['$http'];

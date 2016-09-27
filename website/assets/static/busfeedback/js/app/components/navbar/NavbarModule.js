@@ -3,14 +3,14 @@
     'use strict';
 
     angular
-        .module('runnerapp.navbar', [
-            'runnerapp.navbar.controllers',
-            'runnerapp.navbar.directives'
+        .module('busfeedback.navbar', [
+            'busfeedback.navbar.controllers',
+            'busfeedback.navbar.directives'
         ]);
 
     angular
-        .module('runnerapp.navbar.controllers', []);
+        .module('busfeedback.navbar.controllers', []);
 
     angular
-        .module('runnerapp.navbar.directives', []);
+        .module('busfeedback.navbar.directives', []);
 })();

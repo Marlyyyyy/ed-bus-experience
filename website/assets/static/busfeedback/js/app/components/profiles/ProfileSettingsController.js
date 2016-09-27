@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.profiles.controllers')
+        .module('busfeedback.profiles.controllers')
         .controller('ProfileSettingsController', ProfileSettingsController);
 
     ProfileSettingsController.$inject = [

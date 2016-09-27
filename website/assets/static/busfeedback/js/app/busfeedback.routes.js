@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.routes')
+        .module('busfeedback.routes')
         .config(config);
 
     config.$inject = ['$routeProvider'];

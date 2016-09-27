@@ -3,14 +3,14 @@
     'use strict';
 
     angular
-        .module('runnerapp.profiles', [
-            'runnerapp.profiles.controllers',
-            'runnerapp.profiles.services'
+        .module('busfeedback.profiles', [
+            'busfeedback.profiles.controllers',
+            'busfeedback.profiles.services'
         ]);
 
     angular
-        .module('runnerapp.profiles.controllers', []);
+        .module('busfeedback.profiles.controllers', []);
 
     angular
-        .module('runnerapp.profiles.services', []);
+        .module('busfeedback.profiles.services', []);
 })();

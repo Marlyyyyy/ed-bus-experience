@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.navbar.controllers')
+        .module('busfeedback.navbar.controllers')
         .controller('NavbarController', NavbarController);
 
     NavbarController.$inject = ['$scope', 'Authentication', '$location'];

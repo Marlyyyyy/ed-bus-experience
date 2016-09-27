@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.profiles.controllers')
+        .module('busfeedback.profiles.controllers')
         .controller('ProfileController', ProfileController);
 
     ProfileController.$inject = ['$location', '$routeParams', 'Profile', 'Snackbar'];

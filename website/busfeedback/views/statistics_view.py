@@ -82,18 +82,18 @@ class RideStatisticsView(APIView):
         seat_negatives = 0.0
         for group in seat_group_by:
             if group['seat']:
-                seat_positives = group['seat_count']
+                seat_positives += group['seat_count']
             else:
-                seat_negatives = group['seat_count']
+                seat_negatives += group['seat_count']
 
         greet_group_by = latest_rides.values('greet').annotate(greet_count=Count('greet'))
         greet_positives = 0.0
         greet_negatives = 0.0
         for group in greet_group_by:
             if group['greet']:
-                greet_positives = group['greet_count']
+                greet_positives += group['greet_count']
             else:
-                greet_negatives = group['greet_count']
+                greet_negatives += group['greet_count']
 
         statistics_dictionary = {
             'number_of_journeys': number_of_journeys,

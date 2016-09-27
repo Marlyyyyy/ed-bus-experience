@@ -53,6 +53,7 @@ public class JourneyManager {
         this.journeyStateEnum = JourneyStateEnum.SETUP_INCOMPLETE;
         this.rideStateEnum = RideStateEnum.PREPARING;
         this.rideActionFiredEvent = new RideActionFiredEvent();
+        this.automaticFlow = false;
     }
 
     public JourneyStateEnum getJourneyStateEnum() {

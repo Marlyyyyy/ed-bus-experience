@@ -27,6 +27,7 @@ from busfeedback.constants import API_SERVICES, API_HEADER
 from busfeedback.utilities.bus_updater import update_services_and_stops
 
 
+# Updates the bus-data. This should be a command later on
 @csrf_exempt
 def get_data(request):
     update_services_and_stops()
@@ -35,6 +36,7 @@ def get_data(request):
     return HttpResponse("Done", content_type='application/json')
 
 
+# Removes the bus-data. This should be a command later on
 @csrf_exempt
 def remove_data(request):
     delete_services_stops()
@@ -47,6 +49,7 @@ def custom_404(request):
     return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
+# Returns services for a specific stop
 class ServicesForStopView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -54,7 +57,6 @@ class ServicesForStopView(APIView):
 
     def get(self, request):
         stop_id = int(request.GET.get("id", ""))
-        # TODO: Handle exception
         stop = Stop.objects.filter(id=stop_id)[0]
         services = list(stop.services.all())
         service_serializer = ServiceSerializer(services, many=True)
@@ -63,6 +65,7 @@ class ServicesForStopView(APIView):
         return HttpResponse(json_services, content_type='application/json')
 
 
+# Returns stops for a specific service. Returns remaining stops if start-stop is also specified
 class StopsForServiceView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -71,7 +74,6 @@ class StopsForServiceView(APIView):
     def get(self, request):
         service_id = int(request.GET.get("service_id", ""))
         start_stop_id = request.GET.get("start_stop_id", "")
-        # TODO: Handle exception
 
         # If there's a start_stop, then filter end_stops based on start_stop and service
         if start_stop_id != "":
@@ -90,6 +92,7 @@ class StopsForServiceView(APIView):
         return HttpResponse(json_stops, content_type='application/json')
 
 
+# Returns stops within a specified radius (m) around specified coordinates
 class StopsWithinRadius(APIView):
     permission_classes = (permissions.IsAuthenticated, )
     authentication_classes = (JSONWebTokenAuthentication, )
@@ -120,6 +123,7 @@ class StopsWithinRadius(APIView):
         return HttpResponse(json_stops, content_type='application/json')
 
 
+# Handles the upload and return of bus rides
 class RideView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -214,6 +218,7 @@ class RideView(APIView):
         return HttpResponse(json_rides, content_type='application/json')
 
 
+# Handles the upload of questionnaire results
 class QuestionnaireView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -239,22 +244,7 @@ class QuestionnaireView(APIView):
         return HttpResponse(response_data, content_type='application/json')
 
 
-@csrf_exempt
-def get_diary_for_user(request):
-    username = request.GET.get("username", "")
-
-    try:
-        journeys = Journey.objects.filter(account__username=username).prefetch_related('rides')
-    except ObjectDoesNotExist:
-        error_message = "User with username '{}' could not be found.".format(username)
-        return HttpResponseBadRequest(error_message, content_type='application/json')
-
-    journey_serliazer = JourneySerializer(journeys, many=True)
-    json_journeys = JSONRenderer().render({"journeys": journey_serliazer.data})
-
-    return HttpResponse(json_journeys, content_type='application/json')
-
-
+# Returns all bus services ordered by their identifiers
 class ServiceView(APIView):
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -268,6 +258,7 @@ class ServiceView(APIView):
         return HttpResponse(json_services, content_type='application/json')
 
 
+# Returns the default home page
 class IndexView(APIView):
     permission_classes = (permissions.AllowAny, )
 

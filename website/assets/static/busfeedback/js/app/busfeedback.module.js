@@ -1,30 +1,30 @@
 angular
-    .module('runnerapp', []);
+    .module('busfeedback', []);
 
 (function () {
     'use strict';
 
     angular
-        .module('runnerapp', [
-            'runnerapp.routes',
+        .module('busfeedback', [
+            'busfeedback.routes',
             'config',
             'authentication',
-            'runnerapp.navbar',
-            'runnerapp.home',
-            'runnerapp.snackbar',
-            'runnerapp.profiles',
+            'busfeedback.navbar',
+            'busfeedback.home',
+            'busfeedback.snackbar',
+            'busfeedback.profiles',
             'busfeedback.dashboard',
             'uiGmapgoogle-maps'
         ]);
 
     angular
-        .module('runnerapp.routes', ['ngRoute']);
+        .module('busfeedback.routes', ['ngRoute']);
 
     angular
         .module('config', []);
 
     angular
-        .module('runnerapp')
+        .module('busfeedback')
         .factory('httpRequestInterceptor', httpRequestInterceptor)
         .config(function($httpProvider, $mdThemingProvider, uiGmapGoogleMapApiProvider) {
             $httpProvider.interceptors.push('httpRequestInterceptor');

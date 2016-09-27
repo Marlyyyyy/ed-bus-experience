@@ -3,10 +3,10 @@
     'use strict';
 
     angular
-        .module('runnerapp.snackbar', [
-            'runnerapp.snackbar.services'
+        .module('busfeedback.snackbar', [
+            'busfeedback.snackbar.services'
     ]);
 
     angular
-        .module('runnerapp.snackbar.services', []);
+        .module('busfeedback.snackbar.services', []);
 })();

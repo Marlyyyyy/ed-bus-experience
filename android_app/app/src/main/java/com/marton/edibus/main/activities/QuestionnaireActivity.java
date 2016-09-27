@@ -168,9 +168,7 @@ public class QuestionnaireActivity extends RoboActionBarActivity {
             public void onClick(View v) {
 
                 boolean neverAskAgain = neverAskAgainSwitch.isChecked();
-                if (neverAskAgain){
-                    QuestionnaireManager.writeQuestionnaireFilledInToSharedPreferences(true);
-                }
+                QuestionnaireManager.writeQuestionnaireFilledInToSharedPreferences(true);
 
                 // Start the Content activity
                 Intent intent = new Intent(QuestionnaireActivity.this, ContentActivity.class);

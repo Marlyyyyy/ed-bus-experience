@@ -29,7 +29,7 @@
             return $http.get('/bus/api/yes_and_no_statistics/', {params: {'group_by_value': 'greet'}});
         }
 
-        // Returns the distribution of greet values broken down to each day of the past month
+        // Returns the distribution of average wait_duration broken down to each day of the past month
         function getAverageWaitDurationStatistics() {
 
             return $http.get('/bus/api/average_statistics/', {params: {'aggregate_value': 'wait_duration'}});

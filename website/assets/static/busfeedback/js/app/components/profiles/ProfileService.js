@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-        .module('runnerapp.profiles.services')
+        .module('busfeedback.profiles.services')
         .factory('Profile', Profile);
 
     Profile.$inject = ['$http'];

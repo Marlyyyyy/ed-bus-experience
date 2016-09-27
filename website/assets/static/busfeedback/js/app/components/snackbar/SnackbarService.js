@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-    .module('runnerapp.snackbar.services')
+    .module('busfeedback.snackbar.services')
     .factory('Snackbar', Snackbar);
 
     function Snackbar() {
