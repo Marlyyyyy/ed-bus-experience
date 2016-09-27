@@ -8,3 +8,4 @@ htmlcov/
 *.gif
 assets/static/dependencies/*
 assets/static/compressed/*
+db.sqlite3
